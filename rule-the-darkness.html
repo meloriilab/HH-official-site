@@ -575,10 +575,10 @@
         </div>
         <div class="diff-specs">
           <div class="spec-item">盤面 <span>8×8</span></div>
-          <div class="spec-item">白駒 <span>10個</span></div>
-          <div class="spec-item">手駒 <span>5個</span></div>
+          <div class="spec-item">白駒 <span>12個</span></div>
+          <div class="spec-item">手駒 <span>4個</span></div>
         </div>
-        <div class="diff-desc">手駒の数と白の数がぴったり一致する。一手でも無駄にすれば詰み。盤面全体を見渡して逆算せよ。</div>
+        <div class="diff-desc">一番多くひっくり返せる手ほど罠。欲張って長い列を取ると、孤立した白が必ず取り残される。何を先に置くか、一手の無駄も許されない。</div>
       </div>
 
     </div>
@@ -651,21 +651,24 @@
 //           (5,2)→flip(5,1)  independent
 // Trap: trying (0,2) or (4,2) before (2,0) has no anchor → invalid.
 //
-// ADVANCED 8x8 — 10 whites, 5 hands, strict dependency chain
-//   row1: . B W W W . . .
-//   row2: . . W B W . . .
-//   row3: . . W . W . . .
-//   row4: . . B . B . . .
-//   row5: B W . W . . . .
-//   row6: . B W B . . . .
-//   row7: . . B . . . . .
-// Solution:
-//   A(0,2): down → (1,2)W(2,2)W(3,2)W(4,2)B → flip3
-//   B(0,4): down → (1,4)W(2,4)W(3,4)W(4,4)B → flip3
-//   C(0,3): down → (1,3)W(2,3)B              → flip1
-//   D(5,2): left→(5,1)W(5,0)B flip(5,1); down→(6,2)W(7,2)B flip(6,2)
-//   E(5,4): left→(5,3)W(5,2)B  ← REQUIRES D first (5,2 must be placed)
-// Trap: placing E before D fails (5,2 is empty). A,B,C,D are order-free among themselves.
+// ADVANCED 8x8 — 12 whites, 4 hands, "inverted-T" trap x2  (greedy LOSES here)
+//   row1: . B W W W W . .   <- top unit: long bar (row1) + stem going down (col2)
+//   row2: . . W . . . . .
+//   row3: . . W . . B . .
+//   row4: . . B . . W . .   <- bottom unit: stem going up (col5) + bar (row6)
+//   row5: . . . . . W . .
+//   row6: . . W W W W B .
+//   row7: . . . . . . . .
+// Each unit's bar and stem meet at a JUNCTION white.
+//   TOP unit  : bar (1,2)(1,3)(1,4)(1,5) anchored at (1,1)B; stem (1,2)(2,2)(3,2) anchored at (4,2)B.
+//               Correct: (0,2) flips the STEM first (3 whites incl. junction (1,2)),
+//                        then (1,6) sweeps the bar remainder.
+//               TRAP   : (1,6) first sweeps the whole bar (4 whites, the biggest flip!),
+//                        turning junction (1,2) black → stem (2,2)(3,2) can never be flipped.
+//   BOTTOM unit: mirror image (stem col5 up to (3,5)B, bar row6 to (6,6)B). Entry (7,5)/ (6,1).
+// Because the tempting "flip the most pieces" move is exactly the losing move, a greedy
+// player loses. Only 2 of 6 opening moves are safe; at every step only 1/3 of moves keep
+// the win alive, and there is zero slack (4 whites-groups, exactly 4 hands). Verified by solver.
 
 const LEVELS = {
   beginner: {
@@ -704,16 +707,16 @@ const LEVELS = {
     badgeClass: 'advanced',
     labelColor: '#f87171',
     size: 8,
-    hands: 5,
+    hands: 4,
     init: [
       [0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 2, 2, 2, 0, 0, 0],
-      [0, 0, 2, 1, 2, 0, 0, 0],
-      [0, 0, 2, 0, 2, 0, 0, 0],
-      [0, 0, 1, 0, 1, 0, 0, 0],
-      [1, 2, 0, 2, 0, 0, 0, 0],
-      [0, 1, 2, 1, 0, 0, 0, 0],
-      [0, 0, 1, 0, 0, 0, 0, 0],
+      [0, 1, 2, 2, 2, 2, 0, 0],
+      [0, 0, 2, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 2, 0, 0],
+      [0, 0, 0, 0, 0, 2, 0, 0],
+      [0, 0, 2, 2, 2, 2, 1, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
     ],
   },
 };
