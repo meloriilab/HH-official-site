@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rule The Darkness ～闇で支配せよ～</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+
+    :root {
+      --bg-deep: #050508;
+      --bg-dark: #0a0a12;
+      --bg-panel: #0f0f1a;
+      --bg-board: #0c0c1a;
+      --cell-bg: #0d0d1e;
+      --cell-border: #1a1a35;
+      --gold: #c8a84b;
+      --gold-light: #f0d070;
+      --purple: #6b21a8;
+      --purple-light: #a855f7;
+      --text-main: #c8c8e8;
+      --text-dim: #5a5a7a;
+      --danger: #ff3a3a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Noto Sans JP', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    #particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(106,33,168,0.5), transparent);
+      animation: floatParticle linear infinite;
+    }
+
+    @keyframes floatParticle {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 20px 20px;
+      width: 100%;
+    }
+
+    .title-en {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 5vw, 44px);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(200,168,75,0.5));
+      line-height: 1.2;
+    }
+
+    .title-ja {
+      font-size: clamp(11px, 2vw, 14px);
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    .header-divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 16px auto 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 680px;
+      padding: 0 16px 60px;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ---- SELECT SCREEN ---- */
+
+    .select-intro {
+      text-align: center;
+      margin: 28px 0 36px;
+    }
+
+    .select-intro p {
+      font-size: 13px;
+      line-height: 2.2;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .select-intro .hl { color: var(--purple-light); font-weight: 700; }
+
+    .difficulty-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .diff-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--cell-border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .diff-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .diff-card.beginner::before      { background: linear-gradient(135deg, rgba(34,197,94,0.05), transparent); }
+    .diff-card.intermediate::before  { background: linear-gradient(135deg, rgba(168,85,247,0.08), transparent); }
+    .diff-card.advanced::before      { background: linear-gradient(135deg, rgba(239,68,68,0.08), transparent); }
+
+    .diff-card:hover::before { opacity: 1; }
+
+    .diff-card:hover { transform: translateX(4px); }
+    .diff-card.beginner:hover     { border-color: rgba(34,197,94,0.4); }
+    .diff-card.intermediate:hover { border-color: rgba(168,85,247,0.4); }
+    .diff-card.advanced:hover     { border-color: rgba(239,68,68,0.4); }
+
+    .diff-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .diff-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+
+    .beginner    .diff-badge { background: rgba(34,197,94,0.15);  color: #4ade80;           border: 1px solid rgba(34,197,94,0.3); }
+    .intermediate .diff-badge { background: rgba(168,85,247,0.15); color: var(--purple-light); border: 1px solid rgba(168,85,247,0.3); }
+    .advanced    .diff-badge { background: rgba(239,68,68,0.15);  color: #f87171;           border: 1px solid rgba(239,68,68,0.3); }
+
+    .diff-name { font-size: 16px; font-weight: 700; letter-spacing: 0.1em; }
+
+    .diff-specs { display: flex; gap: 16px; margin-bottom: 8px; }
+
+    .spec-item { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; }
+    .spec-item span { color: var(--text-main); font-weight: 700; }
+
+    .diff-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+
+    /* ---- GAME SCREEN ---- */
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 16px;
+    }
+
+    .back-btn {
+      background: none;
+      border: 1px solid var(--cell-border);
+      color: var(--text-dim);
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Noto Sans JP', sans-serif;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .game-diff-label {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+    }
+
+    .hand-counter { text-align: right; }
+
+    .hand-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .hand-dots { display: flex; gap: 5px; justify-content: flex-end; }
+
+    .hand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--text-dim);
+      background: transparent;
+      transition: all 0.3s;
+    }
+
+    .hand-dot.used {
+      background: #1a1a2e;
+      border-color: rgba(74,0,255,0.5);
+      box-shadow: 0 0 6px rgba(74,0,255,0.4);
+    }
+
+    /* ---- BOARD ---- */
+
+    .board-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .board {
+      display: inline-grid;
+      gap: 3px;
+      padding: 12px;
+      background: var(--bg-board);
+      border: 1px solid var(--cell-border);
+      border-radius: 6px;
+      box-shadow: 0 0 40px rgba(74,0,255,0.06), inset 0 0 40px rgba(0,0,0,0.6);
+    }
+
+    .cell {
+      width: 52px;
+      height: 52px;
+      background: var(--cell-bg);
+      border: 1px solid var(--cell-border);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .cell.placeable { cursor: pointer; }
+    .cell.placeable:hover { background: rgba(74,0,255,0.12); border-color: rgba(74,0,255,0.35); }
+    .cell.hint-cell { background: rgba(74,0,255,0.07); border-color: rgba(74,0,255,0.2); }
+
+    .piece {
+      width: 78%;
+      height: 78%;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .piece.black {
+      background: radial-gradient(circle at 35% 35%, #3a3a5a, #080808);
+      box-shadow: 0 0 12px rgba(74,0,255,0.35), 0 2px 4px rgba(0,0,0,0.9), inset 0 1px 2px rgba(100,80,255,0.2);
+      border: 1px solid rgba(74,0,255,0.25);
+    }
+
+    .piece.white {
+      background: radial-gradient(circle at 35% 35%, #ffffff, #b0b0d8);
+      box-shadow: 0 0 10px rgba(200,200,255,0.25), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8);
+      border: 1px solid rgba(200,200,255,0.4);
+    }
+
+    .piece.placing {
+      animation: placeAnim 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .piece.flipping {
+      animation: flipAnim 0.35s ease-in-out forwards;
+    }
+
+    @keyframes placeAnim {
+      0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes flipAnim {
+      0%   { transform: scaleX(1); }
+      50%  { transform: scaleX(0); }
+      100% { transform: scaleX(1); }
+    }
+
+    .hint-dot {
+      width: 22%;
+      height: 22%;
+      border-radius: 50%;
+      background: rgba(74,0,255,0.5);
+      border: 1px solid rgba(100,60,255,0.7);
+      animation: pulseDot 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.35); }
+    }
+
+    /* ---- STATUS ---- */
+
+    .status-bar {
+      text-align: center;
+      min-height: 28px;
+      margin-bottom: 10px;
+    }
+
+    .status-msg {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      transition: color 0.3s;
+    }
+
+    .status-msg.warning { color: var(--danger); }
+
+    /* ---- HINT TOGGLE ---- */
+
+    .hint-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .hint-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--cell-border);
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.on { background: rgba(74,0,255,0.5); }
+
+    .toggle-knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      transition: all 0.3s;
+    }
+
+    .toggle-switch.on .toggle-knob { left: 19px; background: #a078ff; }
+
+    /* ---- BUTTONS ---- */
+
+    .action-buttons { display: flex; gap: 10px; justify-content: center; }
+
+    .btn {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      padding: 8px 22px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.25s;
+      border: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--cell-border);
+      color: var(--text-dim);
+    }
+
+    .btn-ghost:hover { border-color: var(--purple-light); color: var(--purple-light); }
+
+    /* ---- OVERLAY ---- */
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,5,8,0.93);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .overlay-icon {
+      font-size: 60px;
+      margin-bottom: 18px;
+      animation: iconPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+    }
+
+    @keyframes iconPop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .overlay-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 5vw, 38px);
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      margin-bottom: 10px;
+      animation: slideUp 0.45s ease 0.25s both;
+    }
+
+    .overlay-title.success {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(200,168,75,0.6));
+    }
+
+    .overlay-title.fail {
+      color: var(--danger);
+      filter: drop-shadow(0 0 15px rgba(255,58,58,0.5));
+    }
+
+    .overlay-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-bottom: 34px;
+      animation: slideUp 0.45s ease 0.35s both;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(18px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .overlay-buttons {
+      display: flex;
+      gap: 12px;
+      animation: slideUp 0.45s ease 0.45s both;
+    }
+
+    .overlay-btn {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      padding: 10px 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .overlay-btn.retry {
+      background: linear-gradient(135deg, var(--purple), #4a00ff);
+      color: white;
+      border: 1px solid rgba(168,85,247,0.4);
+      box-shadow: 0 0 20px rgba(74,0,255,0.3);
+    }
+
+    .overlay-btn.retry:hover {
+      box-shadow: 0 0 35px rgba(74,0,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    .overlay-btn.select {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--cell-border);
+    }
+
+    .overlay-btn.select:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ---- RESPONSIVE ---- */
+
+    @media (max-width: 480px) {
+      .cell { width: 44px; height: 44px; }
+      .board { padding: 8px; gap: 2px; }
+    }
+
+    @media (max-width: 360px) {
+      .cell { width: 36px; height: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div class="header">
+  <div class="title-en">RULE THE DARKNESS</div>
+  <div class="title-ja">～ 闇 で 支 配 せ よ ～</div>
+  <div class="header-divider"></div>
+</div>
+
+<div class="container">
+
+  <!-- SELECT SCREEN -->
+  <div id="screen-select" class="screen active">
+    <div class="select-intro">
+      <p>
+        すべての<span class="hl">白</span>を<span class="hl">黒</span>に染め上げろ。<br>
+        盤面に黒駒を置き、オセロのルールで白をひっくり返せ。<br>
+        手駒を使い切ったとき、盤面に白が残っていれば敗北だ。
+      </p>
+    </div>
+
+    <div class="difficulty-cards">
+
+      <div class="diff-card beginner" onclick="startGame('beginner')">
+        <div class="diff-header">
+          <div class="diff-badge">BEGINNER</div>
+          <div class="diff-name">初　級</div>
+        </div>
+        <div class="diff-specs">
+          <div class="spec-item">盤面 <span>5×5</span></div>
+          <div class="spec-item">白駒 <span>3個</span></div>
+          <div class="spec-item">手駒 <span>3個</span></div>
+        </div>
+        <div class="diff-desc">置く場所さえ正しければ、順番を気にせずクリアできる。まずはオセロの感覚を掴もう。</div>
+      </div>
+
+      <div class="diff-card intermediate" onclick="startGame('intermediate')">
+        <div class="diff-header">
+          <div class="diff-badge">INTERMEDIATE</div>
+          <div class="diff-name">中　級</div>
+        </div>
+        <div class="diff-specs">
+          <div class="spec-item">盤面 <span>6×6</span></div>
+          <div class="spec-item">白駒 <span>6個</span></div>
+          <div class="spec-item">手駒 <span>4個</span></div>
+        </div>
+        <div class="diff-desc">ある一手を先に打たないと、後の手が成立しない。ひっくり返る範囲を先読みして順番を考えろ。</div>
+      </div>
+
+      <div class="diff-card advanced" onclick="startGame('advanced')">
+        <div class="diff-header">
+          <div class="diff-badge">ADVANCED</div>
+          <div class="diff-name">上　級</div>
+        </div>
+        <div class="diff-specs">
+          <div class="spec-item">盤面 <span>8×8</span></div>
+          <div class="spec-item">白駒 <span>10個</span></div>
+          <div class="spec-item">手駒 <span>5個</span></div>
+        </div>
+        <div class="diff-desc">手駒の数と白の数がぴったり一致する。一手でも無駄にすれば詰み。盤面全体を見渡して逆算せよ。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="screen-game" class="screen">
+    <div class="game-header">
+      <button class="back-btn" onclick="goBack()">← 難易度選択</button>
+      <div id="game-diff-label" class="game-diff-label"></div>
+      <div class="hand-counter">
+        <div class="hand-label">残り手駒</div>
+        <div class="hand-dots" id="hand-dots"></div>
+      </div>
+    </div>
+
+    <div class="board-wrapper">
+      <div id="board" class="board"></div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-msg" id="status-msg">駒を置く場所を選んでください</div>
+    </div>
+
+    <div class="hint-toggle">
+      <span class="hint-label">ヒント表示（置ける場所）</span>
+      <div class="toggle-switch" id="hint-toggle" onclick="toggleHint()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-ghost" onclick="resetGame()">リセット</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-icon" id="overlay-icon"></div>
+  <div class="overlay-title" id="overlay-title"></div>
+  <div class="overlay-sub" id="overlay-sub"></div>
+  <div class="overlay-buttons">
+    <button class="overlay-btn retry"  onclick="resetGame(); closeOverlay()">もう一度</button>
+    <button class="overlay-btn select" onclick="goBack(); closeOverlay()">難易度選択</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// PUZZLE DATA  (0=empty, 1=black, 2=white)
+// ============================================================
+//
+// BEGINNER 5x5  — 3 whites, 3 hands, any order works
+//   row0: B B . B .
+//   row1: W W . W .
+//   rest: empty
+// Solution: place (2,0) (2,1) (2,3) in any order.
+//   Each move scans upward: W then B → flip.
+//
+// INTERMEDIATE 6x6 — 6 whites, 4 hands, order-sensitive
+//   row1: . B W B . .
+//   row2: . W W W B .
+//   row3: . B W B . .
+//   row5: B W . . . .
+// Solution: (2,0)→flip(2,1)(2,2)(2,3)  MUST GO FIRST
+//           (0,2)→flip(1,2)  requires (2,2) to be B
+//           (4,2)→flip(3,2)  requires (2,2) to be B
+//           (5,2)→flip(5,1)  independent
+// Trap: trying (0,2) or (4,2) before (2,0) has no anchor → invalid.
+//
+// ADVANCED 8x8 — 10 whites, 5 hands, strict dependency chain
+//   row1: . B W W W . . .
+//   row2: . . W B W . . .
+//   row3: . . W . W . . .
+//   row4: . . B . B . . .
+//   row5: B W . W . . . .
+//   row6: . B W B . . . .
+//   row7: . . B . . . . .
+// Solution:
+//   A(0,2): down → (1,2)W(2,2)W(3,2)W(4,2)B → flip3
+//   B(0,4): down → (1,4)W(2,4)W(3,4)W(4,4)B → flip3
+//   C(0,3): down → (1,3)W(2,3)B              → flip1
+//   D(5,2): left→(5,1)W(5,0)B flip(5,1); down→(6,2)W(7,2)B flip(6,2)
+//   E(5,4): left→(5,3)W(5,2)B  ← REQUIRES D first (5,2 must be placed)
+// Trap: placing E before D fails (5,2 is empty). A,B,C,D are order-free among themselves.
+
+const LEVELS = {
+  beginner: {
+    label: 'BEGINNER / 初 級',
+    badgeClass: 'beginner',
+    labelColor: '#4ade80',
+    size: 5,
+    hands: 3,
+    init: [
+      [1, 1, 0, 1, 0],
+      [2, 2, 0, 2, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ],
+  },
+
+  intermediate: {
+    label: 'INTERMEDIATE / 中 級',
+    badgeClass: 'intermediate',
+    labelColor: '#a855f7',
+    size: 6,
+    hands: 4,
+    init: [
+      [0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0],
+      [0, 2, 2, 2, 1, 0],
+      [0, 1, 2, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [1, 2, 0, 0, 0, 0],
+    ],
+  },
+
+  advanced: {
+    label: 'ADVANCED / 上 級',
+    badgeClass: 'advanced',
+    labelColor: '#f87171',
+    size: 8,
+    hands: 5,
+    init: [
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 2, 2, 0, 0, 0],
+      [0, 0, 2, 1, 2, 0, 0, 0],
+      [0, 0, 2, 0, 2, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0, 0],
+      [1, 2, 0, 2, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0, 0],
+    ],
+  },
+};
+
+// ============================================================
+// GAME STATE
+// ============================================================
+
+const state = {
+  key: null,
+  level: null,
+  board: null,
+  handsLeft: 0,
+  hintOn: false,
+  animating: false,
+};
+
+// ============================================================
+// OTHELLO LOGIC
+// ============================================================
+
+const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+
+function getFlips(board, r, c, size) {
+  if (board[r][c] !== 0) return [];
+  const flips = [];
+  for (const [dr, dc] of DIRS) {
+    const line = [];
+    let nr = r + dr, nc = c + dc;
+    while (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === 2) {
+      line.push([nr, nc]);
+      nr += dr; nc += dc;
+    }
+    if (line.length > 0 && nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === 1) {
+      flips.push(...line);
+    }
+  }
+  return flips;
+}
+
+function getValidMoves(board, size) {
+  const moves = [];
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++)
+      if (board[r][c] === 0 && getFlips(board, r, c, size).length > 0)
+        moves.push([r, c]);
+  return moves;
+}
+
+function countWhites(board, size) {
+  let n = 0;
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++)
+      if (board[r][c] === 2) n++;
+  return n;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function renderBoard() {
+  const { board, level, hintOn } = state;
+  const { size } = level;
+  const boardEl = document.getElementById('board');
+  boardEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  boardEl.innerHTML = '';
+
+  const hintSet = hintOn
+    ? new Set(getValidMoves(board, size).map(([r, c]) => `${r},${c}`))
+    : new Set();
+
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+
+      const val = board[r][c];
+      if (val !== 0) {
+        const piece = document.createElement('div');
+        piece.className = `piece ${val === 1 ? 'black' : 'white'}`;
+        cell.appendChild(piece);
+      } else {
+        const isHint = hintSet.has(`${r},${c}`);
+        if (isHint) {
+          cell.classList.add('hint-cell');
+          const dot = document.createElement('div');
+          dot.className = 'hint-dot';
+          cell.appendChild(dot);
+        }
+        cell.classList.add('placeable');
+        cell.addEventListener('click', () => handlePlace(r, c));
+      }
+
+      boardEl.appendChild(cell);
+    }
+  }
+
+  // Responsive cell sizing
+  const maxWidth = Math.min(window.innerWidth - 32, 648);
+  const cellPx = Math.floor((maxWidth - 24 - (size - 1) * 3) / size);
+  document.querySelectorAll('.cell').forEach(el => {
+    el.style.width = cellPx + 'px';
+    el.style.height = cellPx + 'px';
+  });
+}
+
+function renderHands() {
+  const { level, handsLeft } = state;
+  const dotsEl = document.getElementById('hand-dots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < level.hands; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'hand-dot' + (i >= handsLeft ? ' used' : '');
+    dotsEl.appendChild(dot);
+  }
+}
+
+function setStatus(msg, warning = false) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = 'status-msg' + (warning ? ' warning' : '');
+}
+
+// ============================================================
+// INTERACTION
+// ============================================================
+
+function handlePlace(r, c) {
+  if (state.animating || state.handsLeft <= 0 || state.board[r][c] !== 0) return;
+
+  const flips = getFlips(state.board, r, c, state.level.size);
+  if (flips.length === 0) {
+    setStatus('そこには置けません（ひっくり返せる白がない）', true);
+    setTimeout(() => setStatus('駒を置く場所を選んでください'), 1800);
+    return;
+  }
+
+  state.animating = true;
+  state.board[r][c] = 1;
+  flips.forEach(([fr, fc]) => { state.board[fr][fc] = 1; });
+  state.handsLeft--;
+
+  renderBoard();
+  renderHands();
+
+  // Animate placed piece
+  const size = state.level.size;
+  const cells = document.querySelectorAll('.cell');
+  const placedPiece = cells[r * size + c]?.querySelector('.piece');
+  if (placedPiece) placedPiece.classList.add('placing');
+
+  flips.forEach(([fr, fc]) => {
+    const fp = cells[fr * size + fc]?.querySelector('.piece');
+    if (fp) setTimeout(() => fp.classList.add('flipping'), 60);
+  });
+
+  setTimeout(() => {
+    state.animating = false;
+    const whites = countWhites(state.board, state.level.size);
+
+    if (whites === 0) { showOverlay('clear'); return; }
+    if (state.handsLeft === 0) { showOverlay('fail'); return; }
+
+    const moves = getValidMoves(state.board, state.level.size);
+    if (moves.length === 0) {
+      setStatus('置ける場所がありません…', true);
+      setTimeout(() => showOverlay('fail'), 1200);
+      return;
+    }
+
+    setStatus(`残り手駒: ${state.handsLeft} ／ 残り白: ${whites}個`);
+  }, 480);
+}
+
+function toggleHint() {
+  state.hintOn = !state.hintOn;
+  document.getElementById('hint-toggle').classList.toggle('on', state.hintOn);
+  renderBoard();
+}
+
+function startGame(key) {
+  const level = LEVELS[key];
+  state.key = key;
+  state.level = level;
+  state.board = level.init.map(row => [...row]);
+  state.handsLeft = level.hands;
+  state.hintOn = false;
+  state.animating = false;
+
+  document.getElementById('screen-select').classList.remove('active');
+  document.getElementById('screen-game').classList.add('active');
+
+  const labelEl = document.getElementById('game-diff-label');
+  labelEl.textContent = level.label;
+  labelEl.style.color = level.labelColor;
+
+  document.getElementById('hint-toggle').classList.remove('on');
+
+  renderBoard();
+  renderHands();
+  setStatus('駒を置く場所を選んでください');
+}
+
+function resetGame() {
+  if (state.key) startGame(state.key);
+}
+
+function goBack() {
+  document.getElementById('screen-game').classList.remove('active');
+  document.getElementById('screen-select').classList.add('active');
+}
+
+// ============================================================
+// OVERLAY
+// ============================================================
+
+function showOverlay(type) {
+  const whites = countWhites(state.board, state.level.size);
+  document.getElementById('overlay-icon').textContent  = type === 'clear' ? '♟' : '✦';
+  document.getElementById('overlay-title').textContent = type === 'clear' ? 'DARKNESS RULED' : 'DARKNESS REMAINS';
+  document.getElementById('overlay-title').className   = `overlay-title ${type === 'clear' ? 'success' : 'fail'}`;
+  document.getElementById('overlay-sub').textContent   = type === 'clear'
+    ? '闇は完全に支配された。すべての白が黒に染まった。'
+    : `白が ${whites} 個残ってしまった。手順を見直せ。`;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ============================================================
+// BACKGROUND PARTICLES
+// ============================================================
+
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 70 + 20;
+    p.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${Math.random() * 100}%;
+      animation-duration:${Math.random() * 18 + 10}s;
+      animation-delay:${Math.random() * -25}s;
+      opacity:${Math.random() * 0.25 + 0.04};
+    `;
+    container.appendChild(p);
+  }
+}
+
+createParticles();
+window.addEventListener('resize', () => { if (state.board) renderBoard(); });
+</script>
+</body>
+</html>
