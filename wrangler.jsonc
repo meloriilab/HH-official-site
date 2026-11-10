@@ -2,7 +2,7 @@
   // Cloudflare に置くための設定（スタッフサイト staff-wiki と同じ方式）
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hh-official-site",
-  "compatibility_date": "2026-11-01",
+  "compatibility_date": "2026-05-29",
   "assets": {
     "directory": "./"
     
