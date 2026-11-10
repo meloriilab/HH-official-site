@@ -14,3 +14,12 @@
 - `main` に入ったものが本番として公開されます（`https://hh-official-site.meloriilab.workers.dev`。ドメインをつないだら humming-hearts.com）
 - ほかのブランチは、Cloudflare が下見用のURLを作ります。URLはプルリクエストに Cloudflare が書き込むコメントに出ます
 - 下見用の組み立てには `wrangler.jsonc` の `"previews": {}` が必要です。消さないでください
+
+## `main` に入れたのに本番が変わらないとき
+
+2026-11-10 に、`main` に取り込んだあとも本番が古い版のままになったことがあります。Cloudflare の組み立てが「順番待ち」のまま始まっていませんでした（失敗ではなく、始まっていない）。
+
+- まず、端末に古い表示が残っているだけではないかを確かめる（下見用のアドレスと見比べる）
+- GitHub の `main` の最新の記録に、Cloudflare の「Workers Builds: hh-official-site」の結果が付いているかを見る。付いていなければ、組み立てが始まっていない
+- 直し方は2つ。Cloudflare の管理画面（Workers & Pages → hh-official-site → Deployments）で組み立てをやり直すか、`main` に次の変更を取り込む（取り込みのたびに組み立てが走る）
+- 取り込んだあとは、本番のアドレスを実際に開いて、新しい版になっているかを確かめてから「反映した」と伝える
