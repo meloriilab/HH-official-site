@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Humming Hearts OFFICIAL SITE</title>
+<meta name="description" content="鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲とユニット、メンバーを紹介しています。">
+<meta name="theme-color" content="#1C1B33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,500;1,700&family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page" id="top">
+
+<!-- ヘッダー -->
+<header class="header">
+  <a href="#top" class="logo">
+    <span class="logo-main">Humming Hearts</span>
+    <span class="logo-sub">OFFICIAL SITE</span>
+  </a>
+  <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</header>
+
+<!-- メニュー（メニューボタンで開く） -->
+<div class="menu" id="menu" hidden>
+  <nav aria-label="メニュー">
+    <a href="#top">ホーム</a>
+    <a href="#music">楽曲</a>
+    <a href="#units">ユニット</a>
+    <a href="#latest">最新情報</a>
+  </nav>
+</div>
+
+<!-- ファーストビュー -->
+<section class="fv" id="fv">
+  <div class="fv-back" data-speed="0.15" aria-hidden="true">
+    <div class="fv-circle fv-circle1"></div>
+    <div class="fv-circle fv-circle2"></div>
+  </div>
+  <div class="fv-mid" data-speed="0.35">
+    <div class="fv-chara fv-left" id="fvLeft"></div>
+    <div class="fv-chara fv-right" id="fvRight"></div>
+    <div class="fv-chara fv-center" id="fvCenter"></div>
+  </div>
+  <div class="fv-front" data-speed="0.7" aria-hidden="true">
+    <svg class="feather f1" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F4C95D" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/><path d="M9 11l3 3M12 8l3 3"/></svg>
+    <svg class="feather f2" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/></svg>
+    <svg class="feather f3" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F4C95D" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/></svg>
+  </div>
+
+  <div class="release">
+    <span class="label-en gold">NEW RELEASE</span>
+    <div class="release-text">
+      <span class="release-title" id="relTitle">曲名（未確定）</span>
+      <span class="release-unit" id="relUnit">UNIT 01 ／ ユニット名（未確定）</span>
+    </div>
+    <div class="release-row">
+      <button class="play-big" id="relPlay" aria-label="最新曲を再生">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="release-links">
+        <span class="release-now">今すぐ聴く</span>
+        <a href="#units" id="relUnitLink">このユニットを見る →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#1C1B33"><path d="M0 40 C 90 0, 200 0, 390 28 L390 40 Z" fill="#F7F5FB"/></svg>
+
+<!-- 楽曲 -->
+<section class="sec" id="music">
+  <div class="sec-head">
+    <span class="label-en">MUSIC</span>
+    <h2>楽曲</h2>
+  </div>
+  <div class="moods" id="moods"></div>
+  <div class="songs" id="songs"></div>
+  <a href="#" class="more" data-soon>楽曲一覧へ →</a>
+</section>
+
+<!-- ユニット -->
+<section class="sec-units" id="units">
+  <div class="units-head">
+    <div class="sec-head">
+      <span class="label-en">UNITS</span>
+      <h2>ユニット</h2>
+    </div>
+    <span class="units-count" id="unitsCount">8 units</span>
+  </div>
+  <div class="unit-scroller" id="unitScroller"></div>
+  <span class="hint">スワイプで全ユニットを見る</span>
+</section>
+
+<!-- 今日のさえずり -->
+<section class="sec" id="chirp">
+  <div class="sec-head">
+    <span class="label-en">TODAY'S CHIRP</span>
+    <h2>今日のさえずり</h2>
+  </div>
+  <div class="chirp reveal">
+    <div class="chirp-face" id="chirpFace">顔（仮）</div>
+    <div class="chirp-body">
+      <span class="chirp-who" id="chirpWho">メンバー名（未確定）・UNIT 01</span>
+      <div class="chirp-bubble" id="chirpText"></div>
+      <span class="chirp-count" id="chirpCount"></span>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-dark" id="chirpNext">ほかのさえずりを聞く</button>
+    <button class="btn-line" id="chirpShare">シェアする</button>
+  </div>
+</section>
+
+<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#F7F5FB"><path d="M0 12 C 160 44, 260 40, 390 0 L390 40 L0 40 Z" fill="#1C1B33"/></svg>
+
+<!-- 注目のメンバー -->
+<section class="pickup" id="pickup">
+  <div class="pickup-circle" id="pickupCircle" aria-hidden="true"></div>
+  <div class="sec-head">
+    <span class="label-en gold">PICK UP MEMBER</span>
+    <h2>注目のメンバー</h2>
+  </div>
+  <div class="pickup-img" id="pickupImg" data-lag="0.12"></div>
+  <div class="pickup-name">
+    <span class="unit-tag" id="pickupUnit">UNIT 02</span>
+    <span class="pickup-member" id="pickupName">メンバー名（未確定）</span>
+  </div>
+  <div class="facts" id="pickupFacts"></div>
+  <div class="oshi">
+    <span class="oshi-title">推しポイント</span>
+    <div id="pickupOshi"></div>
+  </div>
+  <div class="birdnote">
+    <span class="label-en gold">BIRD NOTE</span>
+    <span class="birdnote-title">鳥のまめ知識</span>
+    <span class="birdnote-text" id="pickupBird"></span>
+  </div>
+  <a href="#" class="btn-white" data-soon>プロフィールを見る</a>
+</section>
+
+<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#1C1B33"><path d="M0 28 C 120 0, 280 0, 390 36 L390 40 L0 40 Z" fill="#F7F5FB"/></svg>
+
+<!-- 最新情報（Xに集約） -->
+<section class="sec" id="latest">
+  <div class="sec-head">
+    <span class="label-en">LATEST</span>
+    <h2>最新情報</h2>
+  </div>
+  <div class="xcard">
+    <div class="xcard-head">
+      <div class="xcard-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 4l14 16M19 4L5 20"/></svg>
+      </div>
+      <div class="xcard-name">
+        <span class="xcard-title">Humming Hearts 公式X</span>
+        <span class="xcard-id" id="xAccount">@アカウント名（未確定）</span>
+      </div>
+    </div>
+    <span class="xcard-text">新曲・衣装・オフショットなどの最新情報は、Xで発信しています。</span>
+    <div class="xembed" id="xEmbed">固定ポストの埋め込み表示（仮）</div>
+    <a href="#" class="btn-dark btn-link" id="xFollow" target="_blank" rel="noopener">Xでフォローする</a>
+  </div>
+</section>
+
+<!-- 今月のバースデー（該当者がいない月は出さない） -->
+<section class="sec-birthday" id="birthday" hidden>
+  <div class="sec-head">
+    <span class="label-en">BIRTHDAY</span>
+    <h2>今月のバースデー</h2>
+  </div>
+  <div class="bday-list" id="bdayList"></div>
+</section>
+
+<!-- フッター -->
+<footer class="footer">
+  <span class="logo-main footer-logo">Humming Hearts</span>
+  <div class="sns" id="sns"></div>
+  <span class="copy">© Humming Hearts</span>
+</footer>
+
+<!-- 画面下の固定ナビ -->
+<nav class="bottom-nav" aria-label="ページ内の移動">
+  <a href="#top" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/></svg>ホーム</a>
+  <a href="#music"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>楽曲</a>
+  <a href="#units"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c1-3 3-4 5-4s4 1 5 4M11 19c1-3 3-4 5-4s4 1 5 4"/></svg>ユニット</a>
+  <a href="#latest"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>最新情報</a>
+</nav>
+
+</div>
+
+<!-- 動画を再生する窓 -->
+<div class="player" id="player" hidden>
+  <div class="player-box" role="dialog" aria-modal="true" aria-label="動画プレーヤー">
+    <button class="player-close" id="playerClose" aria-label="閉じる">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="player-frame" id="playerFrame"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

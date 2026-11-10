@@ -1,0 +1,639 @@
+{
+  "_説明": "このファイルだけ書きかえれば、サイトの中身が変わります。「未確定」は決まったら書きかえてください。",
+  "links": {
+    "x": "https://x.com/humminghearts_x",
+    "xAccount": "@humminghearts_x",
+    "xPinnedPost": "",
+    "youtube": "https://www.youtube.com/channel/UCV7MPR0MRoOkYt-dht88Gww",
+    "tiktok": "",
+    "instagram": ""
+  },
+  "latestSong": "s1",
+  "showMoodFilter": true,
+  "moods": [
+    {
+      "id": "bright",
+      "label": "明るい"
+    },
+    {
+      "id": "sad",
+      "label": "切ない"
+    },
+    {
+      "id": "hard",
+      "label": "激しい"
+    }
+  ],
+  "songs": [
+    {
+      "id": "s1",
+      "title": "曲名（未確定）",
+      "unit": "",
+      "mood": "",
+      "chorus": "",
+      "youtube": "https://youtu.be/IlpEetoUMso",
+      "color": "#E8456B"
+    },
+    {
+      "id": "s2",
+      "title": "曲名（未確定）",
+      "unit": "02",
+      "mood": "sad",
+      "chorus": "1:10",
+      "youtube": "",
+      "color": "#2F6FD6"
+    },
+    {
+      "id": "s3",
+      "title": "曲名（未確定）",
+      "unit": "04",
+      "mood": "hard",
+      "chorus": "0:30",
+      "youtube": "",
+      "color": "#1F9E89"
+    },
+    {
+      "id": "s4",
+      "title": "曲名（未確定）",
+      "unit": "06",
+      "mood": "bright",
+      "chorus": "0:52",
+      "youtube": "",
+      "color": "#F07A3A"
+    }
+  ],
+  "units": [
+    {
+      "no": "01",
+      "name": "Triattique",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#E8456B",
+      "text": "#1C1B33",
+      "members": [
+        "01-1",
+        "01-2",
+        "01-3"
+      ]
+    },
+    {
+      "no": "02",
+      "name": "NocturnalFizz",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#2F6FD6",
+      "text": "#FFFFFF",
+      "members": [
+        "02-1",
+        "02-2"
+      ]
+    },
+    {
+      "no": "03",
+      "name": "Prisméa",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#F2A93B",
+      "text": "#1C1B33",
+      "members": [
+        "03-1",
+        "03-2"
+      ]
+    },
+    {
+      "no": "04",
+      "name": "Blackveil Harmonic",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#1F9E89",
+      "text": "#1C1B33",
+      "members": [
+        "04-1",
+        "04-2",
+        "04-3"
+      ]
+    },
+    {
+      "no": "05",
+      "name": "ORYBIA",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#7B4FD1",
+      "text": "#FFFFFF",
+      "members": [
+        "05-1",
+        "05-2",
+        "05-3",
+        "05-4"
+      ]
+    },
+    {
+      "no": "06",
+      "name": "Winged Oath",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#F07A3A",
+      "text": "#1C1B33",
+      "members": [
+        "06-1"
+      ]
+    },
+    {
+      "no": "07",
+      "name": "Frost Jam²",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#3B3F6E",
+      "text": "#FFFFFF",
+      "members": [
+        "07-1",
+        "07-2"
+      ]
+    },
+    {
+      "no": "08",
+      "name": "木地谷世界",
+      "concept": "コンセプト一文（未確定）",
+      "color": "#9BCB4E",
+      "text": "#1C1B33",
+      "members": [
+        "08-1"
+      ]
+    }
+  ],
+  "members": [
+    {
+      "id": "01-1",
+      "name": "川瀬帝翔",
+      "unit": "01",
+      "image": "images/chara/01-1.webp",
+      "face": "images/chara/01-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#179197",
+        "#033E40"
+      ]
+    },
+    {
+      "id": "01-2",
+      "name": "目代煎之介",
+      "unit": "01",
+      "image": "images/chara/01-2.webp",
+      "face": "images/chara/01-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#828639",
+        "#373803"
+      ]
+    },
+    {
+      "id": "01-3",
+      "name": "燕谷航",
+      "unit": "01",
+      "image": "images/chara/01-3.webp",
+      "face": "images/chara/01-3_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#B4685B",
+        "#54261E"
+      ]
+    },
+    {
+      "id": "02-1",
+      "name": "月嶺隼瞳",
+      "unit": "02",
+      "image": "images/chara/02-1.webp",
+      "face": "images/chara/02-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#947F31",
+        "#413400"
+      ]
+    },
+    {
+      "id": "02-2",
+      "name": "月嶺有智",
+      "unit": "02",
+      "image": "images/chara/02-2.webp",
+      "face": "images/chara/02-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#9E7759",
+        "#4D2C0F"
+      ]
+    },
+    {
+      "id": "03-1",
+      "name": "三条羽響",
+      "unit": "03",
+      "image": "images/chara/03-1.webp",
+      "face": "images/chara/03-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#4387B7",
+        "#0A3956"
+      ]
+    },
+    {
+      "id": "03-2",
+      "name": "若本セイン",
+      "unit": "03",
+      "image": "images/chara/03-2.webp",
+      "face": "images/chara/03-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#838539",
+        "#373803"
+      ]
+    },
+    {
+      "id": "04-1",
+      "name": "烏丸蓮司",
+      "unit": "04",
+      "image": "images/chara/04-1.webp",
+      "face": "images/chara/04-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#8D788E",
+        "#402E41"
+      ]
+    },
+    {
+      "id": "04-2",
+      "name": "笠木涼佑",
+      "unit": "04",
+      "image": "images/chara/04-2.webp",
+      "face": "images/chara/04-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#358AB1",
+        "#043B50"
+      ]
+    },
+    {
+      "id": "04-3",
+      "name": "筧傑",
+      "unit": "04",
+      "image": "images/chara/04-3.webp",
+      "face": "images/chara/04-3_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#98786F",
+        "#492E26"
+      ]
+    },
+    {
+      "id": "05-1",
+      "name": "日滝ジョウ",
+      "unit": "05",
+      "image": "images/chara/05-1.webp",
+      "face": "images/chara/05-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#AD7040",
+        "#502B0A"
+      ]
+    },
+    {
+      "id": "05-2",
+      "name": "日滝ルイ",
+      "unit": "05",
+      "image": "images/chara/05-2.webp",
+      "face": "images/chara/05-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#5084BA",
+        "#163758"
+      ]
+    },
+    {
+      "id": "05-3",
+      "name": "紅ましろ",
+      "unit": "05",
+      "image": "images/chara/05-3.webp",
+      "face": "images/chara/05-3_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#B36672",
+        "#53242D"
+      ]
+    },
+    {
+      "id": "05-4",
+      "name": "菊井律",
+      "unit": "05",
+      "image": "images/chara/05-4.webp",
+      "face": "images/chara/05-4_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": [
+        "#8D8233",
+        "#3D3600"
+      ]
+    },
+    {
+      "id": "06-1",
+      "name": "メンバー名（未確定）",
+      "unit": "06",
+      "image": "",
+      "face": "",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": []
+    },
+    {
+      "id": "07-1",
+      "name": "永島枝音",
+      "unit": "07",
+      "image": "images/chara/07-1.webp",
+      "face": "images/chara/07-1_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": []
+    },
+    {
+      "id": "07-2",
+      "name": "鶴岡清雅",
+      "unit": "07",
+      "image": "images/chara/07-2.webp",
+      "face": "images/chara/07-2_face.webp",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": []
+    },
+    {
+      "id": "08-1",
+      "name": "メンバー名（未確定）",
+      "unit": "08",
+      "image": "",
+      "face": "",
+      "motif": "未確定",
+      "part": "未確定",
+      "voice": "未確定",
+      "birthday": "",
+      "oshi": [
+        "未確定",
+        "未確定",
+        "未確定"
+      ],
+      "birdNote": [
+        "まめ知識1：未確定",
+        "まめ知識2：未確定",
+        "まめ知識3：未確定",
+        "本人の性格とのつながり：未確定"
+      ],
+      "glow": []
+    }
+  ],
+  "firstView": {
+    "left": "01-2",
+    "center": "01-1",
+    "right": "01-3"
+  },
+  "pickupMember": "02-1",
+  "chirps": [
+    {
+      "member": "01-1",
+      "text": "【まめ知識1：未確定】って、知ってた？"
+    },
+    {
+      "member": "02-1",
+      "text": "【鳥の種類：未確定】はね、【まめ知識2：未確定】んだ。"
+    },
+    {
+      "member": "03-1",
+      "text": "【まめ知識3：未確定】。……ぼくもちょっと似てるかも。"
+    }
+  ],
+  "glowDefault": [
+    "#4A4772",
+    "#24233D"
+  ]
+}
