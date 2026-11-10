@@ -1,0 +1,14 @@
+{
+  // Cloudflare に置くための設定（スタッフサイト staff-wiki と同じ方式）
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hh-official-site",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./"
+    
+  },
+  // 確認用URL（*.workers.dev）とブランチごとの下見URLを使う。
+  // 本番のドメインをつないだら workers_dev は false にする
+  "workers_dev": true,
+  "preview_urls": true
+}
