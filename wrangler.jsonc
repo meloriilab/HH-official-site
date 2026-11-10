@@ -10,5 +10,7 @@
   // 確認用URL（*.workers.dev）とブランチごとの下見URLを使う。
   // 本番のドメインをつないだら workers_dev は false にする
   "workers_dev": true,
-  "preview_urls": true
+  "preview_urls": true,
+  // 下見用（本番以外のブランチ）の組み立てに必要
+  "previews": {}
 }
