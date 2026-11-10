@@ -69,6 +69,12 @@
   });
 
   /* ---------- 画像か「（仮）」の枠か ---------- */
+  var glowDefault = ['#4A4772', '#24233D'];
+  function setGlow(el, m) {
+    var g = (m && m.glow && m.glow.length === 2) ? m.glow : glowDefault;
+    el.style.setProperty('--c1', g[0]);
+    el.style.setProperty('--c2', g[1]);
+  }
   function figure(el, src, alt, label) {
     if (src) {
       el.classList.remove('ph');
@@ -93,6 +99,7 @@
     .catch(function () { toast('データを読み込めませんでした'); });
 
   function build(d) {
+    if (d.glowDefault) glowDefault = d.glowDefault;
     var unitBy = {}, memberBy = {}, moodBy = {};
     d.units.forEach(function (u) { unitBy[u.no] = u; });
     d.members.forEach(function (m) { memberBy[m.id] = m; });
@@ -104,6 +111,7 @@
     [['fvLeft', fv.left, '立ち絵（仮）'], ['fvCenter', fv.center, 'センターの立ち絵（仮）'], ['fvRight', fv.right, '立ち絵（仮）']].forEach(function (x) {
       var m = memberBy[x[1]];
       figure($(x[0]), m && m.image, m ? m.name : '', x[2]);
+      if (m && m.image) setGlow($(x[0]), m);
     });
     var latest = d.songs.filter(function (s) { return s.id === d.latestSong; })[0] || d.songs[0];
     if (latest) {
@@ -215,6 +223,7 @@
     if (p) {
       var pu = unitBy[p.unit];
       figure($('pickupImg'), p.image, p.name, '立ち絵・大（仮）');
+      if (p.image) setGlow($('pickupImg'), p);
       $('pickupName').textContent = p.name;
       $('pickupUnit').textContent = 'UNIT ' + (pu ? pu.no : '未確定');
       if (pu) {

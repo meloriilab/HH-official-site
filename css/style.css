@@ -197,3 +197,12 @@ h2{margin:0;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:2
   .sec-units{transition:none}
   .toast{transition:none}
 }
+
+/* 推し色のステージ：立ち絵の真後ろだけに、そのキャラの色の光を置く（案C） */
+.fv-chara:not(.ph)::before,.pickup-img:not(.ph)::before{
+  content:"";position:absolute;z-index:-1;left:-12%;right:-12%;top:4%;bottom:6%;border-radius:50%;
+  background:radial-gradient(ellipse 50% 50% at 50% 45%,var(--c1,#4A4772) 0%,var(--c2,#24233D) 70%,rgba(36,35,61,0) 100%);
+}
+.fv-chara:not(.ph),.pickup-img:not(.ph){isolation:isolate}
+.pickup-img{position:relative}
+.fv-chara img,.pickup-img img{filter:drop-shadow(0 0 1px rgba(255,255,255,.4))}
