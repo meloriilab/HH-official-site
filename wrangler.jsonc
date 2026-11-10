@@ -4,7 +4,7 @@
   "name": "hh-official-site",
   "compatibility_date": "2026-05-29",
   "assets": {
-    "directory": "./",
+    "directory": "./public",
     "not_found_handling": "404-page"
   },
   // 確認用URL（*.workers.dev）とブランチごとの下見URLを使う。
