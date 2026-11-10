@@ -1,210 +1,54 @@
 <!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Humming Hearts OFFICIAL SITE</title>
 <meta name="description" content="鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲とユニット、メンバーを紹介しています。">
-<meta name="theme-color" content="#1C1B33">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@1,500;1,700&family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<div class="page" id="top">
-
-<!-- ヘッダー -->
-<header class="header">
-  <a href="#top" class="logo">
-    <span class="logo-main">Humming Hearts</span>
-    <span class="logo-sub">OFFICIAL SITE</span>
-  </a>
-  <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="menu">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-  </button>
-</header>
-
-<!-- メニュー（メニューボタンで開く） -->
-<div class="menu" id="menu" hidden>
-  <nav aria-label="メニュー">
-    <a href="#top">ホーム</a>
-    <a href="#music">楽曲</a>
-    <a href="#units">ユニット</a>
-    <a href="#latest">最新情報</a>
-  </nav>
-</div>
-
-<!-- ファーストビュー -->
-<section class="fv" id="fv">
-  <div class="fv-back" data-speed="0.15" aria-hidden="true">
-    <div class="fv-circle fv-circle1"></div>
-    <div class="fv-circle fv-circle2"></div>
-  </div>
-  <div class="fv-mid" data-speed="0.35">
-    <div class="fv-chara fv-left" id="fvLeft"></div>
-    <div class="fv-chara fv-right" id="fvRight"></div>
-    <div class="fv-chara fv-center" id="fvCenter"></div>
-  </div>
-  <div class="fv-front" data-speed="0.7" aria-hidden="true">
-    <svg class="feather f1" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F4C95D" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/><path d="M9 11l3 3M12 8l3 3"/></svg>
-    <svg class="feather f2" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/></svg>
-    <svg class="feather f3" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F4C95D" stroke-width="1.5" stroke-linecap="round"><path d="M20 4C11 5 5 11 4 20"/><path d="M20 4c-1 6-5 11-12 12"/></svg>
-  </div>
-
-  <div class="release">
-    <span class="label-en gold">NEW RELEASE</span>
-    <div class="release-text">
-      <span class="release-title" id="relTitle">曲名（未確定）</span>
-      <span class="release-unit" id="relUnit">UNIT 01 ／ ユニット名（未確定）</span>
-    </div>
-    <div class="release-row">
-      <button class="play-big" id="relPlay" aria-label="最新曲を再生">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <div class="release-links">
-        <span class="release-now">今すぐ聴く</span>
-        <a href="#units" id="relUnitLink">このユニットを見る →</a>
-      </div>
-    </div>
-  </div>
+<meta name="theme-color" content="#FAFAF8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Shippori+Mincho+B1:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css"></head><body>
+<div class="prog" aria-hidden="true"><i></i></div>
+<header class="hd"><a class="logo" href="#">Humming Hearts</a><nav class="upills" aria-label="ユニット"><a href="#triattique" data-u="triattique">Triattique</a><a href="#nocturnalfizz" data-u="nocturnalfizz">NocturnalFizz</a><a href="#prismea" data-u="prismea">Prisméa</a><a href="#blackveil-harmonic" data-u="blackveil-harmonic">Blackveil Harmonic</a><a href="#orybia" data-u="orybia">ORYBIA</a><a href="#winged-oath" data-u="winged-oath">Winged Oath</a></nav><nav class="gnav"><a href="#release">Release</a><a href="#units">Units</a><a href="#members">Members</a><a href="#news">News</a></nav><a class="yt" href="https://www.youtube.com/channel/UCV7MPR0MRoOkYt-dht88Gww">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<div class="menu" id="menu" hidden><nav class="m-nav"><a href="#release">Release<small>楽曲</small></a><a href="#units">Units<small>ユニット</small></a><a href="#members">Members<small>メンバー</small></a><a href="#news">News<small>お知らせ</small></a></nav><p class="row"><a class="btn" href="https://www.youtube.com/channel/UCV7MPR0MRoOkYt-dht88Gww">YouTube</a><a class="btn" href="https://x.com/humminghearts_x">X</a></p></div>
+<main>
+<section class="fv">
+  <p class="word w1" aria-hidden="true" data-speed=".55">Humming</p><p class="word w2" aria-hidden="true" data-speed=".3" data-speedx="-.15">Hearts</p>
+  <div class="trio"><img style="left:39%;--s:0.7;--y:0.44;z-index:1" src="images/chara/05-1.webp" alt="<ruby>紅<rt>くれない</rt></ruby>ましろ" data-speed=".26"><img style="left:46%;--s:0.74;--y:0.5;z-index:1" src="images/chara/05-2.webp" alt="<ruby>菊井<rt>きくい</rt></ruby><ruby>律<rt>ただし</rt></ruby>" data-speed=".26"><img style="left:56%;--s:0.72;--y:0.46;z-index:1" src="images/chara/05-3.webp" alt="<ruby>日滝<rt>ひたき</rt></ruby>ルイ" data-speed=".26"><img style="left:65%;--s:0.7;--y:0.51;z-index:1" src="images/chara/05-4.webp" alt="<ruby>日滝<rt>ひたき</rt></ruby>ジョウ" data-speed=".26"><img style="left:13%;--s:0.82;--y:0.34;z-index:1" src="images/chara/03-1.webp" alt="<ruby>三条<rt>さんじょう</rt></ruby><ruby>羽響<rt>うきょう</rt></ruby>" data-speed=".22"><img style="left:24%;--s:0.78;--y:0.4;z-index:1" src="images/chara/03-2.webp" alt="<ruby>若本<rt>わかもと</rt></ruby>セイン" data-speed=".22"><img style="left:76%;--s:0.76;--y:0.5;z-index:1" src="images/chara/07-1.webp" alt="" data-speed=".22"><img style="left:91%;--s:0.8;--y:0.46;z-index:1" src="images/chara/07-2.webp" alt="" data-speed=".22"><img style="left:74%;--s:0.98;--y:0.08;z-index:2" src="images/chara/04-2.webp" alt="<ruby>笠木<rt>かさぎ</rt></ruby><ruby>涼佑<rt>りょうすけ</rt></ruby>" data-speed=".14"><img style="left:85%;--s:1.04;--y:0.04;z-index:2" src="images/chara/04-1.webp" alt="<ruby>烏丸<rt>からすま</rt></ruby><ruby>蓮司<rt>れんじ</rt></ruby>" data-speed=".14"><img style="left:96%;--s:0.96;--y:0.1;z-index:2" src="images/chara/04-3.webp" alt="<ruby>筧<rt>かけい</rt></ruby><ruby>傑<rt>すぐる</rt></ruby>" data-speed=".14"><img style="left:8%;--s:1.12;--y:-0.24;z-index:2" src="images/chara/02-1.webp" alt="<ruby>月嶺<rt>つきみね</rt></ruby><ruby>隼瞳<rt>はやと</rt></ruby>" data-speed=".12"><img style="left:22%;--s:1.06;--y:-0.2;z-index:2" src="images/chara/02-2.webp" alt="<ruby>月嶺<rt>つきみね</rt></ruby><ruby>有智<rt>あると</rt></ruby>" data-speed=".12"><img style="left:37%;--s:1.26;--y:-0.42;z-index:3" src="images/chara/01-2.webp" alt="<ruby>目代<rt>めじろ</rt></ruby><ruby>煎之介<rt>せんのすけ</rt></ruby>" data-speed=".04"><img style="left:63%;--s:1.24;--y:-0.4;z-index:3" src="images/chara/01-3.webp" alt="<ruby>燕谷<rt>つばめや</rt></ruby><ruby>航<rt>わたる</rt></ruby>" data-speed=".04"><img style="left:50%;--s:1.34;--y:-0.44;z-index:4" src="images/chara/01-1.webp" alt="<ruby>川瀬<rt>かわせ</rt></ruby><ruby>帝翔<rt>みこと</rt></ruby>" data-speed=".04"></div>
+  <h1 class="catch"><span>本能のまま、</span><span>歌う。</span></h1>
+  <p class="hint" aria-hidden="true">Scroll</p>
 </section>
-
-<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#1C1B33"><path d="M0 40 C 90 0, 200 0, 390 28 L390 40 Z" fill="#F7F5FB"/></svg>
-
-<!-- 楽曲 -->
-<section class="sec" id="music">
-  <div class="sec-head">
-    <span class="label-en">MUSIC</span>
-    <h2>楽曲</h2>
-  </div>
-  <div class="moods" id="moods"></div>
-  <div class="songs" id="songs"></div>
-  <a href="#" class="more" data-soon>楽曲一覧へ →</a>
-</section>
-
-<!-- ユニット -->
-<section class="sec-units" id="units">
-  <div class="units-head">
-    <div class="sec-head">
-      <span class="label-en">UNITS</span>
-      <h2>ユニット</h2>
-    </div>
-    <span class="units-count" id="unitsCount">8 units</span>
-  </div>
-  <div class="unit-scroller" id="unitScroller"></div>
-  <span class="hint">スワイプで全ユニットを見る</span>
-</section>
-
-<!-- 今日のさえずり -->
-<section class="sec" id="chirp">
-  <div class="sec-head">
-    <span class="label-en">TODAY'S CHIRP</span>
-    <h2>今日のさえずり</h2>
-  </div>
-  <div class="chirp reveal">
-    <div class="chirp-face" id="chirpFace">顔（仮）</div>
-    <div class="chirp-body">
-      <span class="chirp-who" id="chirpWho">メンバー名（未確定）・UNIT 01</span>
-      <div class="chirp-bubble" id="chirpText"></div>
-      <span class="chirp-count" id="chirpCount"></span>
-    </div>
-  </div>
-  <div class="btn-row">
-    <button class="btn-dark" id="chirpNext">ほかのさえずりを聞く</button>
-    <button class="btn-line" id="chirpShare">シェアする</button>
-  </div>
-</section>
-
-<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#F7F5FB"><path d="M0 12 C 160 44, 260 40, 390 0 L390 40 L0 40 Z" fill="#1C1B33"/></svg>
-
-<!-- 注目のメンバー -->
-<section class="pickup" id="pickup">
-  <div class="pickup-circle" id="pickupCircle" aria-hidden="true"></div>
-  <div class="sec-head">
-    <span class="label-en gold">PICK UP MEMBER</span>
-    <h2>注目のメンバー</h2>
-  </div>
-  <div class="pickup-img" id="pickupImg" data-lag="0.12"></div>
-  <div class="pickup-name">
-    <span class="unit-tag" id="pickupUnit">UNIT 02</span>
-    <span class="pickup-member" id="pickupName">メンバー名（未確定）</span>
-  </div>
-  <div class="facts" id="pickupFacts"></div>
-  <div class="oshi">
-    <span class="oshi-title">推しポイント</span>
-    <div id="pickupOshi"></div>
-  </div>
-  <div class="birdnote">
-    <span class="label-en gold">BIRD NOTE</span>
-    <span class="birdnote-title">鳥のまめ知識</span>
-    <span class="birdnote-text" id="pickupBird"></span>
-  </div>
-  <a href="#" class="btn-white" data-soon>プロフィールを見る</a>
-</section>
-
-<svg class="wing" aria-hidden="true" viewBox="0 0 390 40" preserveAspectRatio="none" style="background:#1C1B33"><path d="M0 28 C 120 0, 280 0, 390 36 L390 40 L0 40 Z" fill="#F7F5FB"/></svg>
-
-<!-- 最新情報（Xに集約） -->
-<section class="sec" id="latest">
-  <div class="sec-head">
-    <span class="label-en">LATEST</span>
-    <h2>最新情報</h2>
-  </div>
-  <div class="xcard">
-    <div class="xcard-head">
-      <div class="xcard-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 4l14 16M19 4L5 20"/></svg>
-      </div>
-      <div class="xcard-name">
-        <span class="xcard-title">Humming Hearts 公式X</span>
-        <span class="xcard-id" id="xAccount">@アカウント名（未確定）</span>
-      </div>
-    </div>
-    <span class="xcard-text">新曲・衣装・オフショットなどの最新情報は、Xで発信しています。</span>
-    <div class="xembed" id="xEmbed">固定ポストの埋め込み表示（仮）</div>
-    <a href="#" class="btn-dark btn-link" id="xFollow" target="_blank" rel="noopener">Xでフォローする</a>
-  </div>
-</section>
-
-<!-- 今月のバースデー（該当者がいない月は出さない） -->
-<section class="sec-birthday" id="birthday" hidden>
-  <div class="sec-head">
-    <span class="label-en">BIRTHDAY</span>
-    <h2>今月のバースデー</h2>
-  </div>
-  <div class="bday-list" id="bdayList"></div>
-</section>
-
-<!-- フッター -->
-<footer class="footer">
-  <span class="logo-main footer-logo">Humming Hearts</span>
-  <div class="sns" id="sns"></div>
-  <span class="copy">© Humming Hearts</span>
-</footer>
-
-<!-- 画面下の固定ナビ -->
-<nav class="bottom-nav" aria-label="ページ内の移動">
-  <a href="#top" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/></svg>ホーム</a>
-  <a href="#music"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>楽曲</a>
-  <a href="#units"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c1-3 3-4 5-4s4 1 5 4M11 19c1-3 3-4 5-4s4 1 5 4"/></svg>ユニット</a>
-  <a href="#latest"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>最新情報</a>
-</nav>
-
-</div>
-
-<!-- 動画を再生する窓 -->
-<div class="player" id="player" hidden>
-  <div class="player-box" role="dialog" aria-modal="true" aria-label="動画プレーヤー">
-    <button class="player-close" id="playerClose" aria-label="閉じる">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div class="player-frame" id="playerFrame"></div>
-  </div>
-</div>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script src="js/main.js"></script>
-</body>
-</html>
+<section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
+<div class="pu-g">
+  <a class="pu-fr" href="https://youtu.be/IlpEetoUMso"><span class="pu-c ph"><img src="https://i.ytimg.com/vi/IlpEetoUMso/sddefault.jpg" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ" data-speed=".06"></span><span class="pu-play" aria-hidden="true"><i></i>MV</span><span class="pu-t"><ruby>薄紅梅<rt>うすこうばい</rt></ruby><small>Triattique</small></span></a>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="https://youtu.be/IlpEetoUMso">MV</a></p><p class="row"><a class="btn" href="https://www.youtube.com/channel/UCV7MPR0MRoOkYt-dht88Gww">YouTube</a><a class="btn" href="https://x.com/humminghearts_x">X</a></p></div>
+</div></section>
+<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">
+      <article class="rel" data-speed=".1"><a class="ph" href="https://youtu.be/IlpEetoUMso"><img src="images/jacket/04.webp" alt="Rule The Darkness のジャケット" data-speed=".1"></a>
+        <h3>Rule The Darkness</h3><p class="by">Blackveil Harmonic</p><p class="lk"><a href="https://youtu.be/IlpEetoUMso">MV</a></p></article>
+      <article class="rel" data-speed="-.14"><a class="ph" href="https://youtu.be/IlpEetoUMso"><img src="images/jacket/02.webp" alt="宵の翼 のジャケット" data-speed=".1"></a>
+        <h3><ruby>宵の翼<rt>よいのつばさ</rt></ruby></h3><p class="by">NocturnalFizz</p><p class="lk"><a href="https://youtu.be/IlpEetoUMso">MV</a></p></article>
+      <article class="rel" data-speed=".04"><a class="ph" href="https://youtu.be/IlpEetoUMso"><img src="images/jacket/01.webp" alt="薄紅梅 のジャケット" data-speed=".1"></a>
+        <h3><ruby>薄紅梅<rt>うすこうばい</rt></ruby></h3><p class="by">Triattique</p><p class="lk"><a href="https://youtu.be/IlpEetoUMso">MV</a></p></article></div></section>
+<section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
+<div class="flags">
+      <div class="flag" id="triattique" data-u="triattique" style="--c:#23989E;--tx:#fff">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/01.webp" alt=""><span class="f-name">Triattique</span><span class="f-kana">トリアティーク</span><span class="f-tag">日本の身近な野鳥 × 和ロック</span><ul class="f-mem"><li><ruby>川瀬<rt>かわせ</rt></ruby><ruby>帝翔<rt>みこと</rt></ruby></li><li><ruby>目代<rt>めじろ</rt></ruby><ruby>煎之介<rt>せんのすけ</rt></ruby></li><li><ruby>燕谷<rt>つばめや</rt></ruby><ruby>航<rt>わたる</rt></ruby></li></ul></span>
+        <span class="f-pic"><img class="f-art" src="images/kv/01.webp" alt="" data-speed=".12"></span></div>
+      <div class="flag" id="nocturnalfizz" data-u="nocturnalfizz" style="--c:#B08A3E;--tx:#1B1712">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/02.webp" alt=""><span class="f-name">NocturnalFizz</span><span class="f-kana">ノクターナルフィズ</span><span class="f-tag">猛禽兄弟 × ジャズ</span><ul class="f-mem"><li><ruby>月嶺<rt>つきみね</rt></ruby><ruby>隼瞳<rt>はやと</rt></ruby></li><li><ruby>月嶺<rt>つきみね</rt></ruby><ruby>有智<rt>あると</rt></ruby></li></ul></span>
+        <span class="f-pic"><img class="f-art" src="images/kv/02.webp" alt="" data-speed=".12"></span></div>
+      <div class="flag" id="prismea" data-u="prismea" style="--c:#0D86C8;--tx:#fff">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/03.webp" alt=""><span class="f-name">Prisméa</span><span class="f-kana">プリスメア</span><span class="f-tag">シティポップ・デュオ</span><ul class="f-mem"><li><ruby>三条<rt>さんじょう</rt></ruby><ruby>羽響<rt>うきょう</rt></ruby></li><li><ruby>若本<rt>わかもと</rt></ruby>セイン</li></ul></span>
+        <span class="f-pic"><img class="f-em" src="images/emblem/03.webp" alt="" data-speed=".12"></span></div>
+      <div class="flag" id="blackveil-harmonic" data-u="blackveil-harmonic" style="--c:#5B4560;--tx:#fff">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/04.webp" alt=""><span class="f-name">Blackveil Harmonic</span><span class="f-kana">ブラックヴェイル・ハーモニック</span><span class="f-tag">カラスたちの宴 × ロック</span><ul class="f-mem"><li><ruby>烏丸<rt>からすま</rt></ruby><ruby>蓮司<rt>れんじ</rt></ruby></li><li><ruby>笠木<rt>かさぎ</rt></ruby><ruby>涼佑<rt>りょうすけ</rt></ruby></li><li><ruby>筧<rt>かけい</rt></ruby><ruby>傑<rt>すぐる</rt></ruby></li></ul></span>
+        <span class="f-pic"><img class="f-art" src="images/kv/04.webp" alt="" data-speed=".12"></span></div>
+      <div class="flag" id="orybia" data-u="orybia" style="--c:#E3426A;--tx:#fff">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/05.webp" alt=""><span class="f-name">ORYBIA</span><span class="f-kana">オリビア</span><span class="f-tag">14歳、地元アイドル四人組</span><ul class="f-mem"><li><ruby>紅<rt>くれない</rt></ruby>ましろ</li><li><ruby>菊井<rt>きくい</rt></ruby><ruby>律<rt>ただし</rt></ruby></li><li><ruby>日滝<rt>ひたき</rt></ruby>ルイ</li><li><ruby>日滝<rt>ひたき</rt></ruby>ジョウ</li></ul></span>
+        <span class="f-pic"><img class="f-em" src="images/emblem/05.webp" alt="" data-speed=".12"></span></div>
+      <div class="flag" id="winged-oath" data-u="winged-oath" style="--c:#3C5A7A;--tx:#fff">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/06.webp" alt=""><span class="f-name">Winged Oath</span><span class="f-kana">ウィングド・オウス</span><span class="f-tag">誓いの五人組</span><ul class="f-mem"></ul></span>
+        <span class="f-pic"><img class="f-em" src="images/emblem/06.webp" alt="" data-speed=".12"></span></div></div>
+<section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems"><div class="mem" data-speed=".0"><span class="ph"><img src="images/face/01-1.webp" alt=""></span><span><ruby>川瀬<rt>かわせ</rt></ruby><ruby>帝翔<rt>みこと</rt></ruby></span></div><div class="mem" data-speed="-.12"><span class="ph"><img src="images/face/01-2.webp" alt=""></span><span><ruby>目代<rt>めじろ</rt></ruby><ruby>煎之介<rt>せんのすけ</rt></ruby></span></div><div class="mem" data-speed=".08"><span class="ph"><img src="images/face/01-3.webp" alt=""></span><span><ruby>燕谷<rt>つばめや</rt></ruby><ruby>航<rt>わたる</rt></ruby></span></div><div class="mem" data-speed=".0"><span class="ph"><img src="images/face/02-1.webp" alt=""></span><span><ruby>月嶺<rt>つきみね</rt></ruby><ruby>隼瞳<rt>はやと</rt></ruby></span></div><div class="mem" data-speed="-.12"><span class="ph"><img src="images/face/02-2.webp" alt=""></span><span><ruby>月嶺<rt>つきみね</rt></ruby><ruby>有智<rt>あると</rt></ruby></span></div><div class="mem" data-speed=".08"><span class="ph"><img src="images/face/03-1.webp" alt=""></span><span><ruby>三条<rt>さんじょう</rt></ruby><ruby>羽響<rt>うきょう</rt></ruby></span></div><div class="mem" data-speed=".0"><span class="ph"><img src="images/face/03-2.webp" alt=""></span><span><ruby>若本<rt>わかもと</rt></ruby>セイン</span></div><div class="mem" data-speed="-.12"><span class="ph"><img src="images/face/04-1.webp" alt=""></span><span><ruby>烏丸<rt>からすま</rt></ruby><ruby>蓮司<rt>れんじ</rt></ruby></span></div><div class="mem" data-speed=".08"><span class="ph"><img src="images/face/04-2.webp" alt=""></span><span><ruby>笠木<rt>かさぎ</rt></ruby><ruby>涼佑<rt>りょうすけ</rt></ruby></span></div><div class="mem" data-speed=".0"><span class="ph"><img src="images/face/04-3.webp" alt=""></span><span><ruby>筧<rt>かけい</rt></ruby><ruby>傑<rt>すぐる</rt></ruby></span></div><div class="mem" data-speed="-.12"><span class="ph"><img src="images/face/05-1.webp" alt=""></span><span><ruby>紅<rt>くれない</rt></ruby>ましろ</span></div><div class="mem" data-speed=".08"><span class="ph"><img src="images/face/05-2.webp" alt=""></span><span><ruby>菊井<rt>きくい</rt></ruby><ruby>律<rt>ただし</rt></ruby></span></div><div class="mem" data-speed=".0"><span class="ph"><img src="images/face/05-3.webp" alt=""></span><span><ruby>日滝<rt>ひたき</rt></ruby>ルイ</span></div><div class="mem" data-speed="-.12"><span class="ph"><img src="images/face/05-4.webp" alt=""></span><span><ruby>日滝<rt>ひたき</rt></ruby>ジョウ</span></div></div></section>
+<section class="sec" id="news"><p class="ghost" aria-hidden="true" data-speedx="-.35">News</p><h2><span>News</span><small>お知らせ</small><i class="idx" aria-hidden="true">05<b>/05</b></i></h2><ul class="news"><li><time>2026.07.07</time><span class="tag">MV</span><span class="n-t">ミュージックビデオを公開しました</span></li><li><time>2026.07.07</time><span class="tag">MUSIC</span><span class="n-t">楽曲の配信を開始しました</span></li><li><time>2026.07.07</time><span class="tag">INFO</span><span class="n-t">Humming Hearts 公式サイトを公開しました</span></li></ul><p class="row one"><a class="btn" href="https://x.com/humminghearts_x">X</a></p></section>
+</main>
+<footer class="ft"><p class="logo">Humming Hearts</p><p class="row"><a class="btn" href="https://www.youtube.com/channel/UCV7MPR0MRoOkYt-dht88Gww">YouTube</a><a class="btn" href="https://x.com/humminghearts_x">X</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer><script src="js/main.js"></script></body></html>
