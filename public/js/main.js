@@ -9,7 +9,7 @@ var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInter
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
 var pill={};[].forEach.call(document.querySelectorAll('.upills a'),function(a){pill[a.dataset.u]=a});
-function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=fs.length?fs[fs.length-1].dataset.u:'';for(var k in pill)pill[k].classList.toggle('on',k===cur)}
+function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
 /* layers move at their own speed */

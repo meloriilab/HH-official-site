@@ -84,6 +84,8 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 .hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
 .hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top;animation:fall 2.4s cubic-bezier(.7,0,.2,1) infinite}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.3em;transition:background .25s,color .25s}
+a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
 .ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
 .rel .ph{display:block;overflow:hidden;aspect-ratio:1}.rel .ph img{scale:1.22}

@@ -47,6 +47,35 @@ SLUG = {u: n.lower().replace(" ", "-").replace("é", "e") for no, u, code, n, *_
 def members_of(u): return [c for c in CHARS if c[1].startswith(u)]
 def name(c): return rb(c[2], c[4]) + rb(c[3], c[5])
 def fid(c): return f"{NO[c[1][:3]]}-{int(c[1][3:])}"
+# 個別ページがあるユニットと、メンバーのページの名前（ローマ字。制作用の記号は使わない）
+PAGES = {"trt","nct","blc"}
+MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsubameya","nct01":"hayato-tsukimine","nct02":"aruto-tsukimine",
+         "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei"}
+def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
+def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
+def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
+def header(pre="", top=True):
+    """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
+    home = "#" if top else pre
+    sec = lambda k: f"#{k}" if top else f"{pre}#{k}"
+    upills="".join(f'<a href="{("#"+SLUG[u]) if top else uhref(u,pre)}" data-u="{SLUG[u]}">{n}</a>' for no,u,code,n,*_ in UNITS)
+    return f'''
+<div class="prog" aria-hidden="true"><i></i></div>
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{sec("release")}">Release<small>楽曲</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
+def footer():
+    return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+def page(title, desc, pre, inner, css=(), attrs=""):
+    links="".join(f'<link rel="stylesheet" href="{pre}css/{c}">' for c in ("style.css",)+tuple(css))
+    return f'''<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta name="theme-color" content="#FAFAF8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{FONT}">
+{links}</head><body{attrs}>{inner}<script src="{pre}js/main.js"></script></body></html>
+'''
 def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else ""
 
 def body():
@@ -57,12 +86,16 @@ def body():
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
+        tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">プロフィール</span>') if u in PAGES else ("div","div","")
         return f'''
-      <div class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
-        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{n}</span><span class="f-kana">{kana}</span><span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul></span>
-        <span class="f-pic">{art}</span></div>'''
+      <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{n}</span><span class="f-kana">{kana}</span><span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
+        <span class="f-pic">{art}</span></{end}>'''
     units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS))
-    mem="".join(f'<div class="mem" data-speed="{[".0","-.12",".08"][CHARS.index(c)%3]}"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></div>' for c in CHARS)
+    def face(c):
+        tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
+        return f'<{tag} class="mem" data-speed="{[".0","-.12",".08"][CHARS.index(c)%3]}"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
+    mem="".join(face(c) for c in CHARS)
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
@@ -75,12 +108,8 @@ def body():
          ("02-1",8,1.12,-.24,2,".12"),("02-2",22,1.06,-.2,2,".12"),
          ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
-    upills="".join(f'<a href="#{SLUG[u]}" data-u="{SLUG[u]}">{n}</a>' for no,u,code,n,*_ in UNITS)
-    chan=f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
-    return f'''
-<div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="#">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="#release">Release</a><a href="#units">Units</a><a href="#members">Members</a><a href="#news">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
-<div class="menu" id="menu" hidden><nav class="m-nav"><a href="#release">Release<small>楽曲</small></a><a href="#units">Units<small>ユニット</small></a><a href="#members">Members<small>メンバー</small></a><a href="#news">News<small>お知らせ</small></a></nav>{chan}</div>
+    chan=globals()['chan']()
+    return f'''{header()}
 <main>
 <section class="fv">
   <p class="word w1" aria-hidden="true" data-speed=".55">Humming</p><p class="word w2" aria-hidden="true" data-speed=".3" data-speedx="-.15">Hearts</p>
@@ -99,7 +128,7 @@ def body():
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
 <section class="sec" id="news"><p class="ghost" aria-hidden="true" data-speedx="-.35">News</p><h2><span>News</span><small>お知らせ</small><i class="idx" aria-hidden="true">05<b>/05</b></i></h2><ul class="news">{news}</ul><p class="row one"><a class="btn" href="{XURL}">X</a></p></section>
 </main>
-<footer class="ft"><p class="logo">Humming Hearts</p>{chan}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+{footer()}'''
 CSS="""
 :root{--bg:#FAFAF8;--ink:#141414;--sub:#6E6E6E;--faint:#E9E9E6;--line:#CFCFCB;
 --en:"Cormorant Garamond","Cormorant",Georgia,serif;--min:"Shippori Mincho B1","Yu Mincho",serif;--jp:"Zen Kaku Gothic New","Hiragino Sans",sans-serif}
@@ -187,6 +216,8 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 .hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
 .hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top;animation:fall 2.4s cubic-bezier(.7,0,.2,1) infinite}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.3em;transition:background .25s,color .25s}
+a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
 .ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
 .rel .ph{display:block;overflow:hidden;aspect-ratio:1}.rel .ph img{scale:1.22}
@@ -248,7 +279,7 @@ var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInter
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
 var pill={};[].forEach.call(document.querySelectorAll('.upills a'),function(a){pill[a.dataset.u]=a});
-function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=fs.length?fs[fs.length-1].dataset.u:'';for(var k in pill)pill[k].classList.toggle('on',k===cur)}
+function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
 /* layers move at their own speed */
@@ -258,15 +289,7 @@ function fr(){tk=false;var vh=innerHeight;pg.style.setProperty('--p',(scrollY/Ma
 addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();"""
 
 def main():
-    html = f'''<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Humming Hearts OFFICIAL SITE</title>
-<meta name="description" content="{DESC}">
-<meta name="theme-color" content="#FAFAF8">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONT}">
-<link rel="stylesheet" href="css/style.css"></head><body>{body()}<script src="js/main.js"></script></body></html>
-'''
+    html = page("Humming Hearts OFFICIAL SITE", DESC, "", body())
     for path, text in (("index.html", html), ("css/style.css", CSS.lstrip("\n")), ("js/main.js", JS + "\n")):
         with open(os.path.join(ROOT, path), "w", encoding="utf-8") as f: f.write(text)
         print("ok", path)

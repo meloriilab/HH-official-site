@@ -1,0 +1,66 @@
+/* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
+.prose{max-width:640px}
+.prose p{margin:0 0 1.6em;font-size:15px;line-height:2.2}
+.mems.big{grid-template-columns:repeat(3,1fr);max-width:640px}
+.rels.solo{grid-template-columns:minmax(0,300px)}
+.others{padding-top:96px}.others .lbl{margin-bottom:8px}
+.others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.12em}
+/* unit first screen */
+.uh{height:auto;overflow:clip;padding-top:150px}
+.uh .w1{left:-6px;top:118px;font-size:96px}
+.uh-t{position:relative;z-index:2;padding-inline:24px}
+.uh h1{margin:0;font:500 50px/1 var(--en);letter-spacing:-.01em}
+.uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.16em;color:var(--sub)}
+.uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.12em;color:var(--sub)}
+.uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
+.uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
+.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
+/* member first screen. the colour panel, the diamond and the line come in first, then the figure:
+   the member's own three colours stand behind them as their backdrop */
+.ch{height:auto;overflow:clip;padding-top:136px}
+.ch-art{position:relative;display:block;height:470px;overflow:hidden;background:var(--faint);filter:grayscale(1);transition:filter .8s ease}
+.fv.lit .ch-art{filter:none}
+.bg-main{position:absolute;left:0;top:0;width:100%;height:62%;background:var(--cm);animation:pSlide .5s cubic-bezier(.3,.6,.3,1) both}
+.bg-dia{position:absolute;top:-70px;right:-150px;width:340px;height:340px;background:var(--cs);rotate:45deg;animation:pFade .5s ease-out .2s both}
+.bg-line{position:absolute;right:0;top:0;bottom:0;width:10px;background:var(--ca);transform-origin:top;animation:pBar .4s cubic-bezier(.3,.6,.3,1) .35s both}
+.ch-img{position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-start;animation:pUp .6s cubic-bezier(.22,.68,.3,1) .5s both}
+.ch-img img{height:205%;width:auto;max-width:none;margin-top:14px}
+@keyframes pSlide{from{transform:translateX(-101%)}to{transform:none}}
+@keyframes pFade{from{opacity:0}to{opacity:1}}
+@keyframes pBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ch-t{padding:30px 24px 0}
+.ch-u{margin:0 0 10px;font:italic 500 18px/1 var(--en)}.ch-u a{border-bottom:1px solid var(--ink);padding-bottom:2px;display:inline-flex;min-height:44px;align-items:center}
+.ch h1{margin:0;font:500 40px/1.5 var(--min);letter-spacing:.1em}
+.ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
+.ch-q{margin:28px 0 0;padding-top:22px;border-top:1px solid var(--line);font:500 18px/2 var(--min);letter-spacing:.06em}
+.pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
+.pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.pf dt{font:500 12px/2.4 var(--jp);letter-spacing:.14em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
+.un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
+.un small{font:500 12px/1 var(--jp);font-style:normal;color:var(--sub);letter-spacing:.2em}
+.pn{padding-top:96px;display:grid;grid-template-columns:1fr 1fr}
+.pn a{display:grid;gap:4px;padding:18px 0;border-block:1px solid var(--ink);font:500 16px/1.6 var(--min);letter-spacing:.06em;transition:background .25s,color .25s}
+.pn a+a{text-align:right;border-left:1px solid var(--ink)}
+.pn a:first-child{padding-left:14px}.pn a+a{padding-right:14px}
+.pn small{font:italic 500 16px/1 var(--en);color:var(--sub)}
+.pn a:hover{background:var(--ink);color:var(--bg)}.pn a:hover small{color:inherit}
+@media(min-width:900px){
+ .prose p{font-size:16px}
+ .mems.big{grid-template-columns:repeat(3,160px);gap:48px}
+ .rels.solo{grid-template-columns:340px}
+ .others{padding-top:160px}.others .m-nav a{font-size:44px}
+ .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:calc(50% - 540px)}
+ .uh .w1{left:calc(50% - 600px);top:70px;font-size:260px}
+ .uh-t{padding:0}.uh h1{font-size:84px}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
+ .uh-pic{margin-top:0}
+ .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+ .ch-art{height:760px}.bg-dia{width:560px;height:560px;top:-60px;right:-240px}.bg-line{width:20px}
+ .ch-img img{height:165%;margin-top:40px}
+ .ch-t{padding:0 0 0 72px;max-width:540px}.ch h1{font-size:58px}.ch-q{font-size:22px;margin-top:40px;padding-top:32px}
+ .pf div{grid-template-columns:160px 1fr}
+ .pn{padding-top:160px}.pn a{font-size:20px;padding:26px 24px}
+}
+@media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
