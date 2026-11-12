@@ -43,6 +43,7 @@ MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu
 MOODS = ["おはよ","ハイテンション","闘志","俺/私がルール","真夜中","まったり","恋してる","恋したい","和と雅"]
 MOOD = {"004":["まったり","和と雅"],"003":["俺/私がルール","闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ハイテンション"]}
 def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
+TRY = "Listen"   # プレイヤーを開くボタンの名前（ログイン中はフルで流れるので「試聴」とは書かない）
 def tid(n): return SPT[n].rsplit("/",1)[1] if n in SPT else ""   # Spotify の曲番号（試聴のプレイヤー用）
 def moods_nav(pre=""):
     return '<p class="moods">'+f'<a class="md" href="{pre}songs.html">すべて</a>'+"".join(f'<a class="md" href="{pre}songs.html?m={m}">{m}</a>' for m in used_moods())+'</p>'
@@ -150,7 +151,7 @@ def body():
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
-  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">試聴</button></p>{chan}</div>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div><div class="mood-in"><p class="lbl">Mood</p>{moods_nav()}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
@@ -184,7 +185,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
 button.btn,button.md,.lk button{appearance:none;background:none;border:0;border-radius:0;color:inherit;cursor:pointer;padding:0;margin:0}
-button.btn{font:500 15px/1 var(--jp);letter-spacing:.1em}
+button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 /* mood words: round pills that wrap onto more lines (never a sideways scroll) = pick songs by feeling */
 .moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
 .md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
@@ -343,7 +344,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 """
 JS="""(function(){var d;function shut(){if(d){d.remove();d=null;document.documentElement.classList.remove('has-dock');[].forEach.call(document.querySelectorAll('[data-try].on'),function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')})}}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');shut();if(was||!b.dataset.try)return;
-d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','試聴');
+d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
 d.innerHTML='<iframe title="Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(b.dataset.try)+'"></iframe><button type="button">閉じる</button>';
 d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock');b.classList.add('on');b.setAttribute('aria-pressed','true')})})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;

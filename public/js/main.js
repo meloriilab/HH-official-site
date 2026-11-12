@@ -1,6 +1,6 @@
 (function(){var d;function shut(){if(d){d.remove();d=null;document.documentElement.classList.remove('has-dock');[].forEach.call(document.querySelectorAll('[data-try].on'),function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')})}}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');shut();if(was||!b.dataset.try)return;
-d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','試聴');
+d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
 d.innerHTML='<iframe title="Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(b.dataset.try)+'"></iframe><button type="button">閉じる</button>';
 d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock');b.classList.add('on');b.setAttribute('aria-pressed','true')})})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;

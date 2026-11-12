@@ -2,7 +2,7 @@
 .sg{padding-bottom:96px}.sg .moods{margin-bottom:40px}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 .sg-m{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11px/1.5 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.lk button{font:500 14px/1.4 var(--jp);letter-spacing:.08em;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
+.lk button{font:inherit;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
 .lk button.on{background:var(--ink);color:var(--bg)}
 .lk{flex-wrap:wrap;row-gap:8px}
 @media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.sg .moods{margin-bottom:64px}}

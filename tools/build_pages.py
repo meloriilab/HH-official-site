@@ -71,7 +71,7 @@ def songs_page():
     cards = "".join(f'''
       <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
         <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="sg-m">{"".join(f"<span>{esc(m)}</span>" for m in T.MOOD.get(n, []))}</p>
-        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">試聴</button>' if T.tid(n) else ""}</p></article>''' for n, ru, t, k, un in T.RELS)
+        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">{T.TRY}</button>' if T.tid(n) else ""}</p></article>''' for n, ru, t, k, un in T.RELS)
     inner = f'''{T.header(pre, top=False)}
 <main>
 <section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
@@ -84,7 +84,13 @@ def songs_page():
 
 SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel'));
 function pick(m){ps.forEach(function(p){var on=p.dataset.m===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
-cs.forEach(function(c){c.hidden=!!m&&c.dataset.m.split('|').indexOf(m)<0})}
+/* reorder motion: each jacket slides from where it was to where it goes, so the eye can follow which songs stayed */
+var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!document.body.animate,old=new Map();
+if(mv)cs.forEach(function(c){if(!c.hidden)old.set(c,c.getBoundingClientRect())});
+cs.forEach(function(c){c.hidden=!!m&&c.dataset.m.split('|').indexOf(m)<0});
+if(mv)cs.forEach(function(c){if(c.hidden)return;var n=c.getBoundingClientRect(),o=old.get(c);
+if(o){var dx=o.left-n.left,dy=o.top-n.top;if(dx||dy)c.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'none'}],{duration:480,easing:'cubic-bezier(.2,.7,.2,1)'})}
+else c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:120,easing:'ease-out',fill:'backwards'})})}
 ps.forEach(function(p){p.addEventListener('click',function(){pick(p.dataset.m);try{history.replaceState(null,'',p.dataset.m?'?m='+encodeURIComponent(p.dataset.m):location.pathname)}catch(e){}})});
 var m='';try{m=new URLSearchParams(location.search).get('m')||''}catch(e){}
 if(m&&ps.some(function(p){return p.dataset.m===m}))pick(m)})();"""
@@ -127,7 +133,7 @@ CSS = """
 .sg{padding-bottom:96px}.sg .moods{margin-bottom:40px}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 .sg-m{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11px/1.5 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.lk button{font:500 14px/1.4 var(--jp);letter-spacing:.08em;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
+.lk button{font:inherit;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
 .lk button.on{background:var(--ink);color:var(--bg)}
 .lk{flex-wrap:wrap;row-gap:8px}
 @media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.sg .moods{margin-bottom:64px}}
