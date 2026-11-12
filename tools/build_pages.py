@@ -64,36 +64,46 @@ def unit_page(u):
     return T.page(f'{m["name"]} | Humming Hearts', esc(d["catch"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 def songs_page():
-    """楽曲ページ：全曲のジャケットを並べ、気分の言葉で絞り込む。聴き比べる場所なので、動かさず同じ大きさで並べる"""
+    """楽曲ページ：全曲のジャケットを並べ、気分（Mood）とユニット（Unit）の2段で絞り込む。聴き比べる場所なので、動かさず同じ大きさで並べる"""
     pre = ""
-    pills = '<button class="md on" type="button" data-m="" aria-pressed="true">すべて</button>' + "".join(
-        f'<button class="md" type="button" data-m="{esc(m)}" aria-pressed="false">{esc(m)}</button>' for m in T.used_moods())
+    def row(k, lbl, aria, items):
+        ps = f'<button class="md on" type="button" data-k="{k}" data-v="" aria-pressed="true">すべて</button>' + "".join(
+            f'<button class="md" type="button" data-k="{k}" data-v="{esc(v)}" aria-pressed="false">{esc(t)}</button>' for v, t in items)
+        return f'<div class="flt"><p class="lbl">{lbl}</p><div class="moods" role="group" aria-label="{aria}">{ps}</div></div>'
+    units = [(T.SLUG[u], UNIT[u]["name"]) for u in UNIT if any(r[1] == u for r in T.RELS)]   # 曲があるユニットだけ
+    rows = row("m", "Mood", "気分で選ぶ", [(m, m) for m in T.used_moods()]) + row("u", "Unit", "ユニットで選ぶ", units)
     cards = "".join(f'''
-      <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
-        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="sg-m">{"".join(f"<span>{esc(m)}</span>" for m in T.MOOD.get(n, []))}</p>
+      <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}" data-u="{T.SLUG[ru]}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
+        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="sg-m">{"".join(f'<button class="tg" type="button" data-v="{esc(m)}">{esc(m)}</button>' for m in T.MOOD.get(n, []))}</p>
         <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">{T.TRY}</button>' if T.tid(n) else ""}</p></article>''' for n, ru, t, k, un in T.RELS)
     inner = f'''{T.header(pre, top=False)}
 <main>
 <section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
-  <div class="moods" role="group" aria-label="気分で選ぶ">{pills}</div>
+  <div class="flts">{rows}</div>
   <div class="rels sgs">{cards}</div>
 </section>
 </main>
 {T.footer()}<script>{SGJS}</script>'''
-    return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分の言葉で選べます。", pre, inner, css=("page.css",))
+    return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分とユニットで選べます。", pre, inner, css=("page.css",))
 
-SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel'));
-function pick(m){ps.forEach(function(p){var on=p.dataset.m===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
+SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),st={m:'',u:''};
+function ok(c,m,u){return(!m||c.dataset.m.split('|').indexOf(m)>=0)&&(!u||c.dataset.u===u)}
+function draw(){ps.forEach(function(p){var k=p.dataset.k,v=p.dataset.v,on=st[k]===v;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false');
+/* a word that would leave no song with the other row's choice is dimmed and cannot be pressed = never an empty page */
+p.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})});
 /* reorder motion: each jacket slides from where it was to where it goes, so the eye can follow which songs stayed */
 var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!document.body.animate,old=new Map();
 if(mv)cs.forEach(function(c){if(!c.hidden)old.set(c,c.getBoundingClientRect())});
-cs.forEach(function(c){c.hidden=!!m&&c.dataset.m.split('|').indexOf(m)<0});
+cs.forEach(function(c){c.hidden=!ok(c,st.m,st.u)});
 if(mv)cs.forEach(function(c){if(c.hidden)return;var n=c.getBoundingClientRect(),o=old.get(c);
 if(o){var dx=o.left-n.left,dy=o.top-n.top;if(dx||dy)c.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'none'}],{duration:480,easing:'cubic-bezier(.2,.7,.2,1)'})}
 else c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:120,easing:'ease-out',fill:'backwards'})})}
-ps.forEach(function(p){p.addEventListener('click',function(){pick(p.dataset.m);try{history.replaceState(null,'',p.dataset.m?'?m='+encodeURIComponent(p.dataset.m):location.pathname)}catch(e){}})});
-var m='';try{m=new URLSearchParams(location.search).get('m')||''}catch(e){}
-if(m&&ps.some(function(p){return p.dataset.m===m}))pick(m)})();"""
+ps.forEach(function(p){p.addEventListener('click',function(){st[p.dataset.k]=p.dataset.v;draw();
+try{var q=[];if(st.m)q.push('m='+encodeURIComponent(st.m));if(st.u)q.push('u='+encodeURIComponent(st.u));history.replaceState(null,'',q.length?'?'+q.join('&'):location.pathname)}catch(e){}})});
+[].forEach.call(document.querySelectorAll('.sgs .tg'),function(t){t.addEventListener('click',function(){st.m=t.dataset.v;if(!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';draw()})});
+try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){var v=sp.get(k)||'';if(v&&ps.some(function(p){return p.dataset.k===k&&p.dataset.v===v}))st[k]=v})}catch(e){}
+if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
+draw()})();"""
 
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
@@ -130,13 +140,17 @@ b.addEventListener('click',function(){w.classList.add('out');setTimeout(function
 
 CSS = """
 /* songs page: same-size jackets in a plain grid (no drift, no stagger) = easy to compare */
-.sg{padding-bottom:96px}.sg .moods{margin-bottom:40px}
+.sg{padding-bottom:96px}
+/* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
+.flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
+.md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
-.sg-m{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11px/1.5 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.lk button{font:inherit;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
-.lk button.on{background:var(--ink);color:var(--bg)}
-.lk{flex-wrap:wrap;row-gap:8px}
-@media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.sg .moods{margin-bottom:64px}}
+/* mood tags on each song: small pills; pressing one picks that mood above */
+.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
+.tg:hover{border-color:var(--ink);color:var(--ink)}
+.lk button{font:inherit;letter-spacing:inherit}
+@media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.flts{margin-bottom:64px}.flt{grid-template-columns:64px 1fr;align-items:center;gap:20px}}
 
 /* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
 .prose{max-width:640px}

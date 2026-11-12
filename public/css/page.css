@@ -1,11 +1,15 @@
 /* songs page: same-size jackets in a plain grid (no drift, no stagger) = easy to compare */
-.sg{padding-bottom:96px}.sg .moods{margin-bottom:40px}
+.sg{padding-bottom:96px}
+/* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
+.flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
+.md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
-.sg-m{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11px/1.5 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.lk button{font:inherit;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
-.lk button.on{background:var(--ink);color:var(--bg)}
-.lk{flex-wrap:wrap;row-gap:8px}
-@media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.sg .moods{margin-bottom:64px}}
+/* mood tags on each song: small pills; pressing one picks that mood above */
+.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
+.tg:hover{border-color:var(--ink);color:var(--ink)}
+.lk button{font:inherit;letter-spacing:inherit}
+@media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.flts{margin-bottom:64px}.flt{grid-template-columns:64px 1fr;align-items:center;gap:20px}}
 
 /* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
 .prose{max-width:640px}

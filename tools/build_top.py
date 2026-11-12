@@ -264,7 +264,12 @@ h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px v
 .rels.lead{padding-bottom:72px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
-.lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
+/* song links: a small joined row of boxes, same language as the big buttons; the first one (MV) is filled = the thing to press first */
+.lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
+.lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
+.lk>*+*,.lk>button{border-left:1px solid var(--ink)}
+@media(max-width:359px){.lk{font-size:13px;letter-spacing:0}}
+.lk>:first-child,.lk>:hover,.lk>.on{background:var(--ink);color:var(--bg)}
 /* restrained decoration, each with a job:
    .idx   small section number at the end of the heading rule = where you are among the four sections
    h2 rule draws itself from the left when the section arrives = marks the start of a section
