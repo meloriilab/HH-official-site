@@ -39,6 +39,13 @@ NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),(
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
 # 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送る。ボタンの名前はどれも MV）
 MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu.be/Juhtev74lgU", "001": "https://youtu.be/gt1lyf8tnD0", "005": "https://youtu.be/Qr1X9lWdtyc"}
+# 気分の言葉（仮。確定版が来たら差し替える）と、曲ごとの気分（仮。題名とジャケットからの見立て。1曲に複数可）
+MOODS = ["おはよ","ハイテンション","闘志","俺/私がルール","真夜中","まったり","恋してる","恋したい","和と雅"]
+MOOD = {"004":["まったり","和と雅"],"003":["俺/私がルール","闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ハイテンション"]}
+def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
+def tid(n): return SPT[n].rsplit("/",1)[1] if n in SPT else ""   # Spotify の曲番号（試聴のプレイヤー用）
+def moods_nav(pre=""):
+    return '<p class="moods">'+f'<a class="md" href="{pre}songs.html">すべて</a>'+"".join(f'<a class="md" href="{pre}songs.html?m={m}">{m}</a>' for m in used_moods())+'</p>'
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
 SPOT = "https://open.spotify.com/intl-ja/artist/5zFSrMpca51dx28SN4MqA7"   # アーティストのページ（TOP用）
 # 曲ごとの Spotify のアドレス
@@ -143,9 +150,9 @@ def body():
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
-  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a></p>{chan}</div>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">試聴</button></p>{chan}</div>
 </div></section>
-<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div></section>
+<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div><div class="mood-in"><p class="lbl">Mood</p>{moods_nav()}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
@@ -176,6 +183,18 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .row{display:flex;gap:0;margin:0;border:1px solid var(--ink)}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
+button.btn,button.md,.lk button{appearance:none;background:none;border:0;border-radius:0;color:inherit;cursor:pointer;padding:0;margin:0}
+button.btn{font:500 15px/1 var(--jp);letter-spacing:.1em}
+/* mood words: round pills that wrap onto more lines (never a sideways scroll) = pick songs by feeling */
+.moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
+.md:hover,.md.on{background:var(--ink);color:var(--bg)}
+.mood-in{display:grid;gap:14px;padding-bottom:96px}
+/* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
+.dock iframe{flex:1 1 auto;max-width:640px;width:100%;height:80px;border:0;border-radius:12px;background:#222}
+.dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
+.has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
 .yt{margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .burger{position:relative;z-index:31;width:44px;height:44px;margin-right:-10px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
@@ -241,7 +260,7 @@ h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px v
 .rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
 /* top page: the newest song is shown large, the other four small = what is new reads first */
-.rels.lead{padding-bottom:120px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
+.rels.lead{padding-bottom:72px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 .lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
@@ -302,7 +321,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.mood-in{grid-template-columns:auto 1fr;align-items:center;gap:28px;padding-bottom:40px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
@@ -322,7 +341,12 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.ph img,.trio img{filter:none}}
 """
-JS="""(function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
+JS="""(function(){var d;function shut(){if(d){d.remove();d=null;document.documentElement.classList.remove('has-dock');[].forEach.call(document.querySelectorAll('[data-try].on'),function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')})}}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');shut();if(was||!b.dataset.try)return;
+d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','試聴');
+d.innerHTML='<iframe title="Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(b.dataset.try)+'"></iframe><button type="button">閉じる</button>';
+d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock');b.classList.add('on');b.setAttribute('aria-pressed','true')})})();
+(function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();

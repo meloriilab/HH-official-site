@@ -63,6 +63,32 @@ def unit_page(u):
 {T.footer()}'''
     return T.page(f'{m["name"]} | Humming Hearts', esc(d["catch"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
+def songs_page():
+    """楽曲ページ：全曲のジャケットを並べ、気分の言葉で絞り込む。聴き比べる場所なので、動かさず同じ大きさで並べる"""
+    pre = ""
+    pills = '<button class="md on" type="button" data-m="" aria-pressed="true">すべて</button>' + "".join(
+        f'<button class="md" type="button" data-m="{esc(m)}" aria-pressed="false">{esc(m)}</button>' for m in T.used_moods())
+    cards = "".join(f'''
+      <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
+        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="sg-m">{"".join(f"<span>{esc(m)}</span>" for m in T.MOOD.get(n, []))}</p>
+        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">試聴</button>' if T.tid(n) else ""}</p></article>''' for n, ru, t, k, un in T.RELS)
+    inner = f'''{T.header(pre, top=False)}
+<main>
+<section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
+  <div class="moods" role="group" aria-label="気分で選ぶ">{pills}</div>
+  <div class="rels sgs">{cards}</div>
+</section>
+</main>
+{T.footer()}<script>{SGJS}</script>'''
+    return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分の言葉で選べます。", pre, inner, css=("page.css",))
+
+SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel'));
+function pick(m){ps.forEach(function(p){var on=p.dataset.m===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
+cs.forEach(function(c){c.hidden=!!m&&c.dataset.m.split('|').indexOf(m)<0})}
+ps.forEach(function(p){p.addEventListener('click',function(){pick(p.dataset.m);try{history.replaceState(null,'',p.dataset.m?'?m='+encodeURIComponent(p.dataset.m):location.pathname)}catch(e){}})});
+var m='';try{m=new URLSearchParams(location.search).get('m')||''}catch(e){}
+if(m&&ps.some(function(p){return p.dataset.m===m}))pick(m)})();"""
+
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
 def char_page(cid):
@@ -97,6 +123,15 @@ SWJS = """(function(){var b=document.querySelector('.ch-sw'),w=document.querySel
 b.addEventListener('click',function(){w.classList.add('out');setTimeout(function(){var f=w.classList.toggle('full');b.setAttribute('aria-pressed',f?'true':'false');w.classList.remove('out')},160)})})();"""
 
 CSS = """
+/* songs page: same-size jackets in a plain grid (no drift, no stagger) = easy to compare */
+.sg{padding-bottom:96px}.sg .moods{margin-bottom:40px}
+.sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
+.sg-m{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 10px;font:500 11px/1.5 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.lk button{font:500 14px/1.4 var(--jp);letter-spacing:.08em;border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
+.lk button.on{background:var(--ink);color:var(--bg)}
+.lk{flex-wrap:wrap;row-gap:8px}
+@media(min-width:900px){.sgs{grid-template-columns:repeat(3,1fr);gap:56px 48px}.sg .moods{margin-bottom:64px}}
+
 /* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
 .prose{max-width:640px}
 .prose p{margin:0 0 1.6em;font-size:15px;line-height:2.2}
@@ -193,6 +228,7 @@ CSS = """
 def main():
     out = [(f"units/{T.SLUG[u]}.html", unit_page(u)) for u in UNIT if u in T.PAGES]
     out += [(f"members/{T.MSLUG[c]}.html", char_page(c)) for c in ORDER]
+    out.append(("songs.html", songs_page()))
     out.append(("css/page.css", CSS.lstrip("\n")))
     for path, text in out:
         full = os.path.join(T.ROOT, path)
