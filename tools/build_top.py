@@ -109,6 +109,8 @@ def body():
          ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
     chan=globals()['chan']()
+    # ピックアップ曲の絵は5本の短冊に分ける。短冊ごとに動く速さが違い、画面の真ん中で1枚の絵にそろう
+    strips="".join(f'<i class="st" data-speed="{sp}"><img style="left:-{k*100}%" src="{YT_THUMB}" onerror="this.onerror=null;this.src=\'images/kv/01.webp\'" alt=""></i>' for k,sp in enumerate(["-.16",".1","-.06",".14","-.1"]))
     return f'''{header()}
 <main>
 <section class="fv">
@@ -119,7 +121,7 @@ def body():
 </section>
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
-  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ" data-speed=".06"></span><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
+  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph" role="img" aria-label="薄紅梅 のミュージックビデオ">{strips}</span><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{YT_MV}">MV</a>{spot("btn")}</p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
@@ -178,11 +180,13 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .pu{padding-top:72px}
 h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.1em}
 .pu-g{display:grid;gap:28px}
-/* pick up: the video is shown in its own shape, as a wide window the picture drifts behind (not a disc) */
-.pu-fr{position:relative;display:block;aspect-ratio:4/5;margin-inline:-24px}
-.pu-c{position:absolute;inset:0;overflow:hidden;display:block}
-.pu-c img{width:100%;height:100%;object-fit:cover;scale:1.2;transition:filter .8s ease,scale .8s cubic-bezier(.2,.7,.2,1)}
-.pu-fr:hover .pu-c img{scale:1.26}
+/* pick up: the picture is cut into five slats. each slat rides the scroll at its own speed, so they sit
+   out of step above and below, and line up into one picture when the frame reaches the middle of the screen.
+   job: the moment the picture comes together marks "this is the song to watch now" */
+.pu-fr{position:relative;display:block;aspect-ratio:4/5;margin:40px -24px}
+.pu-c{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr)}
+.st{position:relative;display:block;overflow:hidden}
+.st img{position:absolute;top:0;width:500%;max-width:none;height:100%;object-fit:cover;transition:filter .8s ease}
 .pu-t{position:absolute;left:0;bottom:0;padding-left:24px!important;max-width:71.6%;background:var(--bg);padding:12px 18px 0 0;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px}
 .pu-t small{font:italic 500 16px var(--en);letter-spacing:.02em;color:var(--sub)}
 .pu-s{display:grid;gap:14px}
@@ -250,7 +254,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:calc(50% - 540px);top:150px;font-size:30px}
- .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0;aspect-ratio:16/9}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
+ .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:70px 0;aspect-ratio:16/9}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
  .ghost{font-size:380px;top:60px}
@@ -280,7 +284,7 @@ function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
 /* layers move at their own speed */
-var px=[].slice.call(document.querySelectorAll('[data-speed],[data-speedx]')).map(function(el){return{el:el,s:parseFloat(el.dataset.speed)||0,x:parseFloat(el.dataset.speedx)||0,h:el.closest('.flag,.rel,section')||el.parentNode}}),tk=false;
+var px=[].slice.call(document.querySelectorAll('[data-speed],[data-speedx]')).map(function(el){return{el:el,s:parseFloat(el.dataset.speed)||0,x:parseFloat(el.dataset.speedx)||0,h:el.closest('.flag,.rel,.pu-fr,section')||el.parentNode}}),tk=false;
 function fr(){tk=false;var vh=innerHeight;pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
  var d=(r.top+r.height/2)-vh/2;p.el.style.translate=(-d*p.x).toFixed(1)+'px '+(-d*p.s).toFixed(1)+'px'})}
 addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();"""
