@@ -29,8 +29,8 @@ UNITS = [("01","trt","TRT","Triattique","トリアティーク","日本の身近
          ("06","wgo","WGO","Winged Oath","ウィングド・オウス","誓いの五人組","#3C5A7A",5)]
 # 曲の一覧（新しいものを上に）: (番号, ユニット, 曲名, ふりがな, ユニット名)
 # ジャケットの絵は images/jacket/<ユニット番号>-<そのユニットの何曲目か>.webp（題名なし版は _notitle 付き）
-JK = {"004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
-RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique")]
+JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
+RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique"),("005","prs","Midnight Mirage","","Prisméa")]   # 並び順は未確定（先頭＝いちばん新しい曲だけ確定）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
@@ -97,7 +97,7 @@ def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else
 def body():
     rels="".join(f'''
       <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット"></a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04","-.08"]))
+        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -139,7 +139,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a>{spot("btn")}</p>{chan}</div>
 </div></section>
-<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
+<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
@@ -234,6 +234,8 @@ h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;bo
 h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
 .rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
+/* top page: the newest song is shown large, the other four small = what is new reads first */
+.rels.lead{padding-bottom:120px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 .lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
@@ -294,7 +296,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}

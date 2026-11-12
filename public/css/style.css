@@ -85,6 +85,8 @@ h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;bo
 h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
 .rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
+/* top page: the newest song is shown large, the other four small = what is new reads first */
+.rels.lead{padding-bottom:120px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 .lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
@@ -145,7 +147,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
