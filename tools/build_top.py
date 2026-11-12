@@ -38,7 +38,7 @@ NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),(
 # (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
 # 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送る。ボタンの名前はどれも MV）
-MV = {"004": YT_MV}
+MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu.be/Juhtev74lgU", "001": "https://youtu.be/gt1lyf8tnD0", "005": "https://youtu.be/Qr1X9lWdtyc"}
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
 SPOT = "https://open.spotify.com/intl-ja/artist/5zFSrMpca51dx28SN4MqA7"   # アーティストのページ（TOP用）
 # 曲ごとの Spotify のアドレス
