@@ -17,6 +17,11 @@ UD = {u["id"].lower(): u for u in D["units"]}
 CD = {c["id"].lower(): c for c in D["chars"]}
 PRE = "../"
 
+# キャラ性を表すタグ（K さんが決めた言葉そのまま）。無い人は「未確定」で、タグの段を出さない
+TAGS = {"trt01": ["ストイックなカワセミ", "渓流釣り", "魚は骨だけ残す職人芸"],
+        "trt02": ["ムードメーカーなメジロ", "実は茶道家三男坊", "スイーツラブ"],
+        "trt03": ["フッ軽なツバメ", "三味線", "写真好き"]}
+
 # 曲のMVのアドレス。わかっているものだけ（無いユニットは YouTube のチャンネルへ送る）
 MV = {"trt": T.YT_MV}
 
@@ -72,21 +77,26 @@ def char_page(cid):
     rows = [("誕生日", d["birthday"]), ("身長", f'{d["height"]}cm'), ("年齢", f'{d["age"]}歳'),
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
     dl = "".join(f"<div><dt>{k}</dt><dd>{esc(str(v))}</dd></div>" for k, v in rows)
+    tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
     mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1"]))
     i = ORDER.index(cid); pv, nx = CH[ORDER[i - 1]], CH[ORDER[(i + 1) % len(ORDER)]]
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
-  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.fid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
-  <div class="ch-t"><p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p></div>
+  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.fid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
+  <div class="ch-t"><p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
 <section class="sec" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3)}<div class="prose"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
 <section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3)}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}'''
+{T.footer()}<script>{SWJS}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
+
+# 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
+SWJS = """(function(){var b=document.querySelector('.ch-sw'),w=document.querySelector('.ch-img');if(!b||!w)return;
+b.addEventListener('click',function(){w.classList.add('out');setTimeout(function(){var f=w.classList.toggle('full');b.setAttribute('aria-pressed',f?'true':'false');w.classList.remove('out')},160)})})();"""
 
 CSS = """
 /* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
@@ -123,6 +133,17 @@ CSS = """
 .bg-deco::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in oklab,var(--ca) 78%,#000) 0%,var(--ca) 100%);clip-path:polygon(0 52%,100% 14%,100% 100%,0 100%)}
 .ch-img{position:absolute;inset:0;z-index:2;display:flex;justify-content:center;align-items:flex-start;animation:pUp .38s cubic-bezier(.22,.68,.3,1) .34s both}
 .ch-img img{height:205%;width:auto;max-width:none;margin:14px 0 0 14%}
+.ch-img img{transition:opacity .16s ease,transform .16s ease}
+.ch-img.out img{opacity:0;transform:translateX(-18px)}
+.ch-img.full{align-items:flex-end}.ch-img.full img{height:94%;margin:0 0 30px}
+/* switch between close-up and full figure: two arrows pointing opposite ways */
+.ch-sw{position:absolute;z-index:5;right:25px;top:12px;width:44px;height:44px;padding:0;border:1px solid var(--ink);border-radius:50%;background:var(--bg);color:var(--ink);cursor:pointer;animation:pFade .3s ease .5s both;transition:background .25s,color .25s}
+.ch-sw:hover,.ch-sw[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.ch-sw i{position:absolute;left:12px;width:18px;height:1px;background:currentColor}
+.ch-sw i:first-child{top:17px}.ch-sw i:last-child{top:25px}
+.ch-sw i::after{content:"";position:absolute;top:-3px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.ch-sw i:first-child::after{right:0;rotate:45deg}.ch-sw i:last-child::after{left:0;rotate:-135deg}
+.tags{list-style:none;margin:22px 0 0;padding:18px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 18px;font:500 14px/1.8 var(--jp);letter-spacing:.06em}
 .ch-em{position:absolute;z-index:4;left:12px;top:12px;width:64px;height:64px;animation:pFade .3s ease .5s both}
 .ch-em img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,.6))}
 .vq{position:absolute;z-index:4;left:26px;top:26%;margin:0;display:flex;gap:7px;align-items:flex-start}
@@ -162,7 +183,7 @@ CSS = """
  .uh-pic{margin-top:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
- .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}
+ .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}
  .vq{left:64px;top:18%;gap:11px}.vq .col{font-size:19px;letter-spacing:.14em;line-height:1.7;padding:18px 10px}.vq .col.low{margin-top:74px}
  .ch-t{padding:0 0 0 72px;max-width:540px}.ch h1{font-size:58px}
  .pf div{grid-template-columns:160px 1fr}
