@@ -29,6 +29,8 @@
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
 .uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
 .uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
+.uh-pic.em{aspect-ratio:1;max-width:420px;margin-inline:auto;padding-inline:24px}.uh-pic.em img{object-fit:contain;scale:1}
+.more{margin:28px auto 0;width:fit-content}.more .btn{min-width:180px}
 /* member first screen, as on the old site: the member's main colour slides in as a panel, a square in the
    sub colour turns into place, the accent line grows down the edge, a slanted two-colour strip closes the foot,
    then the figure rises, the unit emblem appears and the member's line is unrolled beside the shoulder.

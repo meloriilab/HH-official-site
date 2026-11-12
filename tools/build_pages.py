@@ -40,11 +40,17 @@ def face(cid, speed=".0"):
     c = CH[cid]
     return f'<a class="mem" href="{T.mhref(c, PRE)}" data-speed="{speed}"><span class="ph"><img src="{PRE}images/face/{T.fid(c)}.webp" alt=""></span><span>{T.name(c)}</span></a>'
 
+def rels_of(u): return [r for r in T.RELS if r[1] == u]
+
 def unit_page(u):
     d, m = UD[u], UNIT[u]
     no = m["no"]
-    intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d["intro"])
-    mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06"]))
+    # 紹介文とキャッチコピーが無いユニットは、旧サイトの短い紹介文を出し、キャッチコピーの行は出さない（文は作らない）
+    intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d.get("intro") or [d["blurb"]])
+    catch = f'<p class="uh-c">{esc(d["catch"])}</p>' if d.get("catch") else ""
+    kv = u in T.KV   # 集合絵が無いユニットは、絵の場所に紋章を大きく出す
+    mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06", "-.04"]))
+    more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
     rels = "".join(f'''
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
         <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}</p></article>''' for n, ru, t, k, un in T.RELS if ru == u)
@@ -52,16 +58,16 @@ def unit_page(u):
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv uh">
-  <div class="uh-t"><img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt=""><h1>{m["name"]}<small>{m["kana"]}</small></h1><p class="uh-tag">{esc(d["tagline"])}</p><p class="uh-c">{esc(d["catch"])}</p></div>
-  <div class="uh-pic ph"><img src="{PRE}images/kv/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>
+  <div class="uh-t">{f'<img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{m["name"]}<small>{m["kana"]}</small></h1><p class="uh-tag">{esc(d["tagline"])}</p>{catch}</div>
+  {f'<div class="uh-pic ph"><img src="{PRE}images/kv/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
 </section>
 <section class="sec" id="about"><p class="ghost" aria-hidden="true" data-speedx="-.35">About</p>{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p>{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
-<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx="-.35">Release</p>{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div></section>
+<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx="-.35">Release</p>{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
 <nav class="sec others" aria-label="ほかのユニット"><p class="lbl">Units</p><div class="m-nav">{others}</div></nav>
 </main>
 {T.footer()}'''
-    return T.page(f'{m["name"]} | Humming Hearts', esc(d["catch"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
+    return T.page(f'{m["name"]} | Humming Hearts', esc(d.get("catch") or d["blurb"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 def songs_page():
     """楽曲ページ：全曲のジャケットを並べ、気分（Mood）とユニット（Unit）の2段で絞り込む。聴き比べる場所なので、動かさず同じ大きさで並べる"""
@@ -118,12 +124,12 @@ def char_page(cid):
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
     dl = "".join(f"<div><dt>{k}</dt><dd>{esc(str(v))}</dd></div>" for k, v in rows)
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
-    mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1"]))
+    mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1", ".06"]))
     i = ORDER.index(cid); pv, nx = CH[ORDER[i - 1]], CH[ORDER[(i + 1) % len(ORDER)]]
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
-  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.fid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
+  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
   <div class="ch-t"><p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
@@ -170,6 +176,8 @@ CSS = """
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
 .uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
 .uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
+.uh-pic.em{aspect-ratio:1;max-width:420px;margin-inline:auto;padding-inline:24px}.uh-pic.em img{object-fit:contain;scale:1}
+.more{margin:28px auto 0;width:fit-content}.more .btn{min-width:180px}
 /* member first screen, as on the old site: the member's main colour slides in as a panel, a square in the
    sub colour turns into place, the accent line grows down the edge, a slanted two-colour strip closes the foot,
    then the figure rises, the unit emblem appears and the member's line is unrolled beside the shoulder.

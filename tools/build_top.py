@@ -68,10 +68,14 @@ SLUG = {u: n.lower().replace(" ", "-").replace("é", "e") for no, u, code, n, *_
 def members_of(u): return [c for c in CHARS if c[1].startswith(u)]
 def name(c): return rb(c[2], c[4]) + rb(c[3], c[5])
 def fid(c): return f"{NO[c[1][:3]]}-{int(c[1][3:])}"
+# 立ち絵のファイル番号は素材フォルダの並び順で、ORYBIA だけ顔アイコンの番号と違う（素材フォルダの対応表どおり）
+ART = {"orb01":"05-3","orb02":"05-4","orb03":"05-2","orb04":"05-1"}
+def aid(c): return ART.get(c[1], fid(c))
 # 個別ページがあるユニットと、メンバーのページの名前（ローマ字。制作用の記号は使わない）
-PAGES = {"trt","nct","blc"}
+PAGES = {"trt","nct","blc","prs","orb"}
 MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsubameya","nct01":"hayato-tsukimine","nct02":"aruto-tsukimine",
-         "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei"}
+         "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei",
+         "prs01":"ukyo-sanjo","prs02":"thane-wakamoto","orb01":"masiro-kurenai","orb02":"tadashi-kikui","orb03":"rui-hitaki","orb04":"jo-hitaki"}
 def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
 def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
 def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
@@ -89,8 +93,8 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS)
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
-<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{sec("release")}">Release<small>楽曲</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{sec("release")}">Release<small>楽曲</small></a><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer():
     return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
 def page(title, desc, pre, inner, css=(), attrs=""):
@@ -129,8 +133,7 @@ def body():
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
-        u,i=k.split("-"); cs=order.get(u)
-        return name(cs[int(i)-1]) if cs else ""
+        return next((c[2]+c[3] for c in CHARS if c[1][:3] in NO and aid(c)==k), "")
     # (file, x%, size, bottom as a share of H, layer, scroll speed)
     FIG=[("05-1",39,.70,.44,1,".26"),("05-2",46,.74,.50,1,".26"),("05-3",56,.72,.46,1,".26"),("05-4",65,.70,.51,1,".26"),
          ("03-1",13,.82,.34,1,".22"),("03-2",24,.78,.40,1,".22"),("07-1",76,.76,.50,1,".22"),("07-2",91,.80,.46,1,".22"),
