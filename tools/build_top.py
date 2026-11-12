@@ -58,7 +58,14 @@ def header(pre="", top=True):
     """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
     home = "#" if top else pre
     sec = lambda k: f"#{k}" if top else f"{pre}#{k}"
-    upills="".join(f'<a href="{("#"+SLUG[u]) if top else uhref(u,pre)}" data-u="{SLUG[u]}">{n}</a>' for no,u,code,n,*_ in UNITS)
+    # 丸いボタン：押すとユニットのページへ。カーソルを載せると、そのユニットのメンバー名が下に出る
+    def pill(u, n):
+        ms = members_of(u)
+        rows = (f'<a href="{uhref(u,pre)}">Unit Top</a>' if u in PAGES else "") + "".join(
+            f'<a href="{mhref(c,pre)}">{c[2]} {c[3]}</a>' if mhref(c) else f'<span>{c[2]} {c[3]}</span>' for c in ms)
+        drop = f'<span class="up-m">{rows}</span>' if ms else ""
+        return f'<span class="up"><a class="up-a" href="{uhref(u,pre)}" data-u="{SLUG[u]}">{n}</a>{drop}</span>'
+    upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS)
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
 <header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
@@ -147,8 +154,9 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .hd{flex-wrap:wrap;gap:14px}
 /* unit pills: jump straight to a unit from anywhere at the top; the one on screen is filled */
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
-.upills a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
-.upills a:hover,.upills a.on{background:var(--ink);color:var(--bg)}
+.up{position:relative;display:block;min-width:0}
+.up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
+.up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
 .row{display:flex;gap:0;margin:0;border:1px solid var(--ink)}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
@@ -161,6 +169,13 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .burger[aria-expanded=true] i{top:22px}.burger[aria-expanded=true] i:first-child{transform:rotate(45deg)}.burger[aria-expanded=true] i:last-child{transform:rotate(-45deg)}
 .menu{position:fixed;inset:0;z-index:30;background:var(--bg);padding:96px 24px 32px;display:flex;flex-direction:column;justify-content:space-between;overflow:auto;animation:menuIn .3s ease}
 .menu[hidden]{display:none}
+/* member names under a unit pill: only where a cursor can rest on it (no touch screens) */
+.up-m{display:none;position:absolute;z-index:20;left:0;top:100%;min-width:100%;padding-top:5px}
+.up-m a,.up-m span{display:block;padding:9px 14px;background:var(--bg);border:1px solid var(--ink);border-top:0;font:500 13px/1.4 var(--min);letter-spacing:.06em;white-space:nowrap;transition:background .2s,color .2s}
+.up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
+.up-m a[href*="units/"]{font:italic 500 15px/1.2 var(--en);letter-spacing:.04em}
+.up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
+@media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
 .menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt{visibility:hidden}
 @keyframes menuIn{from{opacity:0}to{opacity:1}}
 .m-nav{display:grid}
@@ -252,7 +267,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd,.sec,.nr,.ft{padding-inline:calc(50% - 540px)}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
- .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}.upills a{min-height:24px;font-size:13px;padding-inline:14px}
+ .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:calc(50% - 540px);top:150px;font-size:30px}
@@ -281,7 +296,7 @@ document.documentElement.classList.add('js');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
-var pill={};[].forEach.call(document.querySelectorAll('.upills a'),function(a){pill[a.dataset.u]=a});
+var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
 function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
