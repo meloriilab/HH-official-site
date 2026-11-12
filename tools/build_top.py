@@ -211,6 +211,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
 .up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
 @media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
+/* unit pills: on the top page they stay out of the way and drop in as a bar at the top only while the Units part is on screen
+   (unit and member pages keep them in the header; pages outside Units do not show them) */
+.js body:not([data-u]) .upills{position:fixed;z-index:12;top:0;left:0;right:0;margin:0;padding:9px 16px;background:rgba(250,250,248,.94);border-bottom:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(-100%);transition:transform .35s ease,opacity .35s ease,visibility 0s .35s}
+.js.in-units body:not([data-u]) .upills{opacity:1;visibility:visible;transform:none;transition:transform .35s ease,opacity .35s ease}
 .menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt{visibility:hidden}
 @keyframes menuIn{from{opacity:0}to{opacity:1}}
 .m-nav{display:grid}
@@ -321,7 +325,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd,.sec,.nr,.ft{padding-inline:max(32px,calc(50% - 540px))}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
- .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
+ .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}
+ .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(6,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
@@ -380,8 +385,8 @@ var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.cla
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
 /* layers move at their own speed */
 var px=[].slice.call(document.querySelectorAll('[data-speed],[data-speedx]')).map(function(el){return{el:el,s:parseFloat(el.dataset.speed)||0,x:parseFloat(el.dataset.speedx)||0,h:el.closest('.flag,.rel,section')||el.parentNode}}),tk=false;
-var pu=document.querySelector('.pu-fr');
-function fr(){tk=false;var vh=innerHeight;if(pu){var q=pu.getBoundingClientRect(),o=1.25-Math.abs(q.top+q.height/2-vh/2)/(vh*.42);o=Math.max(0,Math.min(1,o));pu.style.setProperty('--o',(o*o*(3-2*o)).toFixed(3))}pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
+var pu=document.querySelector('.pu-fr'),us=document.getElementById('units'),fl=document.querySelector('.flags');
+function fr(){tk=false;var vh=innerHeight;if(us&&fl)document.documentElement.classList.toggle('in-units',us.getBoundingClientRect().top<vh*.55&&fl.getBoundingClientRect().bottom>vh*.35);if(pu){var q=pu.getBoundingClientRect(),o=1.25-Math.abs(q.top+q.height/2-vh/2)/(vh*.42);o=Math.max(0,Math.min(1,o));pu.style.setProperty('--o',(o*o*(3-2*o)).toFixed(3))}pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
  var d=(r.top+r.height/2)-vh/2;p.el.style.translate=(-d*p.x).toFixed(1)+'px '+(-d*p.s).toFixed(1)+'px'})}
 addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();"""
 
