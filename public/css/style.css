@@ -68,7 +68,7 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
    four small words in the corners = what this is (Pick Up / MV), who (unit) and when (release date) */
 .dr::before{content:"";position:absolute;inset:var(--in);border:1px solid rgba(250,250,248,.55)}
 .dl::before{right:0;border-right:0}.drr::before{left:0;border-left:0}
-.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);filter:grayscale(1) contrast(1.1)}
+.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);}
 .dl img{right:calc(var(--e)/-2)}.drr img{left:calc(var(--e)/-2)}
 .dr b{position:absolute;font:italic 500 17px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
 .d-a{top:calc(var(--in) + 14px)}.d-b{bottom:calc(var(--in) + 14px)}

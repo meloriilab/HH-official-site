@@ -31,6 +31,9 @@ RELS = [("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
+# ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
+PICK = "001"
+PICK_DATE = "2026.07.07"
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
 SPOT = ""
 # ピックアップ曲の絵（YouTube のサムネイル。読めないときは手元の絵を出す）
@@ -116,6 +119,7 @@ def body():
          ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
     chan=globals()['chan']()
+    _,pu_u,PT,PK,PUN=next(r for r in RELS if r[0]==PICK); PN=NO[pu_u]   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
     return f'''{header()}
 <main>
 <section class="fv">
@@ -126,7 +130,7 @@ def body():
 </section>
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
-  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/01.webp" alt=""><b class="d-b">Triattique</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/01.webp" alt=""><b class="d-b">2026.07.07</b></i><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
+  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/{PN}.webp'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PICK_DATE}</b></i><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{YT_MV}">MV</a>{spot("btn")}</p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
@@ -207,7 +211,7 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
    four small words in the corners = what this is (Pick Up / MV), who (unit) and when (release date) */
 .dr::before{content:"";position:absolute;inset:var(--in);border:1px solid rgba(250,250,248,.55)}
 .dl::before{right:0;border-right:0}.drr::before{left:0;border-left:0}
-.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);filter:grayscale(1) contrast(1.1)}
+.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);}
 .dl img{right:calc(var(--e)/-2)}.drr img{left:calc(var(--e)/-2)}
 .dr b{position:absolute;font:italic 500 17px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
 .d-a{top:calc(var(--in) + 14px)}.d-b{bottom:calc(var(--in) + 14px)}
