@@ -126,7 +126,7 @@ def body():
 </section>
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
-  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b>Pick Up</b></i><i class="dr drr" aria-hidden="true"><b>MV</b></i><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
+  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/01.webp" alt=""><b class="d-b">Triattique</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/01.webp" alt=""><b class="d-b">2026.07.07</b></i><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{YT_MV}">MV</a>{spot("btn")}</p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
@@ -199,11 +199,20 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .pu-fr{position:relative;display:block;aspect-ratio:4/5;margin-inline:-24px;overflow:hidden}
 .pu-c{position:absolute;inset:0;display:block}
 .pu-c img{width:100%;height:100%;object-fit:cover;transition:filter .8s ease}
-.dr{position:absolute;top:0;bottom:0;width:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;will-change:transform}
-.dl{left:0;justify-content:flex-end;transform:translateX(calc(var(--o,1)*-101%))}
-.drr{right:0;justify-content:flex-start;transform:translateX(calc(var(--o,1)*101%))}
-.dr b{font:italic 500 30px/1 var(--en);letter-spacing:.02em;padding:0 14px;white-space:nowrap}
-.dl{border-right:1px solid var(--bg)}
+.dr{position:absolute;top:0;bottom:0;width:50%;background:var(--ink);color:var(--bg);overflow:hidden;will-change:transform;--e:150px;--in:12px}
+.dl{left:0;transform:translateX(calc(var(--o,1)*-101%))}
+.drr{right:0;transform:translateX(calc(var(--o,1)*101%))}
+/* on the doors, each with a job:
+   thin frame line, open on the seam side = the two halves read as one pair of doors
+   the unit's emblem, half on each door = whose song is behind the doors; it parts when they open
+   four small words in the corners = what this is (Pick Up / MV), who (unit) and when (release date) */
+.dr::before{content:"";position:absolute;inset:var(--in);border:1px solid rgba(250,250,248,.55)}
+.dl::before{right:0;border-right:0}.drr::before{left:0;border-left:0}
+.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);filter:grayscale(1) contrast(1.1)}
+.dl img{right:calc(var(--e)/-2)}.drr img{left:calc(var(--e)/-2)}
+.dr b{position:absolute;font:italic 500 17px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
+.d-a{top:calc(var(--in) + 14px)}.d-b{bottom:calc(var(--in) + 14px)}
+.dl b{left:calc(var(--in) + 14px)}.drr b{right:calc(var(--in) + 14px)}
 .pu-t{z-index:2;position:absolute;left:0;bottom:0;padding-left:24px!important;max-width:71.6%;background:var(--bg);padding:12px 18px 0 0;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px}
 .pu-t small{font:italic 500 16px var(--en);letter-spacing:.02em;color:var(--sub)}
 .pu-s{display:grid;gap:14px}
@@ -271,7 +280,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:calc(50% - 540px);top:150px;font-size:30px}
- .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0;aspect-ratio:16/9}.dr b{font-size:54px;padding:0 26px}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
+ .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0;aspect-ratio:16/9}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
  .ghost{font-size:380px;top:60px}
