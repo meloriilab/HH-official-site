@@ -48,7 +48,7 @@ def unit_page(u):
     intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d["intro"])
     mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06"]))
     rels = "".join(f'''
-      <article class="rel"><a class="ph" href="{MV.get(u, T.YT_CH)}"><img src="{PRE}images/jacket/{no}.webp" alt="{t} のジャケット" data-speed=".1"></a>
+      <article class="rel"><a class="ph" href="{MV.get(u, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
         <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[u]}">MV</a>' if u in MV else f'<a href="{T.YT_CH}">YouTube</a>'}{T.spot("")}</p></article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{UNIT[o]["name"]}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
     inner = f'''{T.header(PRE, top=False)}

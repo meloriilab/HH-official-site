@@ -27,7 +27,10 @@ UNITS = [("01","trt","TRT","Triattique","トリアティーク","日本の身近
          ("04","blc","BLC","Blackveil Harmonic","ブラックヴェイル・ハーモニック","カラスたちの宴 × ロック","#5B4560",3),
          ("05","orb","ORB","ORYBIA","オリビア","14歳、地元アイドル四人組","#E3426A",4),
          ("06","wgo","WGO","Winged Oath","ウィングド・オウス","誓いの五人組","#3C5A7A",5)]
-RELS = [("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique")]
+# 曲の一覧（新しいものを上に）: (番号, ユニット, 曲名, ふりがな, ユニット名)
+# ジャケットの絵は images/jacket/<ユニット番号>-<そのユニットの何曲目か>.webp（題名なし版は _notitle 付き）
+JK = {"004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
+RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique")]
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
@@ -35,7 +38,7 @@ NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),(
 # (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
 # 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送り、ボタンの名前も YouTube にする）
-MV = {}
+MV = {"004": YT_MV}
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
 SPOT = ""
 # ピックアップ曲の絵（YouTube のサムネイル。読めないときは手元の絵を出す）
@@ -93,8 +96,8 @@ def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else
 
 def body():
     rels="".join(f'''
-      <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{NO[u]}.webp" alt="{t} のジャケット" data-speed=".1"></a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04"]))
+      <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット"></a>
+        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04","-.08"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -229,8 +232,8 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .sec{position:relative;padding-top:128px;overflow:clip}
 h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:14px}
 h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
-.rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px}
-.rel:nth-child(2){margin-top:64px}
+.rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
+.rel:nth-child(even){margin-top:64px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 .lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
@@ -255,7 +258,8 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
 .ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
-.rel .ph{display:block;overflow:hidden;aspect-ratio:1}.rel .ph img{scale:1.22}
+/* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
+.rel .ph{display:block;overflow:hidden;aspect-ratio:1}
 /* unit flags: full-width, stack over the previous one; grey until they take the screen */
 .flags{margin-top:8px}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
@@ -290,7 +294,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
