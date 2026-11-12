@@ -193,7 +193,7 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .mood-in{display:grid;gap:14px;padding-bottom:96px}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
-.dock iframe{flex:1 1 auto;max-width:640px;width:100%;height:80px;border:0;border-radius:12px;background:#222}
+.dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
@@ -347,11 +347,23 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.ph img,.trio img{filter:none}}
 """
-JS="""(function(){var d;function shut(){if(d){d.remove();d=null;document.documentElement.classList.remove('has-dock');[].forEach.call(document.querySelectorAll('[data-try].on'),function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')})}}
-document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');shut();if(was||!b.dataset.try)return;
-d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
-d.innerHTML='<iframe title="Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(b.dataset.try)+'"></iframe><button type="button">閉じる</button>';
-d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock');b.classList.add('on');b.setAttribute('aria-pressed','true')})})();
+JS="""/* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
+(function(){var d,ctl,api,wait;
+function mark(b){[].forEach.call(document.querySelectorAll('[data-try]'),function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')})}
+function shut(){if(d){try{ctl&&ctl.destroy()}catch(e){}ctl=null;d.parentNode.removeChild(d);d=null;document.documentElement.classList.remove('has-dock');mark(null)}}
+function plain(id){var h=d&&d.querySelector('.dock-p');if(h)h.innerHTML='<iframe title="Spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'"></iframe>'}
+function start(id){var h=d&&d.querySelector('.dock-p');if(!h)return;
+if(ctl){try{ctl.loadUri('spotify:track:'+id);ctl.play();return}catch(e){ctl=null}}
+h.innerHTML='<div></div>';
+try{api.createController(h.firstChild,{uri:'spotify:track:'+id,width:'100%',height:80},function(c){ctl=c;var go=function(){try{c.play()}catch(e){}};c.addListener('ready',go);go()})}catch(e){plain(id)}}
+function load(id){if(api){start(id);return}
+window.onSpotifyIframeApiReady=function(a){api=a;clearTimeout(wait);if(d&&d.dataset.id)start(d.dataset.id)};
+if(!document.getElementById('sp-api')){var s=document.createElement('script');s.id='sp-api';s.async=true;s.src='https://open.spotify.com/embed/iframe-api/v1';s.onerror=function(){clearTimeout(wait);if(d)plain(d.dataset.id)};document.head.appendChild(s)}
+clearTimeout(wait);wait=setTimeout(function(){if(!api&&d)plain(d.dataset.id)},4000)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');if(was||!b.dataset.try){shut();return}
+if(!d){d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
+d.innerHTML='<div class="dock-p"></div><button type="button">閉じる</button>';d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock')}
+d.dataset.id=b.dataset.try;mark(b);load(b.dataset.try)})})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});

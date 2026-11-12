@@ -1,8 +1,20 @@
-(function(){var d;function shut(){if(d){d.remove();d=null;document.documentElement.classList.remove('has-dock');[].forEach.call(document.querySelectorAll('[data-try].on'),function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')})}}
-document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');shut();if(was||!b.dataset.try)return;
-d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
-d.innerHTML='<iframe title="Spotify" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(b.dataset.try)+'"></iframe><button type="button">閉じる</button>';
-d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock');b.classList.add('on');b.setAttribute('aria-pressed','true')})})();
+/* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
+(function(){var d,ctl,api,wait;
+function mark(b){[].forEach.call(document.querySelectorAll('[data-try]'),function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')})}
+function shut(){if(d){try{ctl&&ctl.destroy()}catch(e){}ctl=null;d.parentNode.removeChild(d);d=null;document.documentElement.classList.remove('has-dock');mark(null)}}
+function plain(id){var h=d&&d.querySelector('.dock-p');if(h)h.innerHTML='<iframe title="Spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'"></iframe>'}
+function start(id){var h=d&&d.querySelector('.dock-p');if(!h)return;
+if(ctl){try{ctl.loadUri('spotify:track:'+id);ctl.play();return}catch(e){ctl=null}}
+h.innerHTML='<div></div>';
+try{api.createController(h.firstChild,{uri:'spotify:track:'+id,width:'100%',height:80},function(c){ctl=c;var go=function(){try{c.play()}catch(e){}};c.addListener('ready',go);go()})}catch(e){plain(id)}}
+function load(id){if(api){start(id);return}
+window.onSpotifyIframeApiReady=function(a){api=a;clearTimeout(wait);if(d&&d.dataset.id)start(d.dataset.id)};
+if(!document.getElementById('sp-api')){var s=document.createElement('script');s.id='sp-api';s.async=true;s.src='https://open.spotify.com/embed/iframe-api/v1';s.onerror=function(){clearTimeout(wait);if(d)plain(d.dataset.id)};document.head.appendChild(s)}
+clearTimeout(wait);wait=setTimeout(function(){if(!api&&d)plain(d.dataset.id)},4000)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');if(was||!b.dataset.try){shut();return}
+if(!d){d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
+d.innerHTML='<div class="dock-p"></div><button type="button">閉じる</button>';d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock')}
+d.dataset.id=b.dataset.try;mark(b);load(b.dataset.try)})})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
