@@ -32,12 +32,15 @@ RELS = [("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
 # ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
-PICK = "001"
-PICK_DATE = "2026.07.07"
+# (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
+PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
+# 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送り、ボタンの名前も YouTube にする）
+MV = {}
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
 SPOT = ""
 # ピックアップ曲の絵（YouTube のサムネイル。読めないときは手元の絵を出す）
-YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/sddefault.jpg"
+YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/hq720.jpg"   # 横長（16:9）で、上下の黒い帯が無い絵
+YT_THUMB2 = "https://i.ytimg.com/vi/IlpEetoUMso/mqdefault.jpg"   # 上が読めないときの小さい絵
 # 旗に大きな絵を出すユニット（絵がそろっているものだけ。ほかは紋章を出す）
 KV = {"trt","nct","blc"}
 FONT = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Shippori+Mincho+B1:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap"
@@ -90,8 +93,8 @@ def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else
 
 def body():
     rels="".join(f'''
-      <article class="rel" data-speed="{sp}"><a class="ph" href="{YT_MV}"><img src="images/jacket/{NO[u]}.webp" alt="{t} のジャケット" data-speed=".1"></a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{YT_MV}">MV</a>{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04"]))
+      <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{NO[u]}.webp" alt="{t} のジャケット" data-speed=".1"></a>
+        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -119,7 +122,7 @@ def body():
          ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
     chan=globals()['chan']()
-    _,pu_u,PT,PK,PUN=next(r for r in RELS if r[0]==PICK); PN=NO[pu_u]   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
+    pu_u,PT,PK,PD,PMV=PICK; PN=NO[pu_u]; PUN=next(n for no,u,code,n,*_ in UNITS if u==pu_u)   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
     return f'''{header()}
 <main>
 <section class="fv">
@@ -130,8 +133,8 @@ def body():
 </section>
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
-  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/{PN}.webp'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PICK_DATE}</b></i><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
-  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{YT_MV}">MV</a>{spot("btn")}</p>{chan}</div>
+  <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a>{spot("btn")}</p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
@@ -199,24 +202,26 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 /* pick up: the picture stays whole. two ink doors stand in front of it and slide apart as the frame
    comes to the middle of the screen, like a stage curtain; they close again as it leaves.
    job: the opening marks "this is the song to watch now". --o is how far open (0 shut, 1 open) */
-.pu-fr{position:relative;display:block;aspect-ratio:4/5;margin-inline:-24px;overflow:hidden}
+/* the frame keeps the video's own 16:9 shape at every width, so nothing in the picture is cut off */
+.pu-fr{position:relative;display:block;margin-inline:-24px}
+.pu-w{position:relative;display:block;aspect-ratio:16/9;overflow:hidden}
 .pu-c{position:absolute;inset:0;display:block}
 .pu-c img{width:100%;height:100%;object-fit:cover;transition:filter .8s ease}
-.dr{position:absolute;top:0;bottom:0;width:50%;background:var(--ink);color:var(--bg);overflow:hidden;will-change:transform;--e:150px;--in:12px}
+.dr{position:absolute;top:0;bottom:0;width:50%;background:var(--ink);color:var(--bg);overflow:hidden;will-change:transform;--e:104px;--in:9px}
 .dl{left:0;transform:translateX(calc(var(--o,1)*-101%))}
 .drr{right:0;transform:translateX(calc(var(--o,1)*101%))}
 /* on the doors, each with a job:
    thin frame line, open on the seam side = the two halves read as one pair of doors
-   the unit's emblem, half on each door = whose song is behind the doors; it parts when they open
+   the unit's emblem in one colour (the doors are black), half on each door = whose song is behind the doors; it parts when they open
    four small words in the corners = what this is (Pick Up / MV), who (unit) and when (release date) */
 .dr::before{content:"";position:absolute;inset:var(--in);border:1px solid rgba(250,250,248,.55)}
 .dl::before{right:0;border-right:0}.drr::before{left:0;border-left:0}
-.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);}
+.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);filter:grayscale(1) contrast(1.1)}
 .dl img{right:calc(var(--e)/-2)}.drr img{left:calc(var(--e)/-2)}
-.dr b{position:absolute;font:italic 500 17px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
-.d-a{top:calc(var(--in) + 14px)}.d-b{bottom:calc(var(--in) + 14px)}
-.dl b{left:calc(var(--in) + 14px)}.drr b{right:calc(var(--in) + 14px)}
-.pu-t{z-index:2;position:absolute;left:0;bottom:0;padding-left:24px!important;max-width:71.6%;background:var(--bg);padding:12px 18px 0 0;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px}
+.dr b{position:absolute;font:italic 500 14px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
+.d-a{top:calc(var(--in) + 9px)}.d-b{bottom:calc(var(--in) + 9px)}
+.dl b{left:calc(var(--in) + 10px)}.drr b{right:calc(var(--in) + 10px)}
+.pu-t{margin:14px 24px 0;font:500 30px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .pu-t small{font:italic 500 16px var(--en);letter-spacing:.02em;color:var(--sub)}
 .pu-s{display:grid;gap:14px}
 .lbl{margin:0;font:italic 500 17px/1 var(--en);color:var(--sub)}
@@ -283,7 +288,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
- .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0;aspect-ratio:16/9}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
+ .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
  .ghost{font-size:380px;top:60px}

@@ -23,7 +23,7 @@ TAGS = {"trt01": ["ストイックなカワセミ", "渓流釣り", "魚は骨�
         "trt03": ["フッ軽なツバメ", "三味線", "写真好き"]}
 
 # 曲のMVのアドレス。わかっているものだけ（無いユニットは YouTube のチャンネルへ送る）
-MV = {"trt": T.YT_MV}
+MV = {"prs": T.YT_MV}   # 月日の奏（Prisméa）。ほかの曲のMVは未確定
 
 UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana, tg, c, cnt in T.UNITS}
 CH = {c[1]: c for c in T.CHARS}
