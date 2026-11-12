@@ -133,24 +133,31 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 [data-speed]{will-change:translate}
 @media(min-width:900px){
- .hd,.sec,.nr,.ft{padding-inline:calc(50% - 540px)}
+ .hd,.sec,.nr,.ft{padding-inline:max(32px,calc(50% - 540px))}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
  .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
- .catch{right:calc(50% - 540px);top:150px;font-size:30px}
+ .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0;aspect-ratio:16/9}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0!important}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
- .hint{display:block;left:auto;right:calc(50% - 540px)}
+ .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
- .f-txt{padding:120px 60px 60px calc(50vw - 540px);align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:48px 20px}.mem .ph{width:116px;height:116px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
+}
+/* narrow PC and tablets held sideways (900 to 1139px): same layout, with the menu button instead of the word links */
+@media(min-width:900px) and (max-width:1139px){
+ .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
+ .trio{left:0;margin-left:0;width:88%}
+ .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
+ h2 span{font-size:88px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.ph img,.trio img{filter:none}}

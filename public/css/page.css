@@ -76,7 +76,7 @@
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
- .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:calc(50% - 540px)}
+ .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
  .uh-em{width:300px;height:300px;margin:0 0 20px -18px}
  .uh-t{padding:0}.uh h1{font-size:84px}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
  .uh-pic{margin-top:0}
