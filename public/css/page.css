@@ -70,7 +70,13 @@
 @keyframes pUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pRoll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
 .ch-t{position:relative;padding:30px 24px 0}
-.ch-p,.n-pc{display:none}
+.ch-p,.n-pc,.tags-a{display:none}
+@media(min-width:700px) and (max-width:899px){
+ .ch-art{height:600px}.ch-img img{height:190%}
+ .tags-a{position:absolute;z-index:4;left:40px;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
+ .tags-a li{padding:7px 14px;background:var(--cm);color:var(--tc);font:500 15px/1.5 var(--jp);letter-spacing:.06em;animation:pFade .4s ease .9s both}
+ .ch-t .tags{display:none}
+}
 .ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
 .ch-nv a{position:relative;width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
 .ch-nv a:hover{background:var(--ink);color:var(--bg)}

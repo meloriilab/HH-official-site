@@ -126,6 +126,10 @@ def char_page(cid):
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
     dl = "".join(f"<div><dt>{k}</dt><dd>{esc(str(v))}</dd></div>" for k, v in rows)
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
+    # タブレット幅では、タグを立ち絵の上にメインカラーの帯で縦に並べる。帯が明るい色の人は、白ではなく黒の文字にして読めるようにする
+    r, g, b = (int(col["main"][i:i + 2], 16) / 255 for i in (1, 3, 5))
+    lum = sum(w * (v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4) for w, v in zip((.2126, .7152, .0722), (r, g, b)))
+    tags_a = tags.replace('class="tags"', f'class="tags-a" style="--tc:{"#141414" if lum > .36 else "#fff"}"') if tags else ""
     mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1", ".06"]))
     i = ORDER.index(cid); pv, nx = CH[ORDER[i - 1]], CH[ORDER[(i + 1) % len(ORDER)]]
     # 前後のメンバーへ移る丸いボタン（名前の段の右上。ページのいちばん下の Prev / Next と同じ行き先）
@@ -136,7 +140,7 @@ def char_page(cid):
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
-  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
+  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}{prof}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
@@ -224,7 +228,13 @@ CSS = """
 @keyframes pUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pRoll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
 .ch-t{position:relative;padding:30px 24px 0}
-.ch-p,.n-pc{display:none}
+.ch-p,.n-pc,.tags-a{display:none}
+@media(min-width:700px) and (max-width:899px){
+ .ch-art{height:600px}.ch-img img{height:190%}
+ .tags-a{position:absolute;z-index:4;left:40px;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
+ .tags-a li{padding:7px 14px;background:var(--cm);color:var(--tc);font:500 15px/1.5 var(--jp);letter-spacing:.06em;animation:pFade .4s ease .9s both}
+ .ch-t .tags{display:none}
+}
 .ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
 .ch-nv a{position:relative;width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
 .ch-nv a:hover{background:var(--ink);color:var(--bg)}
