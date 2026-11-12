@@ -61,7 +61,7 @@ def header(pre="", top=True):
     # 丸いボタン：押すとユニットのページへ。カーソルを載せると、そのユニットのメンバー名が下に出る
     def pill(u, n):
         ms = members_of(u)
-        rows = (f'<a href="{uhref(u,pre)}">Unit Top</a>' if u in PAGES else "") + "".join(
+        rows = "".join(
             f'<a href="{mhref(c,pre)}">{c[2]} {c[3]}</a>' if mhref(c) else f'<span>{c[2]} {c[3]}</span>' for c in ms)
         drop = f'<span class="up-m">{rows}</span>' if ms else ""
         return f'<span class="up"><a class="up-a" href="{uhref(u,pre)}" data-u="{SLUG[u]}">{n}</a>{drop}</span>'
@@ -173,7 +173,6 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .up-m{display:none;position:absolute;z-index:20;left:0;top:100%;min-width:100%;padding-top:5px}
 .up-m a,.up-m span{display:block;padding:9px 14px;background:var(--bg);border:1px solid var(--ink);border-top:0;font:500 13px/1.4 var(--min);letter-spacing:.06em;white-space:nowrap;transition:background .2s,color .2s}
 .up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
-.up-m a[href*="units/"]{font:italic 500 15px/1.2 var(--en);letter-spacing:.04em}
 .up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
 @media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
 .menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt{visibility:hidden}

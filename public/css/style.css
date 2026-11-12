@@ -34,7 +34,6 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .up-m{display:none;position:absolute;z-index:20;left:0;top:100%;min-width:100%;padding-top:5px}
 .up-m a,.up-m span{display:block;padding:9px 14px;background:var(--bg);border:1px solid var(--ink);border-top:0;font:500 13px/1.4 var(--min);letter-spacing:.06em;white-space:nowrap;transition:background .2s,color .2s}
 .up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
-.up-m a[href*="units/"]{font:italic 500 15px/1.2 var(--en);letter-spacing:.04em}
 .up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
 @media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
 .menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt{visibility:hidden}
