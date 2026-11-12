@@ -33,8 +33,10 @@ def ruby_text(s):
     s = re.sub(r"\[\[([^\]|]+)\|([^\]]+)\]\]", lambda m: T.rb(m.group(1), m.group(2)), s)
     return re.sub(r"\[\[([^\]]+)\]\]", r"\1", s)
 
-def h2(en, jp, i, n):
-    return f'<h2><span>{en}</span><small>{jp}</small><i class="idx" aria-hidden="true">{i:02d}<b>/{n:02d}</b></i></h2>'
+def h2(en, jp, i, n, pc=None):
+    num = lambda a, b: f'{a:02d}<b>/{b:02d}</b>'
+    idx = num(i, n) if pc is None else f'<span class="n-sp">{num(i, n)}</span><span class="n-pc">{num(*pc)}</span>'
+    return f'<h2><span>{en}</span><small>{jp}</small><i class="idx" aria-hidden="true">{idx}</i></h2>'
 
 def face(cid, speed=".0"):
     c = CH[cid]
@@ -126,15 +128,20 @@ def char_page(cid):
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
     mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1", ".06"]))
     i = ORDER.index(cid); pv, nx = CH[ORDER[i - 1]], CH[ORDER[(i + 1) % len(ORDER)]]
+    # 前後のメンバーへ移る丸いボタン（名前の段の右上。ページのいちばん下の Prev / Next と同じ行き先）
+    nav = (f'<p class="ch-nv"><a class="pv" href="{T.mhref(pv, PRE)}" aria-label="前のメンバー：{pv[2]}{pv[3]}"></a>'
+           f'<a class="nx" href="{T.mhref(nx, PRE)}" aria-label="次のメンバー：{nx[2]}{nx[3]}"></a></p>')
+    # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
+    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl></div>'
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><a class="ch-em" href="{T.uhref(u, PRE)}" aria-label="{m["name"]}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt=""></a><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span><i class="bg-deco"></i></div>
-  <div class="ch-t"><p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}</div>
+  <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}">{m["name"]}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}{prof}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
-<section class="sec" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3)}<div class="prose"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3)}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3, (1, 2))}<div class="prose"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
+<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
 {T.footer()}<script>{SWJS}</script>'''
@@ -216,7 +223,14 @@ CSS = """
 @keyframes pBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes pUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pRoll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
-.ch-t{padding:30px 24px 0}
+.ch-t{position:relative;padding:30px 24px 0}
+.ch-p,.n-pc{display:none}
+.ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
+.ch-nv a{position:relative;width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
+.ch-nv a:hover{background:var(--ink);color:var(--bg)}
+.ch-nv a::before{content:"";position:absolute;left:13px;top:21px;width:18px;height:1px;background:currentColor}
+.ch-nv a::after{content:"";position:absolute;top:18px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.ch-nv .nx::after{right:13px;rotate:45deg}.ch-nv .pv::after{left:13px;rotate:-135deg}
 .ch-u{margin:0 0 10px;font:italic 500 18px/1 var(--en)}.ch-u a{border-bottom:1px solid var(--ink);padding-bottom:2px;display:inline-flex;min-height:44px;align-items:center}
 .ch h1{margin:0;font:500 40px/1.5 var(--min);letter-spacing:.1em}
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
@@ -246,7 +260,11 @@ CSS = """
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}
  .vq{left:64px;top:18%;gap:11px}.vq .col{font-size:19px;letter-spacing:.14em;line-height:1.7;padding:18px 10px}.vq .col.low{margin-top:74px}
- .ch-t{padding:0 0 0 72px;max-width:540px}.ch h1{font-size:58px}
+ .ch-t{box-sizing:border-box;padding:0 32px 0 72px;max-width:684px}.ch h1{font-size:54px}.ch-nv{right:32px;top:0}
+ .ch-p{display:block;margin-top:26px}.ch-p p{margin:0;font-size:15px;line-height:2}
+ .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:9px 0}.ch-p .pf dd{font-size:14px;line-height:2.1}
+ @media(max-width:1099px){.ch-t{padding-left:44px}.ch h1{font-size:46px}.ch-p .pf{column-gap:20px}.ch-p .pf div{grid-template-columns:76px 1fr}}
+ #profile,.n-sp{display:none}.n-pc{display:inline}.ch .tags{margin-top:22px;padding-top:18px;font-size:15px}
  .pf div{grid-template-columns:160px 1fr}
  .pn{padding-top:160px}.pn a{font-size:20px;padding:26px 24px}
 }
