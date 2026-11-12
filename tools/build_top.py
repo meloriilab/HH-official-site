@@ -37,10 +37,14 @@ NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),(
 # ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
 # (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
-# 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送り、ボタンの名前も YouTube にする）
+# 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送る。ボタンの名前はどれも MV）
 MV = {"004": YT_MV}
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
-SPOT = ""
+SPOT = "https://open.spotify.com/intl-ja/artist/5zFSrMpca51dx28SN4MqA7"   # アーティストのページ（TOP用）
+# 曲ごとの Spotify のアドレス
+SPT = {"004":"https://open.spotify.com/intl-ja/track/09G3RQDDX4gFqODCdNUIdB","003":"https://open.spotify.com/intl-ja/track/5mHORhSCXO1Ee7glWClH6o",
+       "002":"https://open.spotify.com/intl-ja/track/12PFLQPl0zbGCJhKa4KWj0","001":"https://open.spotify.com/intl-ja/track/5pJiXLZd6goH98a9wZuSsP",
+       "005":"https://open.spotify.com/intl-ja/track/6smsE3EpklyXBSPFZBL2hq"}
 # ピックアップ曲の絵（YouTube のサムネイル。読めないときは手元の絵を出す）
 YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/hq720.jpg"   # 横長（16:9）で、上下の黒い帯が無い絵
 YT_THUMB2 = "https://i.ytimg.com/vi/IlpEetoUMso/mqdefault.jpg"   # 上が読めないときの小さい絵
@@ -92,12 +96,14 @@ def page(title, desc, pre, inner, css=(), attrs=""):
 <link rel="stylesheet" href="{FONT}">
 {links}</head><body{attrs}>{inner}<script src="{pre}js/main.js"></script></body></html>
 '''
-def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else ""
+def spot(cls, url=None):
+    url = SPOT if url is None else url
+    return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
 def body():
     rels="".join(f'''
       <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット"></a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[n]}">MV</a>' if n in MV else f'<a href="{YT_CH}">YouTube</a>'}{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
+        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -137,7 +143,7 @@ def body():
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
-  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a>{spot("btn")}</p>{chan}</div>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a></p>{chan}</div>
 </div></section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>

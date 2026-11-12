@@ -22,8 +22,6 @@ TAGS = {"trt01": ["ストイックなカワセミ", "渓流釣り", "魚は骨�
         "trt02": ["ムードメーカーなメジロ", "実は茶道家三男坊", "スイーツラブ"],
         "trt03": ["フッ軽なツバメ", "三味線", "写真好き"]}
 
-# 曲のMVのアドレス。わかっているものだけ（無いユニットは YouTube のチャンネルへ送る）
-MV = {"prs": T.YT_MV}   # 月日の奏（Prisméa）。ほかの曲のMVは未確定
 
 UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana, tg, c, cnt in T.UNITS}
 CH = {c[1]: c for c in T.CHARS}
@@ -48,8 +46,8 @@ def unit_page(u):
     intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d["intro"])
     mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06"]))
     rels = "".join(f'''
-      <article class="rel"><a class="ph" href="{MV.get(u, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
-        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk">{f'<a href="{MV[u]}">MV</a>' if u in MV else f'<a href="{T.YT_CH}">YouTube</a>'}{T.spot("")}</p></article>''' for n, ru, t, k, un in T.RELS if ru == u)
+      <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット"></a>
+        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}</p></article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{UNIT[o]["name"]}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
     inner = f'''{T.header(PRE, top=False)}
 <main>
