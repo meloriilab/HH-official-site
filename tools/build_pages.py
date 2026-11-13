@@ -131,6 +131,7 @@ TGV = "(function(){var m=location.search.match(/[?&]tag=([124])/);if(!m)return;d
 RDY = "requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('rdy')})})"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
+QCUT = {"でもそれ以上にワクワクしてるッス！": 7}   # 帯を分ける位置の指定（行の文 → 何字目の後ろで分けるか）。律：Kさんの指定（2026-11-13）。文は変えない
 QMAX, QLOW = 17, 14   # せりふの帯1本の字数の上限／下げる帯がこの字数以上なら上下を入れ替える
 
 def char_page(cid):
@@ -144,7 +145,9 @@ def char_page(cid):
     #  2) 一段下げるのは2行目。ただし下げる帯が QLOW 字以上のときは、1行目のほうを下げる（長い帯を上から始める）
     cols = []
     for k, x in enumerate(lines):
-        if len(x) > QMAX:
+        if x in QCUT:   # Kさんが切れ目を指定した行
+            cols += [(x[:QCUT[x]], k), (x[QCUT[x]:], k)]
+        elif len(x) > QMAX:
             cut = min((i for i, ch in enumerate(x) if ch == "、"), key=lambda i: abs(i - len(x) / 2), default=None)
             assert cut is not None, f"せりふの行が長すぎて分けられない（「、」が無い）: {x}"
             cols += [(x[:cut], k), (x[cut + 1:], k)]
