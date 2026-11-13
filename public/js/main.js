@@ -38,19 +38,26 @@ addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}}
 /* Episode: opens the chat over the page; lines appear one by one (Skip shows all). #episode-<song> opens it directly. */
 (function(){var tm=0;
 function rows(d){return d.querySelectorAll('.ep-log>*')}
-function all(d){clearTimeout(tm);[].forEach.call(rows(d),function(x){x.classList.add('in')});d.querySelector('.ep-sk').hidden=true}
-function play(d){var r=rows(d),i=0,log=d.querySelector('.ep-log');log.scrollTop=0;
- (function step(){if(!d.open||i>=r.length){if(i>=r.length)d.querySelector('.ep-sk').hidden=true;return}
-  var x=r[i++];x.classList.add('in');log.scrollTo({top:log.scrollHeight,behavior:'smooth'});
-  tm=setTimeout(step,Math.min(2100,700+x.textContent.length*55))})()}
+function noty(d){[].forEach.call(d.querySelectorAll('.ep-ty'),function(x){x.remove()})}
+function all(d){clearTimeout(tm);noty(d);[].forEach.call(rows(d),function(x){x.classList.add('in')});d.querySelector('.ep-sk').hidden=true}
+/* before each line, the speaker's side shows moving dots ("typing") for a moment, then the line takes their place */
+function play(d){var r=[].slice.call(rows(d)),i=0,log=d.querySelector('.ep-log');log.scrollTop=0;
+ function down(){log.scrollTo({top:log.scrollHeight,behavior:'smooth'})}
+ function show(x){noty(d);x.classList.add('in');i++;down();tm=setTimeout(step,Math.min(1700,450+x.textContent.length*45))}
+ function step(){if(!d.open)return;if(i>=r.length){d.querySelector('.ep-sk').hidden=true;return}
+  var x=r[i];if(!x.classList.contains('ep-r')){show(x);return}
+  var t=document.createElement('div');t.className='ep-r ep-ty in'+(x.classList.contains('me')?' me':'');t.setAttribute('aria-hidden','true');
+  t.innerHTML='<img class="ep-av" src="'+x.querySelector('.ep-av').getAttribute('src')+'" alt=""><div><p><i></i><i></i><i></i></p></div>';
+  log.insertBefore(t,x);down();tm=setTimeout(function(){show(x)},520+Math.min(900,x.textContent.length*28))}
+ step()}
 function open(s){var d=document.getElementById('ep-'+s);if(!d||!d.showModal||d.open)return;
- [].forEach.call(rows(d),function(x){x.classList.remove('in')});d.querySelector('.ep-sk').hidden=false;
+ noty(d);[].forEach.call(rows(d),function(x){x.classList.remove('in')});d.querySelector('.ep-sk').hidden=false;
  d.showModal();document.documentElement.classList.add('ep-on');history.replaceState(null,'','#episode-'+s);
  if(matchMedia('(prefers-reduced-motion:reduce)').matches)all(d);else tm=setTimeout(function(){play(d)},380)}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]');if(b){open(b.dataset.ep);return}
  var d=e.target.closest('dialog.ep');if(!d)return;
  if(e.target===d||e.target.closest('.ep-x'))d.close();else if(e.target.closest('.ep-ph'))e.target.closest('.ep-ph').classList.toggle('big');else if(e.target.closest('.ep-sk')){all(d);d.querySelector('.ep-log').scrollTop=0}});
-[].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);document.documentElement.classList.remove('ep-on');
+[].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);noty(d);document.documentElement.classList.remove('ep-on');
  if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
 var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 
