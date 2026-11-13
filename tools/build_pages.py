@@ -113,8 +113,6 @@ try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){va
 if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
 draw()})();"""
 
-# 見比べ用：住所の末尾に ?bird=1 を付けると、モチーフの鳥が「案1」の置き方になる（決まったら外す）
-BJS = "if(/[?&]bird=1/.test(location.search)){var m=document.getElementById('motif');if(m)m.classList.add('b1')}"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
 def char_page(cid):
@@ -152,7 +150,7 @@ def char_page(cid):
 <section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}<script>{SWJS}</script><script>{BJS}</script>'''
+{T.footer()}<script>{SWJS}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
@@ -234,14 +232,10 @@ CSS = """
 .ch-t{position:relative;padding:30px 24px 0}
 .ch-p,.n-pc,.tags-a{display:none}
 /* motif bird: below the text on phones, beside the text on wide screens; it never sits under the words */
-/* 案2（既定）: 絵を縮めて、段の中に全部おさめる */
-.has-b{padding-bottom:calc(58vw + 150px)}.has-b .mt-p{position:relative;z-index:1}
-.mt-b{position:absolute;z-index:0;left:8vw;bottom:90px;width:84vw;max-width:none;height:auto;pointer-events:none}
-@media(min-width:700px){.has-b{padding-bottom:240px}.has-b .mt-p{max-width:44%}.mt-b{left:auto;right:max(32px,calc(50% - 540px));bottom:auto;top:calc(50% - 40px);width:min(46vw,560px)}}
-/* 案1（?bird=1 で見比べ用）: 下から2番目の層に大きく薄く置き、文字と少し重なってよい */
-.b1.has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}
-.b1 .mt-b{left:3vw;bottom:auto;top:230px;width:94vw;opacity:.42}
-@media(min-width:700px){.b1.has-b{padding-bottom:150px;min-height:0}.b1.has-b .mt-p{max-width:640px}.b1 .mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}.b1.has-b{min-height:calc(min(62vw,760px)*.68 + 380px)}}
+/* モチーフの鳥: 下から2番目の層（薄い大きな見出し文字のすぐ上、文章の下）に大きく薄く置く。文章と少し重なってよい。段の外へは出さない（切らない） */
+.has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}.has-b .mt-p{position:relative;z-index:1}
+.mt-b{position:absolute;z-index:0;left:3vw;top:230px;width:94vw;max-width:none;height:auto;opacity:.42;pointer-events:none}
+@media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}}
 @media(min-width:700px){
  .tags-a{position:absolute;z-index:4;left:0;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
