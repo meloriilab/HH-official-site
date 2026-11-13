@@ -35,3 +35,22 @@ var pu=document.querySelector('.pu-fr'),us=document.getElementById('units'),fl=d
 function fr(){tk=false;var vh=innerHeight;if(us&&fl)document.documentElement.classList.toggle('in-units',us.getBoundingClientRect().top<vh*.55&&fl.getBoundingClientRect().bottom>vh*.35);if(pu){var q=pu.getBoundingClientRect(),o=1.25-Math.abs(q.top+q.height/2-vh/2)/(vh*.42);o=Math.max(0,Math.min(1,o));pu.style.setProperty('--o',(o*o*(3-2*o)).toFixed(3))}pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
  var d=(r.top+r.height/2)-vh/2;p.el.style.translate=(-d*p.x).toFixed(1)+'px '+(-d*p.s).toFixed(1)+'px'})}
 addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();
+/* Episode: opens the chat over the page; lines appear one by one (Skip shows all). #episode-<song> opens it directly. */
+(function(){var tm=0;
+function rows(d){return d.querySelectorAll('.ep-log>*')}
+function all(d){clearTimeout(tm);[].forEach.call(rows(d),function(x){x.classList.add('in')});d.querySelector('.ep-sk').hidden=true}
+function play(d){var r=rows(d),i=0,log=d.querySelector('.ep-log');log.scrollTop=0;
+ (function step(){if(!d.open||i>=r.length){if(i>=r.length)d.querySelector('.ep-sk').hidden=true;return}
+  var x=r[i++];x.classList.add('in');log.scrollTo({top:log.scrollHeight,behavior:'smooth'});
+  tm=setTimeout(step,Math.min(2100,700+x.textContent.length*55))})()}
+function open(s){var d=document.getElementById('ep-'+s);if(!d||!d.showModal||d.open)return;
+ [].forEach.call(rows(d),function(x){x.classList.remove('in')});d.querySelector('.ep-sk').hidden=false;
+ d.showModal();document.documentElement.classList.add('ep-on');history.replaceState(null,'','#episode-'+s);
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)all(d);else tm=setTimeout(function(){play(d)},380)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]');if(b){open(b.dataset.ep);return}
+ var d=e.target.closest('dialog.ep');if(!d)return;
+ if(e.target===d||e.target.closest('.ep-x'))d.close();else if(e.target.closest('.ep-ph'))e.target.closest('.ep-ph').classList.toggle('big');else if(e.target.closest('.ep-sk')){all(d);d.querySelector('.ep-log').scrollTop=0}});
+[].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);document.documentElement.classList.remove('ep-on');
+ if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
+var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
+

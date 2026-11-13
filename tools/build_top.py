@@ -88,6 +88,47 @@ MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsub
          "prs01":"ukyo-sanjo","prs02":"thane-wakamoto","orb01":"masiro-kurenai","orb02":"tadashi-kikui","orb03":"rui-hitaki","orb04":"jo-hitaki"}
 def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
 def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
+# ───────── エピソード（曲ごとのメンバーのチャット。文と写真は旧サイトのものをそのまま使う） ─────────
+# 中身は tools/episodes.json。ここに番号を足した曲だけ、曲の下に入口「Episode」が出る
+import json as _json, os as _os
+EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
+EP_ON = ["001", "002", "003"]
+ESLUG = {"001": "usukoubai", "002": "yoi-no-tsubasa", "003": "rule-the-darkness"}   # アドレス用の名前（制作用の記号は使わない）
+def _ch(cid): return next(c for c in CHARS if c[1] == cid)
+def _lum(h): return (0.299 * int(h[1:3], 16) + 0.587 * int(h[3:5], 16) + 0.114 * int(h[5:7], 16)) / 255
+def ep_btn(n, pre=""):
+    """曲の下に出す入口：話しているメンバーの丸い顔と Episode の文字（だれの話かが開く前にわかる）"""
+    if n not in EP_ON: return ""
+    who = list(dict.fromkeys(l["w"] for l in EP[n]["lines"]))
+    faces = "".join(f'<img src="{pre}images/face/{fid(_ch(w))}.webp" alt="">' for w in who)
+    return f'<p class="ep-in"><button type="button" data-ep="{ESLUG[n]}"><span class="ep-f">{faces}</span><b>Episode</b></button></p>'
+def ep_dialogs(inner, pre=""):
+    """そのページにある入口のぶんだけ、重ねて開く画面を用意する"""
+    out = ""
+    for n in EP_ON:
+        if f'data-ep="{ESLUG[n]}"' not in inner: continue
+        _, u, t, k, un = next(r for r in RELS if r[0] == n)
+        uc = next(x[6] for x in UNITS if x[1] == u)
+        rows = ""
+        for l in EP[n]["lines"]:
+            c = _ch(l["w"])
+            av = f'<img class="ep-av" src="{pre}images/face/{fid(c)}.webp" alt="">'
+            nm = f'<small>{l["n"]}</small>' if l.get("n") else ""
+            if l.get("k") == "mv":
+                bub = f'<a class="ep-mv" href="{MV.get(n, YT_CH)}"><img src="{pre}images/jacket/{JK[n]}.webp" alt=""><span><i>MV</i>{t}</span></a>'
+            elif l.get("k") == "img":
+                cap = f'<small>{l["cap"]}</small>' if l.get("cap") else ""
+                bub = f'<button class="ep-ph" type="button" aria-label="写真を大きく見る"><img src="{pre}images/episode/{l["img"]}" alt="{l.get("cap", "")}">{cap}</button>'
+            elif l.get("k") == "lc":   # 作中のお店のカード（実在のリンクではないので、押しても移動しない）
+                bub = f'<span class="ep-mv"><img src="{pre}images/episode/{l["img"]}" alt=""><span>{l["t"]}<i>{l["url"]}</i></span></span>'
+            else:
+                bub = f'<p>{l["t"]}</p>'
+            rows += f'<div class="ep-r{" me" if l["me"] else ""}">{av}<div>{nm}{bub}</div></div>'
+        out += (f'<dialog class="ep" id="ep-{ESLUG[n]}" aria-label="{t} のエピソード" style="--uc:{uc};--ut:{"#141414" if _lum(uc) > .6 else "#fff"}">'
+                f'<div class="ep-h"><img src="{pre}images/emblem/{NO[u]}.webp" alt=""><div><b>{EP[n]["room"]}</b><small>{t}</small></div>'
+                f'<button class="ep-sk" type="button">Skip</button><button class="ep-x" type="button" aria-label="閉じる"></button></div>'
+                f'<div class="ep-log" tabindex="0" autofocus>{rows}<p class="ep-end">End</p></div></dialog>')
+    return out
 def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
 def header(pre="", top=True):
     """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
@@ -116,7 +157,7 @@ def page(title, desc, pre, inner, css=(), attrs=""):
 <meta name="theme-color" content="#FAFAF8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONT}">
-{links}</head><body{attrs}>{inner}<script src="{pre}js/main.js"></script></body></html>
+{links}</head><body{attrs}>{inner}{ep_dialogs(inner, pre)}<script src="{pre}js/main.js"></script></body></html>
 '''
 def spot(cls, url=None):
     url = SPOT if url is None else url
@@ -125,7 +166,7 @@ def spot(cls, url=None):
 def body():
     rels="".join(f'''
       <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット">{jo(n)}</a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
+        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p>{ep_btn(n)}</article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -282,6 +323,40 @@ h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px v
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 /* song links: a small joined row of boxes, same language as the big buttons; the first one (MV) is filled = the thing to press first */
+/* episode: entry under a song (round faces of the members who talk + label) */
+.ep-in{margin:10px 0 0}
+.ep-in button{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;min-height:40px;display:inline-flex;align-items:center;gap:10px;font:italic 500 17px/1 var(--en);letter-spacing:.03em}
+.ep-f{display:flex}.ep-f img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--bg);margin-left:-9px}.ep-f img:first-child{margin-left:-2px}
+.ep-in b{font-weight:500;padding-bottom:3px;border-bottom:1px solid var(--ink);transition:opacity .25s}.ep-in button:hover b{opacity:.55}
+/* episode: the chat opens over the page. phone = whole screen, wider = a tall sheet in the middle */
+html.ep-on{overflow:hidden}
+.ep{border:0;padding:0;margin:0;inset:0;width:100%;height:100%;max-width:none;max-height:none;background:var(--bg);color:var(--ink);flex-direction:column;overflow:hidden}
+.ep[open]{display:flex;animation:epIn .45s cubic-bezier(.16,1,.3,1)}
+.ep::backdrop{background:rgba(20,20,20,.7)}
+@keyframes epIn{from{opacity:0;translate:0 28px}}
+.ep-h{flex:none;display:flex;align-items:center;gap:12px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--ink)}
+.ep-h>img{width:36px;height:36px;object-fit:contain}
+.ep-h>div{min-width:0;margin-right:auto}.ep-h b{display:block;font:500 17px/1.3 var(--en);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ep-h small{display:block;font:500 12px/1.5 var(--min);color:var(--sub);letter-spacing:.06em}
+.ep-h button{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;min-height:44px}
+.ep-sk{padding-inline:10px!important;font:italic 500 16px/1 var(--en)}
+.ep-x{position:relative;width:44px}.ep-x::before,.ep-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.ep-x::after{rotate:-45deg}
+.ep-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 16px 34px;display:flex;flex-direction:column;gap:14px;outline:0}
+.ep-r{display:flex;align-items:flex-end;gap:9px;max-width:88%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
+.ep-av{flex:none;width:36px;height:36px;border-radius:50%;object-fit:cover}
+.ep-r>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}.ep-r.me>div{align-items:flex-end}
+.ep-r small{margin:0 6px 3px;font:400 12px/1.4 var(--jp);color:var(--sub);letter-spacing:.06em}
+.ep-r p{margin:0;padding:9px 15px;border:1px solid var(--ink);border-radius:20px;font:400 15px/1.7 var(--jp);letter-spacing:.03em;white-space:pre-line}
+.ep-r.me p{background:var(--uc);border-color:var(--uc);color:var(--ut)}
+.ep-mv{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border:1px solid var(--ink);border-radius:20px;font:500 15px/1.4 var(--min)}
+.ep-mv img{width:64px;height:64px;border-radius:13px;object-fit:cover}.ep-mv i{display:block;font:italic 500 14px/1.3 var(--en);color:var(--sub)}
+.ep-ph{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;cursor:zoom-in;text-align:left}.ep-ph img{display:block;width:min(240px,62vw);border-radius:20px;transition:width .45s cubic-bezier(.16,1,.3,1)}
+.ep-ph.big{cursor:zoom-out}.ep-ph.big img{width:min(100%,560px)}.ep-ph small{margin:6px 6px 0!important;font-family:var(--min)!important}
+.ep-r:has(.ep-ph.big){max-width:100%}
+.ep-end{align-self:center;margin:10px 0 0;font:italic 500 15px/1 var(--en);color:var(--sub);letter-spacing:.08em}
+.js .ep-log>:not(.in){display:none}.js .ep-log>.in{animation:epRow .5s cubic-bezier(.16,1,.3,1)}
+@keyframes epRow{from{opacity:0;translate:0 12px}}
+@media(min-width:700px){.ep{inset:0;margin:auto;width:460px;height:min(92vh,780px)}.ep-log{padding:26px 22px 38px}}
+@media(prefers-reduced-motion:reduce){.ep[open]{animation:none}.js .ep-log>.in{animation:none}.ep-ph img{transition:none}}
 .lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
 .lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
 .lk>*+*,.lk>button{border-left:1px solid var(--ink)}
@@ -424,7 +499,26 @@ var px=[].slice.call(document.querySelectorAll('[data-speed],[data-speedx]')).ma
 var pu=document.querySelector('.pu-fr'),us=document.getElementById('units'),fl=document.querySelector('.flags');
 function fr(){tk=false;var vh=innerHeight;if(us&&fl)document.documentElement.classList.toggle('in-units',us.getBoundingClientRect().top<vh*.55&&fl.getBoundingClientRect().bottom>vh*.35);if(pu){var q=pu.getBoundingClientRect(),o=1.25-Math.abs(q.top+q.height/2-vh/2)/(vh*.42);o=Math.max(0,Math.min(1,o));pu.style.setProperty('--o',(o*o*(3-2*o)).toFixed(3))}pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
  var d=(r.top+r.height/2)-vh/2;p.el.style.translate=(-d*p.x).toFixed(1)+'px '+(-d*p.s).toFixed(1)+'px'})}
-addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();"""
+addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();
+/* Episode: opens the chat over the page; lines appear one by one (Skip shows all). #episode-<song> opens it directly. */
+(function(){var tm=0;
+function rows(d){return d.querySelectorAll('.ep-log>*')}
+function all(d){clearTimeout(tm);[].forEach.call(rows(d),function(x){x.classList.add('in')});d.querySelector('.ep-sk').hidden=true}
+function play(d){var r=rows(d),i=0,log=d.querySelector('.ep-log');log.scrollTop=0;
+ (function step(){if(!d.open||i>=r.length){if(i>=r.length)d.querySelector('.ep-sk').hidden=true;return}
+  var x=r[i++];x.classList.add('in');log.scrollTo({top:log.scrollHeight,behavior:'smooth'});
+  tm=setTimeout(step,Math.min(2100,700+x.textContent.length*55))})()}
+function open(s){var d=document.getElementById('ep-'+s);if(!d||!d.showModal||d.open)return;
+ [].forEach.call(rows(d),function(x){x.classList.remove('in')});d.querySelector('.ep-sk').hidden=false;
+ d.showModal();document.documentElement.classList.add('ep-on');history.replaceState(null,'','#episode-'+s);
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)all(d);else tm=setTimeout(function(){play(d)},380)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]');if(b){open(b.dataset.ep);return}
+ var d=e.target.closest('dialog.ep');if(!d)return;
+ if(e.target===d||e.target.closest('.ep-x'))d.close();else if(e.target.closest('.ep-ph'))e.target.closest('.ep-ph').classList.toggle('big');else if(e.target.closest('.ep-sk')){all(d);d.querySelector('.ep-log').scrollTop=0}});
+[].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);document.documentElement.classList.remove('ep-on');
+ if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
+var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
+"""
 
 def main():
     html = page("Humming Hearts OFFICIAL SITE", DESC, "", body())

@@ -55,7 +55,7 @@ def unit_page(u):
     more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
     rels = "".join(f'''
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
-        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}</p></article>''' for n, ru, t, k, un in T.RELS if ru == u)
+        <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}</p>{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{UNIT[o]["name"]}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
     inner = f'''{T.header(PRE, top=False)}
 <main>
@@ -83,7 +83,7 @@ def songs_page():
     cards = "".join(f'''
       <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}" data-u="{T.SLUG[ru]}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
         <h3>{T.rb(t, k)}</h3><p class="by">{un}</p><p class="sg-m">{"".join(f'<button class="tg" type="button" data-v="{esc(m)}">{esc(m)}</button>' for m in T.MOOD.get(n, []))}</p>
-        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">{T.TRY}</button>' if T.tid(n) else ""}</p></article>''' for n, ru, t, k, un in T.RELS)
+        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">{T.TRY}</button>' if T.tid(n) else ""}</p>{T.ep_btn(n, pre)}</article>''' for n, ru, t, k, un in T.RELS)
     inner = f'''{T.header(pre, top=False)}
 <main>
 <section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
