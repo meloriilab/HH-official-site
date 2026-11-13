@@ -114,6 +114,8 @@ if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
 draw()})();"""
 
 # 開いた直後にも帯が伸びる動きを見せるため、最初の1コマを描いてから「準備できた」の印を付ける
+# 【お試し】タグの形の案を見比べるための切り替え（アドレスの最後に ?tag=1 / 2 / 4）。形が決まったら消す
+TGV = "(function(){var m=location.search.match(/[?&]tag=([124])/);if(!m)return;document.documentElement.classList.add('tg'+m[1]);document.querySelectorAll('.ch-nv a').forEach(function(a){a.href+='?tag='+m[1]})})();"
 RDY = "requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('rdy')})})"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
@@ -153,7 +155,7 @@ def char_page(cid):
 <section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}<script>{SWJS}</script><script>{RDY}</script>'''
+{T.footer()}<script>{SWJS}</script><script>{TGV}{RDY}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
@@ -252,6 +254,25 @@ CSS = """
  .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
  .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
  @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
+ /* 【お試し】案1：右端をななめに切る */
+ .tg1 .tags-a li{padding-right:36px}
+ .tg1.js .tags-a li{clip-path:polygon(0 0,0 0,0 100%,0 100%)}
+ .tg1.rdy .fv.lit .tags-a li{clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+ /* 【お試し】案2：帯をやめて細い線 */
+ .tg2 .tags-a{gap:12px}
+ .tg2 .tags-a li{position:relative;background:none;color:#141414;padding:4px 6px 7px 26px}
+ .tg2.js .tags-a li,.tg2.rdy .fv.lit .tags-a li{clip-path:none}
+ .tg2 .tags-a li::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:#141414;transform-origin:left;transition:transform .45s cubic-bezier(.7,0,.84,0)}
+ .tg2.js .tags-a li::after{transform:scaleX(0)}
+ .tg2.js .tags-a li:nth-child(2)::after{transition-delay:.07s}.tg2.js .tags-a li:nth-child(1)::after{transition-delay:.14s}
+ .tg2.rdy .fv.lit .tags-a li::after{transform:none;transition:transform .75s cubic-bezier(.16,1,.3,1) .45s}
+ .tg2.rdy .fv.lit .tags-a li:nth-child(2)::after{transition-delay:.57s}.tg2.rdy .fv.lit .tags-a li:nth-child(3)::after{transition-delay:.69s}
+ /* 【お試し】案4：両端を丸くする */
+ .tg4 .tags-a{left:26px;gap:10px}
+ .tg4 .tags-a li{padding-inline:22px}
+ .tg4.js .tags-a li{clip-path:inset(0 100% 0 0 round 99px)}
+ .tg4.rdy .fv.lit .tags-a li{clip-path:inset(0 round 99px)}
+ @media(prefers-reduced-motion:reduce){.tg1.js .tags-a li{clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}.tg4.js .tags-a li{clip-path:inset(0 round 99px)}.tg2.js .tags-a li::after{transform:none;transition:none}}
  .ch-t .tags{display:none}
 }
 .ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
