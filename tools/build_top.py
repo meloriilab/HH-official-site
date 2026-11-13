@@ -41,6 +41,12 @@ PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
 MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu.be/Juhtev74lgU", "001": "https://youtu.be/gt1lyf8tnD0", "005": "https://youtu.be/Qr1X9lWdtyc"}
 # 気分の言葉（仮。確定版が来たら差し替える）と、曲ごとの気分（仮。題名とジャケットからの見立て。1曲に複数可）
 MOODS = ["おはよ","ノリノリ","闘志","真夜中","まったり","恋してる","恋したい","和と雅"]
+# ジャケットにカーソルを乗せたときに出す内容: 番号 -> (リリース日, 作詞, 作曲)。わからない欄は空（空の行は画面に出さない）
+# 作詞・作曲はスタッフ用ツールの取り込みデータ（2026年の楽曲一覧）から。リリース日は未確定
+CRED = {"001":("","川瀬帝翔","燕谷航"),"002":("","月嶺隼瞳","月嶺隼瞳"),"003":("","烏丸蓮司","筧傑"),"004":("","三条羽響","三条羽響"),"005":("","若本セイン","三条羽響")}
+def jo(n):
+    rows = "".join(f"<small>{l}</small><span>{v}</span>" for l, v in zip(("リリース","作詞","作曲"), CRED.get(n, ("","",""))) if v)
+    return f'<i class="jo-p" aria-hidden="true"></i>' + (f'<span class="jo-c">{rows}</span>' if rows else "")
 MOOD = {"004":["まったり","和と雅"],"003":["闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ノリノリ"]}
 def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
 TRY = "Listen"   # プレイヤーを開くボタンの名前（ログイン中はフルで流れるので「試聴」とは書かない）
@@ -114,7 +120,7 @@ def spot(cls, url=None):
 
 def body():
     rels="".join(f'''
-      <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット"></a>
+      <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット">{jo(n)}</a>
         <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
@@ -299,7 +305,19 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
 .ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
-.rel .ph{display:block;overflow:hidden;aspect-ratio:1}
+.rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
+/* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
+.jo-p,.jo-c{display:none}
+@media(hover:hover){
+ .rel .ph::after{content:"";position:absolute;inset:0;background:rgba(20,20,20,.22);opacity:0;transition:opacity .3s}
+ .jo-p{display:block;position:absolute;z-index:1;left:50%;top:50%;margin:-17px 0 0 -11px;border-left:28px solid #fff;border-block:17px solid transparent;opacity:0;scale:.8;transition:opacity .3s,scale .45s cubic-bezier(.16,1,.3,1)}
+ .jo-c{display:grid;position:absolute;z-index:1;inset:auto 0 0;grid-template-columns:auto 1fr;gap:2px 14px;padding:12px 16px 13px;background:rgba(20,20,20,.78);color:#f4f4f0;font:400 13px/1.7 var(--jp);letter-spacing:.06em;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
+ .jo-c small{font-size:11px;line-height:2;opacity:.72}
+ .rel .ph:hover::after,.rel .ph:focus-visible::after,.rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{opacity:1}
+ .rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{scale:1}
+ .rel .ph:hover .jo-c,.rel .ph:focus-visible .jo-c{translate:0}
+ @media(prefers-reduced-motion:reduce){.jo-p,.jo-c,.rel .ph::after{transition:none}}
+}
 /* unit flags: full-width, stack over the previous one; grey until they take the screen */
 .flags{margin-top:8px}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
