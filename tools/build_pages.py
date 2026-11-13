@@ -113,6 +113,8 @@ try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){va
 if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
 draw()})();"""
 
+# 見比べ用：住所の末尾に ?bird=1 を付けると、モチーフの鳥が「案1」の置き方になる（決まったら外す）
+BJS = "if(/[?&]bird=1/.test(location.search)){var m=document.getElementById('motif');if(m)m.classList.add('b1')}"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
 def char_page(cid):
@@ -131,7 +133,7 @@ def char_page(cid):
     lum = sum(w * (v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4) for w, v in zip((.2126, .7152, .0722), (r, g, b)))
     tags_a = tags.replace('class="tags"', f'class="tags-a" style="--tc:{"#141414" if lum > .36 else "#fff"}"') if tags else ""
     # モチーフの鳥の絵（ある人だけ）。モチーフの段の背景に置き、スクロールでゆっくりずれる
-    bird = f'<img class="mt-b" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" data-speed=".16">' if os.path.exists(os.path.join(HERE, "..", "public", "images", "bird", T.aid(c) + ".webp")) else ""
+    bird = f'<img class="mt-b" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" data-speed=".08">' if os.path.exists(os.path.join(HERE, "..", "public", "images", "bird", T.aid(c) + ".webp")) else ""
     mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1", ".06"]))
     i = ORDER.index(cid); pv, nx = CH[ORDER[i - 1]], CH[ORDER[(i + 1) % len(ORDER)]]
     # 前後のメンバーへ移る丸いボタン（名前の段の右上。ページのいちばん下の Prev / Next と同じ行き先）
@@ -150,7 +152,7 @@ def char_page(cid):
 <section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}<script>{SWJS}</script>'''
+{T.footer()}<script>{SWJS}</script><script>{BJS}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
@@ -232,9 +234,14 @@ CSS = """
 .ch-t{position:relative;padding:30px 24px 0}
 .ch-p,.n-pc,.tags-a{display:none}
 /* motif bird: below the text on phones, beside the text on wide screens; it never sits under the words */
-.has-b{padding-bottom:calc(62vw + 20px)}.has-b .mt-p{position:relative;z-index:1}
-.mt-b{position:absolute;z-index:0;right:-4vw;bottom:0;width:92vw;max-width:none;height:auto;pointer-events:none}
-@media(min-width:700px){.has-b{padding-bottom:120px}.has-b .mt-p{max-width:44%}.mt-b{right:-3vw;bottom:auto;top:calc(50% - 4vw);width:54vw;max-width:820px}}
+/* 案2（既定）: 絵を縮めて、段の中に全部おさめる */
+.has-b{padding-bottom:calc(58vw + 150px)}.has-b .mt-p{position:relative;z-index:1}
+.mt-b{position:absolute;z-index:0;left:8vw;bottom:90px;width:84vw;max-width:none;height:auto;pointer-events:none}
+@media(min-width:700px){.has-b{padding-bottom:240px}.has-b .mt-p{max-width:44%}.mt-b{left:auto;right:max(32px,calc(50% - 540px));bottom:auto;top:calc(50% - 40px);width:min(46vw,560px)}}
+/* 案1（?bird=1 で見比べ用）: 下から2番目の層に大きく薄く置き、文字と少し重なってよい */
+.b1.has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}
+.b1 .mt-b{left:3vw;bottom:auto;top:230px;width:94vw;opacity:.42}
+@media(min-width:700px){.b1.has-b{padding-bottom:150px;min-height:0}.b1.has-b .mt-p{max-width:640px}.b1 .mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}.b1.has-b{min-height:calc(min(62vw,760px)*.68 + 380px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}}
 @media(min-width:700px){
  .tags-a{position:absolute;z-index:4;left:0;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
