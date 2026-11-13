@@ -45,7 +45,10 @@ MOODS = ["おはよ","ノリノリ","闘志","真夜中","まったり","恋し�
 # 作詞・作曲・日付はスタッフ用ツールの書き出し（2026-11-13）から。リリース日は「ショートMV公開」の日を仮に使用（どの日を出すかは未確定）
 CRED = {"001":("2026.08.12","川瀬帝翔","燕谷航"),"002":("2026.08.22","月嶺隼瞳","月嶺隼瞳"),"003":("2026.09.25","烏丸蓮司","筧傑"),"004":("2026.10.16","三条羽響","三条羽響"),"005":("2026.09.11","若本セイン","三条羽響")}
 def jo(n):
-    rows = "".join(f"<small>{l}</small><span>{v}</span>" for l, v in zip(("リリース","作詞","作曲"), CRED.get(n, ("","",""))) if v)
+    # 見出しは英字の斜体（Release / Lyrics / Music）、日付は英字、名前は明朝。作詞と作曲が同じ人なら1つにまとめる
+    d, ly, mu = CRED.get(n, ("", "", ""))
+    who = [("Lyrics &amp; Music", ly)] if ly and ly == mu else [(l, v) for l, v in (("Lyrics", ly), ("Music", mu)) if v]
+    rows = (f'<span class="jo-d"><i>Release</i>{d}</span>' if d else "") + (f'<span class="jo-n">{"".join(f"<span><i>{l}</i>{v}</span>" for l, v in who)}</span>' if who else "")
     return f'<i class="jo-p" aria-hidden="true"></i>' + (f'<span class="jo-c">{rows}</span>' if rows else "")
 MOOD = {"004":["まったり","和と雅"],"003":["闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ノリノリ"]}
 def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
@@ -311,8 +314,12 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 @media(hover:hover){
  .rel .ph::after{content:"";position:absolute;inset:0;background:rgba(20,20,20,.22);opacity:0;transition:opacity .3s}
  .jo-p{display:block;position:absolute;z-index:1;left:50%;top:50%;margin:-17px 0 0 -11px;border-left:28px solid #fff;border-block:17px solid transparent;opacity:0;scale:.8;transition:opacity .3s,scale .45s cubic-bezier(.16,1,.3,1)}
- .jo-c{display:grid;position:absolute;z-index:1;inset:auto 0 0;grid-template-columns:auto 1fr;gap:2px 14px;padding:12px 16px 13px;background:rgba(20,20,20,.78);color:#f4f4f0;font:400 13px/1.7 var(--jp);letter-spacing:.06em;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
- .jo-c small{font-size:11px;line-height:2;opacity:.72}
+ .jo-c{display:block;position:absolute;z-index:1;inset:auto 0 0;padding:14px 18px 15px;background:rgba(20,20,20,.78);color:#f4f4f0;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
+ .jo-c i{font:italic 500 14px/1 var(--en);letter-spacing:.04em;opacity:.7}
+ .jo-d{display:flex;align-items:baseline;gap:10px;font:500 21px/1.2 var(--en);letter-spacing:.06em}
+ .jo-n{display:flex;flex-wrap:wrap;gap:4px 22px;font:500 15px/1.6 var(--min);letter-spacing:.08em}
+ .jo-d+.jo-n{margin-top:9px;padding-top:9px;border-top:1px solid rgba(244,244,240,.28)}
+ .jo-n span{display:inline-flex;align-items:baseline;gap:9px;white-space:nowrap}
  .rel .ph:hover::after,.rel .ph:focus-visible::after,.rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{opacity:1}
  .rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{scale:1}
  .rel .ph:hover .jo-c,.rel .ph:focus-visible .jo-c{translate:0}
