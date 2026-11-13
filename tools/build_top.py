@@ -148,8 +148,11 @@ def header(pre="", top=True):
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{sec("release")}">Release<small>楽曲</small></a><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer():
     return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+# 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
+import hashlib as _hl, glob as _gl
+VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
 def page(title, desc, pre, inner, css=(), attrs=""):
-    links="".join(f'<link rel="stylesheet" href="{pre}css/{c}">' for c in ("style.css",)+tuple(css))
+    links="".join(f'<link rel="stylesheet" href="{pre}css/{c}?v={VER}">' for c in ("style.css",)+tuple(css))
     return f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
@@ -157,7 +160,7 @@ def page(title, desc, pre, inner, css=(), attrs=""):
 <meta name="theme-color" content="#FAFAF8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONT}">
-{links}</head><body{attrs}>{inner}{ep_dialogs(inner, pre)}<script src="{pre}js/main.js"></script></body></html>
+{links}</head><body{attrs}>{inner}{ep_dialogs(inner, pre)}<script src="{pre}js/main.js?v={VER}"></script></body></html>
 '''
 def spot(cls, url=None):
     url = SPOT if url is None else url
