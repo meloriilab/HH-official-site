@@ -20,7 +20,7 @@ PRE = "../"
 # キャラ性を表すタグ（K さんが決めた言葉そのまま）。無い人は「未確定」で、タグの段を出さない
 TAGS = {"trt01": ["ストイックなカワセミ", "渓流釣り", "魚は骨だけ残す職人芸"],
         "trt02": ["ムードメーカーなメジロ", "実は茶道家三男坊", "スイーツラブ"],
-        "trt03": ["フッ軽なツバメ", "三味線", "写真好き"]}
+        "trt03": ["風まかせな旅ツバメ", "三味線", "写真好き"]}
 
 
 UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana, tg, c, cnt in T.UNITS}
@@ -113,6 +113,8 @@ try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){va
 if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
 draw()})();"""
 
+# 開いた直後にも帯が伸びる動きを見せるため、最初の1コマを描いてから「準備できた」の印を付ける
+RDY = "requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('rdy')})})"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
 def char_page(cid):
@@ -130,6 +132,7 @@ def char_page(cid):
     r, g, b = (int(col["main"][i:i + 2], 16) / 255 for i in (1, 3, 5))
     lum = sum(w * (v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4) for w, v in zip((.2126, .7152, .0722), (r, g, b)))
     tags_a = tags.replace('class="tags"', f'class="tags-a" style="--tc:{"#141414" if lum > .36 else "#fff"}"') if tags else ""
+    tags_a = tags_a.replace("<li>", "<li><span>").replace("</li>", "</span></li>")
     # モチーフの鳥の絵（ある人だけ）。モチーフの段の背景に置き、スクロールでゆっくりずれる
     bird = f'<img class="mt-b" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" data-speed=".08">' if os.path.exists(os.path.join(HERE, "..", "public", "images", "bird", T.aid(c) + ".webp")) else ""
     mates = "".join(face(i.lower(), s) for i, s in zip([x for x in UD[u]["members"] if x.lower() != cid], [".0", "-.1", ".06"]))
@@ -150,7 +153,7 @@ def char_page(cid):
 <section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{m["name"]}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}<script>{SWJS}</script>'''
+{T.footer()}<script>{SWJS}</script><script>{RDY}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
@@ -239,7 +242,16 @@ CSS = """
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}}
 @media(min-width:700px){
  .tags-a{position:absolute;z-index:4;left:0;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
- .tags-a li{padding:7px 16px 7px 26px;background:var(--cm);color:var(--tc);font:500 15px/1.5 var(--jp);letter-spacing:.06em;animation:pFade .4s ease .9s both}
+ .tags-a li{padding:7px 16px 7px 26px;background:var(--cm);color:var(--tc);font:500 15px/1.5 var(--jp);letter-spacing:.06em}
+ /* タグの帯の出入り: 絵が画面の真ん中に来たら、左の端から帯が1本ずつ伸び、文字があとから追いつく。離れると下の帯から順に左へ戻る（絵と同じ合図で動かす） */
+ .js .tags-a li{clip-path:inset(0 100% 0 0);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
+ .js .tags-a li span{display:inline-block;opacity:0;transform:translateX(-18px);transition:opacity .2s ease,transform .3s ease}
+ .js .tags-a li:nth-child(2){transition-delay:.07s}.js .tags-a li:nth-child(1){transition-delay:.14s}
+ .rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
+ .rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
+ .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
+ .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
+ @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
  .ch-t .tags{display:none}
 }
 .ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
