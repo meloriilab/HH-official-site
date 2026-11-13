@@ -49,7 +49,8 @@ def jo(n):
     d, ly, mu = CRED.get(n, ("", "", ""))
     who = [("Lyrics &amp; Music", ly)] if ly and ly == mu else [(l, v) for l, v in (("Lyrics", ly), ("Music", mu)) if v]
     rows = (f'<span class="jo-d"><i>Release</i>{d}</span>' if d else "") + (f'<span class="jo-n">{"".join(f"<span><i>{l}</i>{v}</span>" for l, v in who)}</span>' if who else "")
-    return f'<i class="jo-p" aria-hidden="true"></i>' + (f'<span class="jo-c">{rows}</span>' if rows else "")
+    # 再生ボタンは、クレジットの帯を除いた残りの高さの真ん中に置く（.jo が縦に並べ、.jo-a が残りを全部使う）
+    return f'<span class="jo"><span class="jo-a"><i class="jo-p" aria-hidden="true"></i></span>' + (f'<span class="jo-c">{rows}</span>' if rows else "") + '</span>'
 MOOD = {"004":["まったり","和と雅"],"003":["闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ノリノリ"]}
 def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
 TRY = "Listen"   # プレイヤーを開くボタンの名前（ログイン中はフルで流れるので「試聴」とは書かない）
@@ -310,11 +311,18 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
-.jo-p,.jo-c{display:none}
+.jo{display:none}
 @media(hover:hover){
  .rel .ph::after{content:"";position:absolute;inset:0;background:rgba(20,20,20,.22);opacity:0;transition:opacity .3s}
- .jo-p{display:block;position:absolute;z-index:1;left:50%;top:50%;margin:-17px 0 0 -11px;border-left:28px solid #fff;border-block:17px solid transparent;opacity:0;scale:.8;transition:opacity .3s,scale .45s cubic-bezier(.16,1,.3,1)}
- .jo-c{display:block;position:absolute;z-index:1;inset:auto 0 0;padding:14px 18px 15px;background:rgba(20,20,20,.78);color:#f4f4f0;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
+ .jo{display:flex;flex-direction:column;position:absolute;z-index:1;inset:0}
+ .jo-a{flex:1;min-height:0;display:grid;place-items:center}
+ /* play mark: a hairline ring (same 1px line language as the page) with a small triangle; one thin ring spreads out once on hover, like sound */
+ .jo-p{position:relative;width:72px;height:72px;border:1px solid rgba(255,255,255,.92);border-radius:50%;background:rgba(20,20,20,.14);opacity:0;scale:.84;transition:opacity .3s,scale .55s cubic-bezier(.16,1,.3,1)}
+ .jo-p::before{content:"";position:absolute;left:50%;top:50%;translate:-36% -50%;border-left:17px solid #fff;border-block:10px solid transparent}
+ .jo-p::after{content:"";position:absolute;inset:-1px;border:1px solid #fff;border-radius:50%;opacity:0}
+ .rel .ph:hover .jo-p::after,.rel .ph:focus-visible .jo-p::after{animation:joR 1s cubic-bezier(.2,.6,.3,1) .12s 1}
+ @keyframes joR{from{opacity:.75;scale:1}to{opacity:0;scale:1.6}}
+ .jo-c{display:block;padding:14px 18px 15px;background:rgba(20,20,20,.78);color:#f4f4f0;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
  .jo-c i{font:italic 500 14px/1 var(--en);letter-spacing:.04em;opacity:.7}
  .jo-d{display:flex;align-items:baseline;gap:10px;font:500 21px/1.2 var(--en);letter-spacing:.06em}
  .jo-n{display:flex;flex-wrap:wrap;gap:4px 22px;font:500 15px/1.6 var(--min);letter-spacing:.08em}
@@ -323,7 +331,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .rel .ph:hover::after,.rel .ph:focus-visible::after,.rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{opacity:1}
  .rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{scale:1}
  .rel .ph:hover .jo-c,.rel .ph:focus-visible .jo-c{translate:0}
- @media(prefers-reduced-motion:reduce){.jo-p,.jo-c,.rel .ph::after{transition:none}}
+ @media(prefers-reduced-motion:reduce){.jo-p,.jo-c,.rel .ph::after{transition:none}.rel .ph .jo-p::after{animation:none!important}}
 }
 /* unit flags: full-width, stack over the previous one; grey until they take the screen */
 .flags{margin-top:8px}
