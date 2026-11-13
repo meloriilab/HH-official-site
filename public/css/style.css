@@ -17,6 +17,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
 .up{position:relative;display:block;min-width:0}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
+.up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
 .row{display:flex;gap:0;margin:0;border:1px solid var(--ink)}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
@@ -200,6 +201,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .flag.lit{filter:none}
 .f-txt{display:block;padding:72px 24px 24px}
 .f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
+.kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
 .f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.16em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
 .f-mem{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid currentColor;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font:500 15px/1.7 var(--min)}

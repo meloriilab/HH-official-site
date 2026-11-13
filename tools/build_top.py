@@ -1,3 +1,4 @@
+import re
 # -*- coding: utf-8 -*-
 """トップページを組み立てる道具。
 
@@ -21,7 +22,7 @@ CHARS = [("TRT01","trt01","川瀬","帝翔","かわせ","みこと","#23989E"),(
          ("PRS01","prs01","三条","羽響","さんじょう","うきょう","#0D86C8"),("PRS02","prs02","若本","セイン","わかもと","","#C9A21E"),
          ("BLC01","blc01","烏丸","蓮司","からすま","れんじ","#473548"),("BLC02","blc02","笠木","涼佑","かさぎ","りょうすけ","#2B83AA"),("BLC03","blc03","筧","傑","かけい","すぐる","#1E9BD0"),
          ("ORB01","orb01","紅","ましろ","くれない","","#E3426A"),("ORB02","orb02","菊井","律","きくい","ただし","#B8A51F"),("ORB03","orb03","日滝","ルイ","ひたき","","#2A79C3"),("ORB04","orb04","日滝","ジョウ","ひたき","","#E28126")]
-UNITS = [("01","trt","TRT","Triattique","トリアティーク","日本の身近な野鳥 × 和ロック","#23989E",3),
+UNITS = [("01","trt","TRT","トリアティーク","","日本の身近な野鳥 × 和ロック","#23989E",3),
          ("02","nct","NCT","NocturnalFizz","ノクターナルフィズ","猛禽兄弟 × ジャズ","#B08A3E",2),
          ("03","prs","PRS","Prisméa","プリズメア","シティポップ・デュオ","#0D86C8",2),
          ("04","blc","BLC","Blackveil Harmonic","ブラックヴェイル・ハーモニック","カラスたちの宴 × ロック","#5B4560",3),
@@ -30,7 +31,7 @@ UNITS = [("01","trt","TRT","Triattique","トリアティーク","日本の身近
 # 曲の一覧（新しいものを上に）: (番号, ユニット, 曲名, ふりがな, ユニット名)
 # ジャケットの絵は images/jacket/<ユニット番号>-<そのユニットの何曲目か>.webp（題名なし版は _notitle 付き）
 JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
-RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique"),("005","prs","Midnight Mirage","","Prisméa")]   # 並び順は未確定（先頭＝いちばん新しい曲だけ確定）
+RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク"),("005","prs","Midnight Mirage","","Prisméa")]   # 並び順は未確定（先頭＝いちばん新しい曲だけ確定）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
@@ -75,7 +76,11 @@ DESC = "鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲�
 # 画像のファイル名とページ内の行き先には、制作用の記号（TRT など）を使わない
 NO = {u: no for no, u, *_ in UNITS}
 SLUG = {u: n.lower().replace(" ", "-").replace("é", "e") for no, u, code, n, *_ in UNITS}
+SLUG["trt"] = "triattique"   # 表記はカタカナ（公式表記）。アドレスは半角のまま変えない（2026-11-13）
 def members_of(u): return [c for c in CHARS if c[1].startswith(u)]
+def kn(n):
+    # ユニット名がカタカナのとき（公式表記がカタカナのユニット）は、欧文の書体が当たらないので、明朝に切り替える印を付ける
+    return f'<span class="kn">{n}</span>' if re.search("[ァ-ヶ]", n) else n
 def name(c): return rb(c[2], c[4]) + rb(c[3], c[5])
 def fid(c): return f"{NO[c[1][:3]]}-{int(c[1][3:])}"
 # 立ち絵のファイル番号は素材フォルダの並び順で、ORYBIA だけ顔アイコンの番号と違う（素材フォルダの対応表どおり）
@@ -140,7 +145,7 @@ def header(pre="", top=True):
         rows = "".join(
             f'<a href="{mhref(c,pre)}">{c[2]} {c[3]}</a>' if mhref(c) else f'<span>{c[2]} {c[3]}</span>' for c in ms)
         drop = f'<span class="up-m">{rows}</span>' if ms else ""
-        return f'<span class="up"><a class="up-a" href="{uhref(u,pre)}" data-u="{SLUG[u]}">{n}</a>{drop}</span>'
+        return f'<span class="up"><a class="up-a" href="{uhref(u,pre)}" data-u="{SLUG[u]}">{kn(n)}</a>{drop}</span>'
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS)
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
@@ -169,7 +174,7 @@ def spot(cls, url=None):
 def body():
     rels="".join(f'''
       <article class="rel" data-speed="{sp}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット">{jo(n)}</a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p>{ep_btn(n)}</article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
+        <h3>{rb(t,k)}</h3><p class="by">{kn(un)}</p><p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}</p>{ep_btn(n)}</article>''' for (n,u,t,k,un),sp in zip(RELS,[".04",".1","-.12",".08","-.1"]))
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -177,7 +182,7 @@ def body():
         tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">プロフィール</span>') if u in PAGES else ("div","div","")
         return f'''
       <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
-        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{n}</span><span class="f-kana">{kana}</span><span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
+        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
         <span class="f-pic">{art}</span></{end}>'''
     units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS))
     def face(c):
@@ -237,6 +242,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
 .up{position:relative;display:block;min-width:0}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
+.up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
 .row{display:flex;gap:0;margin:0;border:1px solid var(--ink)}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
@@ -420,6 +426,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .flag.lit{filter:none}
 .f-txt{display:block;padding:72px 24px 24px}
 .f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
+.kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
 .f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.16em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
 .f-mem{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid currentColor;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font:500 15px/1.7 var(--min)}
