@@ -21,7 +21,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');
+document.documentElement.classList.add('js');if(/[?&]top=1/.test(location.search))document.documentElement.classList.add('t1');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
@@ -60,4 +60,19 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]'
 [].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);noty(d);document.documentElement.classList.remove('ep-on');
  if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
 var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
+
+/* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
+(function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;
+function shut(){if(pop){pop.remove();pop=null;b.setAttribute('aria-expanded','false')}}
+b.addEventListener('click',function(e){e.stopPropagation();var m=document.querySelector('meta[name="share"]'),t=(m&&m.content)||document.title,u=location.href;
+ if(navigator.share&&matchMedia('(pointer:coarse)').matches){navigator.share({title:document.title,text:t,url:u}).catch(function(){});return}
+ if(pop){shut();return}
+ pop=document.createElement('p');pop.className='sh-p';
+ var x=document.createElement('a');x.className='btn';x.textContent='X';x.target='_blank';x.rel='noopener';x.href='https://x.com/intent/post?text='+encodeURIComponent(t)+'&url='+encodeURIComponent(u);
+ var c=document.createElement('button');c.type='button';c.className='btn';c.textContent='Copy';
+ c.addEventListener('click',function(ev){ev.stopPropagation();var done=function(){c.textContent='Copied';setTimeout(shut,900)};
+  if(navigator.clipboard)navigator.clipboard.writeText(u).then(done,function(){prompt('',u)});else prompt('',u)});
+ pop.appendChild(x);pop.appendChild(c);document.body.appendChild(pop);
+ var r=b.getBoundingClientRect();pop.style.margin='0';pop.style.top=(r.bottom+scrollY+4)+'px';pop.style.left=Math.max(8,Math.min(r.right-216,innerWidth-224))+'px';b.setAttribute('aria-expanded','true')});
+addEventListener('click',shut);addEventListener('keydown',function(e){if(e.key==='Escape')shut()});addEventListener('resize',shut)})();
 
