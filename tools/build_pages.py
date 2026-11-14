@@ -67,7 +67,7 @@ def unit_page(u):
     more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
     rels = "".join(f'''
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
-        <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p><p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}</p>{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
+        <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{T.kn(UNIT[o]["name"])}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
     inner = f'''{T.header(PRE, top=False)}
 <main>
@@ -95,7 +95,7 @@ def songs_page():
     cards = "".join(f'''
       <article class="rel" data-m="{esc("|".join(T.MOOD.get(n, [])))}" data-u="{T.SLUG[ru]}"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{pre}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
         <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p><p class="sg-m">{"".join(f'<button class="tg" type="button" data-v="{esc(m)}">{esc(m)}</button>' for m in T.MOOD.get(n, []))}</p>
-        <p class="lk"><a href="{T.MV.get(n, T.YT_CH)}">MV</a>{T.spot("", T.SPT.get(n, ""))}{f'<button type="button" data-try="{T.tid(n)}" aria-pressed="false">{T.TRY}</button>' if T.tid(n) else ""}</p>{T.ep_btn(n, pre)}</article>''' for n, ru, t, k, un in T.RELS)
+        {T.lk(n)}{T.ep_btn(n, pre)}</article>''' for n, ru, t, k, un in T.RELS)
     inner = f'''{T.header(pre, top=False)}
 <main>
 <section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
@@ -175,15 +175,22 @@ def char_page(cid):
            f'<a class="nx" href="{T.mhref(nx, PRE)}" aria-label="次のメンバー：{nx[2]}{nx[3]}"></a></p>')
     # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
     prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl></div>'
+    # そのメンバーが歌っている曲（＝ユニットの曲）。カードはユニットのページと同じもの（Kさんの回答 2026-11-14）
+    songs = "".join(f'''
+      <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
+        <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
+    k = 1 if songs else 0   # 曲の段がある人は、後ろの段の番号が1つずつ増える
+    songs_sec = f'''<section class="sec" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p>{h2("Songs", "楽曲", 2, 4, (1, 3))}<div class="rels solo">{songs}</div><p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p></section>''' if songs else ""
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}{prof}</div>
 </section>
-<section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
-<section class="sec{" has-b" if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3, (1, 2))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3, (2, 2))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
+{songs_sec}
+<section class="sec{" has-b" if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2 + k, 3 + k, (1 + k, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
+<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3 + k, 3 + k, (2 + k, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
 {T.footer()}<script>{SWJS}</script><script>{TGV}{RDY}</script>'''

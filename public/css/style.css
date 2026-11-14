@@ -28,37 +28,18 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
 .md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
-.mood-in{display:grid;gap:14px;padding-bottom:96px}.mood-in .lbl small{display:none}
-/* 【お試し】?top=1 … TOPの「地続き」対策（Kさんの判断待ち。不採用ならこの塊と main.js の t1 の1行を消す）
-   Mood：楽曲を気分で選ぶ入口なので、薄いグレーの帯にして Release の締めに置く ／ Units：見出しを黒い表紙にして、色の札の重なりの1枚目にする */
-.off{display:none}
-.t1 .off{display:grid;gap:12px;padding:36px 24px 0}.t1 .pu-ch{display:none}
-@media(min-width:900px){.t1 .off{grid-template-columns:auto 420px;align-items:center;justify-content:space-between;padding:56px max(32px,calc(50% - 540px)) 0}}
-/* 【お試し】?top=2 … Mood を Release の見出しのすぐ下に置く（Kさんの指定。2026-11-14） */
-.t2 #release{display:flex;flex-direction:column}.t2 #release h2{order:1;margin-bottom:28px}.t2 #release .mood-in{order:2;padding-bottom:48px}.t2 #release .rels{order:3}
-.t2 .mood-in .lbl{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.t2 .mood-in .lbl small{display:inline;font:500 12px var(--min);font-style:normal;letter-spacing:.3em}
-@media(min-width:900px){.t2 #release h2{margin-bottom:36px}.t2 #release .mood-in{padding-bottom:72px}}
-/* 【お試し】?top=3 … Mood を Pick Up の次の、独立した段にする（Kさんの案。2026-11-14）。採用するなら段の番号（02/05 など）を振り直す */
-.mood-s{display:none}
-.t3 .mood-s{display:block}.t3 #release .mood-in{display:none}.t3 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.t3 .mood-s .moods{gap:10px}
-@media(min-width:900px){.t3 .mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.t3 .mood-s .moods{gap:14px}}
-.t1 #release{padding-bottom:0}
-.t1 .mood-in{padding:40px 0 44px;gap:18px;background:var(--faint);box-shadow:0 0 0 100vmax var(--faint);clip-path:inset(0 -100vmax)}
-.t1 .mood-in .lbl{font:500 34px/1 var(--en);color:var(--ink);display:flex;align-items:baseline;gap:14px}
-.t1 .mood-in .lbl small{display:inline;font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
-.t1 .mood-in .md{background:var(--bg)}.t1 .mood-in .md:hover{background:var(--ink)}
-.t1 #units{background:var(--ink);color:var(--bg);padding-top:96px}
-.t1 #units h2{margin-bottom:0;padding-bottom:28px}.t1 #units h2::after{display:none}
-.t1 #units h2 small,.t1 #units .idx b{color:#B9B9B4}.t1 #units .ghost{color:rgba(255,255,255,.07)}
-.t1 .flags{margin-top:0}
-@media(min-width:900px){.t1 .mood-in{grid-template-columns:auto 1fr;gap:40px;padding:48px 0}.t1 .mood-in .lbl{font-size:44px}.t1 #units{padding-top:150px}.t1 #units h2{padding-bottom:40px}}
+/* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
+.mood-s{padding-bottom:96px}.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
+@media(min-width:900px){.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+/* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
+@media(max-width:899px){.fl1 .flag{min-height:70svh}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-.yt{margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
+.yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
 @media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt{font-size:15px}}
@@ -258,7 +239,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.mood-in{grid-template-columns:auto 1fr;align-items:center;gap:28px;padding-bottom:40px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
