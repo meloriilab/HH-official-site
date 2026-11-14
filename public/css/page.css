@@ -3,9 +3,15 @@
 /* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
 .flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
 .md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
-/* phone: the same choices as two pulldowns (name on the left, one line each) = no cramped rows of pills, no ragged gaps */
-.sel{display:none;appearance:none;-webkit-appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;border:1px solid var(--ink);border-radius:999px;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;color:var(--ink);font:500 16px/1 var(--jp);letter-spacing:.06em;cursor:pointer}
-@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.sel{display:block}}
+/* phone: the same choices as two lists that open under a pill (same look as the member names under the unit pills) = no cramped rows of pills, no ragged gaps */
+.dd{display:none;position:relative}
+.dd-b{appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;text-align:left;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 15px/1 var(--jp);letter-spacing:.06em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;transition:background-color .25s,color .25s}
+.dd.open .dd-b{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
+.dd-m{display:none;position:absolute;z-index:20;left:0;right:0;top:100%;padding-top:5px}.dd.open .dd-m{display:block}
+.dd-m button{appearance:none;display:block;width:100%;margin:0;min-height:44px;padding:9px 20px;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--ink);border-top:0;border-radius:0;font:500 14px/1.4 var(--min);letter-spacing:.06em;cursor:pointer}
+.dd-m button:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.dd-m button:last-child{border-radius:0 0 12px 12px}
+.dd-m button[aria-selected="true"]{background:var(--ink);color:var(--bg)}.dd-m button:disabled{color:var(--line);cursor:default}
+@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.dd{display:block}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -85,6 +91,8 @@
 .has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}.has-b .mt-p{position:relative;z-index:1}
 .mt-b{position:absolute;z-index:0;left:3vw;top:230px;width:94vw;max-width:none;height:auto;opacity:.42;pointer-events:none}
 .mt-b.tall{width:60vw;left:20vw}.has-b.tall{min-height:calc(96vw + 330px)}
+/* phone: a smaller bird (the text over it stays easy to read) and no spare room kept under it (K 2026-11-14) */
+@media(max-width:699px){.has-b{padding-bottom:32px;min-height:calc(48vw + 262px)}.mt-b{width:72vw;left:14vw}.mt-b.tall{width:46vw;left:27vw}.has-b.tall{min-height:calc(74vw + 262px)}}
 @media(min-width:700px){.mt-b.tall{width:min(26vw,330px);left:auto}.has-b.tall{min-height:calc(min(26vw,330px)*1.6 + 380px)}}
 @media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}.vq{top:18%}}

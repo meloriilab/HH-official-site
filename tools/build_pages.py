@@ -89,8 +89,10 @@ def songs_page():
     def row(k, lbl, aria, items):
         ps = f'<button class="md on" type="button" data-k="{k}" data-v="" aria-pressed="true">すべて</button>' + "".join(
             f'<button class="md" type="button" data-k="{k}" data-v="{esc(v)}" aria-pressed="false">{esc(t)}</button>' for v, t in items)
-        # スマホは同じ中身をプルダウンで出す（Kさんの指示 2026-11-14：丸いボタンだと窮屈で余白も無駄になる）。PCは丸いボタンのまま。どちらも同じ一覧から作るので手間は増えない
-        sel = f'<select class="sel" data-k="{k}" aria-label="{aria}"><option value="">すべて</option>' + "".join(f'<option value="{esc(v)}">{esc(t)}</option>' for v, t in items) + '</select>'
+        # スマホは同じ中身を、押すと下に開く一覧で出す（Kさんの指示 2026-11-14：丸いボタンだと窮屈。端末まかせの選択画面は使わず、ユニットのピルの下に出るメンバー名と同じ見た目にする）
+        # PCは丸いボタンのまま。どちらも同じ一覧から作るので手間は増えない
+        sel = (f'<div class="dd" data-k="{k}"><button class="dd-b" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="{aria}">すべて</button><span class="dd-m" role="listbox" aria-label="{aria}">'
+               + '<button type="button" role="option" data-v="" aria-selected="true">すべて</button>' + "".join(f'<button type="button" role="option" data-v="{esc(v)}" aria-selected="false">{esc(t)}</button>' for v, t in items) + '</span></div>')
         return f'<div class="flt"><p class="lbl">{lbl}</p><div class="moods" role="group" aria-label="{aria}">{ps}</div>{sel}</div>'
     units = [(T.SLUG[u], UNIT[u]["name"]) for u in UNIT if any(r[1] == u for r in T.RELS)]   # 曲があるユニットだけ
     rows = row("m", "Mood", "気分で選ぶ", [(m, m) for m in T.used_moods()]) + row("u", "Unit", "ユニットで選ぶ", units)
@@ -108,12 +110,12 @@ def songs_page():
 {T.footer()}<script>{SGJS}</script>'''
     return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分とユニットで選べます。", pre, inner, css=("page.css",))
 
-SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),ss=[].slice.call(document.querySelectorAll('.sg .sel')),st={m:'',u:''};
+SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),ss=[].slice.call(document.querySelectorAll('.sg .dd')),st={m:'',u:''};
 function ok(c,m,u){return(!m||c.dataset.m.split('|').indexOf(m)>=0)&&(!u||c.dataset.u===u)}
 function draw(){ps.forEach(function(p){var k=p.dataset.k,v=p.dataset.v,on=st[k]===v;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false');
 /* a word that would leave no song with the other row's choice is dimmed and cannot be pressed = never an empty page */
 p.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})});
-ss.forEach(function(s){var k=s.dataset.k;s.value=st[k];[].forEach.call(s.options,function(o){var v=o.value;o.disabled=st[k]!==v&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})})});
+ss.forEach(function(s){var k=s.dataset.k;[].forEach.call(s.querySelectorAll('[role=option]'),function(o){var v=o.dataset.v,on=st[k]===v;o.setAttribute('aria-selected',on?'true':'false');if(on)s.querySelector('.dd-b').textContent=o.textContent;o.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})})});
 /* reorder motion: each jacket slides from where it was to where it goes, so the eye can follow which songs stayed */
 var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!document.body.animate,old=new Map();
 if(mv)cs.forEach(function(c){if(!c.hidden)old.set(c,c.getBoundingClientRect())});
@@ -123,7 +125,10 @@ if(o){var dx=o.left-n.left,dy=o.top-n.top;if(dx||dy)c.animate([{transform:'trans
 else c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:120,easing:'ease-out',fill:'backwards'})})}
 function put(){try{var q=[];if(st.m)q.push('m='+encodeURIComponent(st.m));if(st.u)q.push('u='+encodeURIComponent(st.u));history.replaceState(null,'',q.length?'?'+q.join('&'):location.pathname)}catch(e){}}
 ps.forEach(function(p){p.addEventListener('click',function(){st[p.dataset.k]=p.dataset.v;draw();put()})});
-ss.forEach(function(s){s.addEventListener('change',function(){st[s.dataset.k]=s.value;draw();put()})});
+function shut(x){ss.forEach(function(s){if(s!==x){s.classList.remove('open');s.querySelector('.dd-b').setAttribute('aria-expanded','false')}})}
+ss.forEach(function(s){var b=s.querySelector('.dd-b');b.addEventListener('click',function(){shut(s);b.setAttribute('aria-expanded',s.classList.toggle('open')?'true':'false')});
+[].forEach.call(s.querySelectorAll('[role=option]'),function(o){o.addEventListener('click',function(){st[s.dataset.k]=o.dataset.v;shut();draw();put();b.focus()})})});
+document.addEventListener('click',function(e){if(!e.target.closest('.dd'))shut()});document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
 [].forEach.call(document.querySelectorAll('.sgs .tg'),function(t){t.addEventListener('click',function(){st.m=t.dataset.v;if(!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';draw()})});
 try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){var v=sp.get(k)||'';if(v&&ps.some(function(p){return p.dataset.k===k&&p.dataset.v===v}))st[k]=v})}catch(e){}
 if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
@@ -216,9 +221,15 @@ CSS = """
 /* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
 .flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
 .md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
-/* phone: the same choices as two pulldowns (name on the left, one line each) = no cramped rows of pills, no ragged gaps */
-.sel{display:none;appearance:none;-webkit-appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;border:1px solid var(--ink);border-radius:999px;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;color:var(--ink);font:500 16px/1 var(--jp);letter-spacing:.06em;cursor:pointer}
-@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.sel{display:block}}
+/* phone: the same choices as two lists that open under a pill (same look as the member names under the unit pills) = no cramped rows of pills, no ragged gaps */
+.dd{display:none;position:relative}
+.dd-b{appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;text-align:left;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 15px/1 var(--jp);letter-spacing:.06em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;transition:background-color .25s,color .25s}
+.dd.open .dd-b{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
+.dd-m{display:none;position:absolute;z-index:20;left:0;right:0;top:100%;padding-top:5px}.dd.open .dd-m{display:block}
+.dd-m button{appearance:none;display:block;width:100%;margin:0;min-height:44px;padding:9px 20px;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--ink);border-top:0;border-radius:0;font:500 14px/1.4 var(--min);letter-spacing:.06em;cursor:pointer}
+.dd-m button:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.dd-m button:last-child{border-radius:0 0 12px 12px}
+.dd-m button[aria-selected="true"]{background:var(--ink);color:var(--bg)}.dd-m button:disabled{color:var(--line);cursor:default}
+@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.dd{display:block}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -298,6 +309,8 @@ CSS = """
 .has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}.has-b .mt-p{position:relative;z-index:1}
 .mt-b{position:absolute;z-index:0;left:3vw;top:230px;width:94vw;max-width:none;height:auto;opacity:.42;pointer-events:none}
 .mt-b.tall{width:60vw;left:20vw}.has-b.tall{min-height:calc(96vw + 330px)}
+/* phone: a smaller bird (the text over it stays easy to read) and no spare room kept under it (K 2026-11-14) */
+@media(max-width:699px){.has-b{padding-bottom:32px;min-height:calc(48vw + 262px)}.mt-b{width:72vw;left:14vw}.mt-b.tall{width:46vw;left:27vw}.has-b.tall{min-height:calc(74vw + 262px)}}
 @media(min-width:700px){.mt-b.tall{width:min(26vw,330px);left:auto}.has-b.tall{min-height:calc(min(26vw,330px)*1.6 + 380px)}}
 @media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}.vq{top:18%}}
