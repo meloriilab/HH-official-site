@@ -149,7 +149,7 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS)
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="sh" type="button" aria-haspopup="true">Share</button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{sec("release")}">Release</a><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 15.5V3.5M7.5 8 12 3.5 16.5 8M8.5 10.5H5v10h14v-10h-3.5"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{sec("release")}">Release<small>楽曲</small></a><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer():
     return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
@@ -289,9 +289,9 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
 .yt{margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
-.sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px}
+.sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
-@media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt,.sh{font-size:15px}}
+@media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt{font-size:15px}}
 @media(max-width:359px){.hd .logo{width:min-content;line-height:1}}
 .burger{position:relative;z-index:31;width:44px;height:44px;margin-right:-10px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
 .burger i{position:absolute;left:10px;right:10px;height:1px;background:currentColor;transition:transform .3s,top .3s}
@@ -479,7 +479,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 [data-speed]{will-change:translate}
 @media(min-width:900px){
  .hd,.sec,.nr,.ft{padding-inline:max(32px,calc(50% - 540px))}
- .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.sh{font-size:19px}.burger{display:none}
+ .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
  .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}
  .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(6,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
