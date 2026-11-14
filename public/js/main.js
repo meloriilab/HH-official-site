@@ -15,6 +15,17 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-try]
 if(!d){d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
 d.innerHTML='<div class="dock-p"></div><button type="button">閉じる</button>';d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock')}
 d.dataset.id=b.dataset.try;mark(b);load(b.dataset.try)})})();
+/* Mood: five jackets picked at random; a mood word picks again among the songs of that mood (fewer than five = all of them) */
+(function(){var w=document.querySelector('.mds');if(!w)return;var cs=[].slice.call(w.children),ps=[].slice.call(document.querySelectorAll('.mood-s .md')),more=document.querySelector('.mood-s .more a'),
+mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
+function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
+cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
+w.classList.toggle('ev',pk.length%2===0);
+ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
+if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
+if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
+ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});draw('',false)})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});

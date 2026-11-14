@@ -181,6 +181,11 @@ def spot(cls, url=None):
     return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
 def body():
+    # Mood：ジャケットを5曲ならべ、気分の言葉で選び直せる（Kさんの指示 2026-11-14「リリースとmoodが合体した感じ」）。5曲の選び方と並び順は、開くたびに画面側で変える
+    mcards="".join(f'''
+      <article class="rel" data-m="{"|".join(MOOD.get(n,[]))}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット">{jo(n)}</a>
+        <h3>{rb(t,k)}</h3><p class="by">{kn(un)}</p>{lk(n)}{ep_btn(n)}</article>''' for n,u,t,k,un in RELS)
+    mpills='<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>'+"".join(f'<button class="md" type="button" data-v="{m}" aria-pressed="false">{m}</button>' for m in used_moods())
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
@@ -220,7 +225,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec mood-s" id="mood"><p class="ghost" aria-hidden="true" data-speedx=".35">Mood</p><h2><span>Mood</span><small>気分で選ぶ</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2>{moods_nav()}</section>
+<section class="sec mood-s" id="mood"><p class="ghost" aria-hidden="true" data-speedx=".35">Mood</p><h2><span>Mood</span><small>気分で選ぶ</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">Songs</a></p></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
@@ -259,8 +264,12 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
 /* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
-.mood-s{padding-bottom:96px}.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
-@media(min-width:900px){.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+.mood-s{padding-bottom:96px}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
+/* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
+.mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
+.mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
+.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
 /* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
 @media(max-width:899px){.fl1 .flag{min-height:70svh}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
@@ -509,6 +518,17 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-try]
 if(!d){d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
 d.innerHTML='<div class="dock-p"></div><button type="button">閉じる</button>';d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock')}
 d.dataset.id=b.dataset.try;mark(b);load(b.dataset.try)})})();
+/* Mood: five jackets picked at random; a mood word picks again among the songs of that mood (fewer than five = all of them) */
+(function(){var w=document.querySelector('.mds');if(!w)return;var cs=[].slice.call(w.children),ps=[].slice.call(document.querySelectorAll('.mood-s .md')),more=document.querySelector('.mood-s .more a'),
+mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
+function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
+cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
+w.classList.toggle('ev',pk.length%2===0);
+ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
+if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
+if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
+ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});draw('',false)})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});

@@ -29,8 +29,12 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
 /* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
-.mood-s{padding-bottom:96px}.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
-@media(min-width:900px){.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+.mood-s{padding-bottom:96px}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
+/* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
+.mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
+.mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
+.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
 /* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
 @media(max-width:899px){.fl1 .flag{min-height:70svh}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
