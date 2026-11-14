@@ -31,7 +31,7 @@ UNITS = [("01","trt","TRT","トリアティーク","","日本の身近な野鳥 
 # 曲の一覧（新しいものを上に）: (番号, ユニット, 曲名, ふりがな, ユニット名)
 # ジャケットの絵は images/jacket/<ユニット番号>-<そのユニットの何曲目か>.webp（題名なし版は _notitle 付き）
 JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
-RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule the Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク"),("005","prs","Midnight Mirage","","Prisméa")]   # 並び順は未確定（先頭＝いちばん新しい曲だけ確定）
+RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule the Darkness","","Blackveil Harmonic"),("005","prs","Midnight Mirage","","Prisméa"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク")]   # 並び順＝YouTubeでMVを公開した日の新しい順（Kさんの回答 2026-11-14。日付は CRED）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
 NEWS = [("----.--.--","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開する日が決まったら入れる（未確定）
@@ -149,13 +149,14 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS if u in PAGES)   # ページがあるユニットだけ（Kさんの回答 2026-11-14）
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"><span>YouTube</span><svg class="ext" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M4.5 1.5h-3v9h9v-3M7 1.5h3.5V5M10.5 1.5 5.5 6.5"/></svg></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer():
     return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
 # 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
 import hashlib as _hl, glob as _gl
 VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
+SITE = "https://humming-hearts.com"   # 共有したときの画像は、完全なアドレスで書く決まり。ドメインをつなぐまでは、確認用のページでは画像が出ない
 def page(title, desc, pre, inner, css=(), attrs="", share=None):
     # share … 共有ボタンで送る一言（ページごとに変えられる。決まっていないページは、ページの題名をそのまま送る）
     links="".join(f'<link rel="stylesheet" href="{pre}css/{c}?v={VER}">' for c in ("style.css",)+tuple(css))
@@ -164,7 +165,8 @@ def page(title, desc, pre, inner, css=(), attrs="", share=None):
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta name="share" content="{share or title}">
-<meta property="og:site_name" content="Humming Hearts"><meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
+<meta property="og:site_name" content="Humming Hearts"><meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:image" content="{SITE}/images/og.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{pre}favicon.png"><link rel="apple-touch-icon" href="{pre}apple-touch-icon.png">
 <meta name="theme-color" content="#FAFAF8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONT}">
@@ -267,6 +269,9 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
+/* YouTube へのリンク：赤い文字＋外へ出る印（Kさんの案 2026-11-14）。【お試し】?yt=1 … 小さい公式アイコンを前に付ける（余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける。不採用なら .yt-i と main.js の yt1 を消す） */
+.yt .ext{fill:none;stroke:currentColor;stroke-width:1;margin:-8px 0 0 4px;flex:none}.yt-i{display:none;height:24px;width:auto;margin-right:10px;flex:none}.yt1 .yt-i{display:block}
+@media(max-width:389px){.yt1 .yt span{display:none}.yt1 .yt-i{margin-right:2px}}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
@@ -510,7 +515,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');
+document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');if(/[?&]yt=1/.test(location.search))document.documentElement.classList.add('yt1');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');

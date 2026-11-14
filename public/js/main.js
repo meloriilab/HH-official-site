@@ -21,7 +21,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');
+document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');if(/[?&]yt=1/.test(location.search))document.documentElement.classList.add('yt1');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');

@@ -39,6 +39,9 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
+/* YouTube へのリンク：赤い文字＋外へ出る印（Kさんの案 2026-11-14）。【お試し】?yt=1 … 小さい公式アイコンを前に付ける（余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける。不採用なら .yt-i と main.js の yt1 を消す） */
+.yt .ext{fill:none;stroke:currentColor;stroke-width:1;margin:-8px 0 0 4px;flex:none}.yt-i{display:none;height:24px;width:auto;margin-right:10px;flex:none}.yt1 .yt-i{display:block}
+@media(max-width:389px){.yt1 .yt span{display:none}.yt1 .yt-i{margin-right:2px}}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
