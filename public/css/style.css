@@ -38,6 +38,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .t2 #release{display:flex;flex-direction:column}.t2 #release h2{order:1;margin-bottom:28px}.t2 #release .mood-in{order:2;padding-bottom:48px}.t2 #release .rels{order:3}
 .t2 .mood-in .lbl{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.t2 .mood-in .lbl small{display:inline;font:500 12px var(--min);font-style:normal;letter-spacing:.3em}
 @media(min-width:900px){.t2 #release h2{margin-bottom:36px}.t2 #release .mood-in{padding-bottom:72px}}
+/* 【お試し】?top=3 … Mood を Pick Up の次の、独立した段にする（Kさんの案。2026-11-14）。採用するなら段の番号（02/05 など）を振り直す */
+.mood-s{display:none}
+.t3 .mood-s{display:block}.t3 #release .mood-in{display:none}.t3 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.t3 .mood-s .moods{gap:10px}
+@media(min-width:900px){.t3 .mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.t3 .mood-s .moods{gap:14px}}
 .t1 #release{padding-bottom:0}
 .t1 .mood-in{padding:40px 0 44px;gap:18px;background:var(--faint);box-shadow:0 0 0 100vmax var(--faint);clip-path:inset(0 -100vmax)}
 .t1 .mood-in .lbl{font:500 34px/1 var(--en);color:var(--ink);display:flex;align-items:baseline;gap:14px}

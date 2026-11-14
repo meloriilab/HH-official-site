@@ -219,6 +219,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p><div class="pu-ch">{chan}</div></div>
 </div></section>
+<section class="sec mood-s" id="mood"><p class="ghost" aria-hidden="true" data-speedx=".35">Mood</p><h2><span>Mood</span><small>気分で選ぶ</small></h2>{moods_nav()}</section>
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels lead">{rels}</div><div class="mood-in"><p class="lbl">Mood<small>気分で選ぶ</small></p>{moods_nav()}</div></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
 <div class="flags">{units}</div>
@@ -267,6 +268,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .t2 #release{display:flex;flex-direction:column}.t2 #release h2{order:1;margin-bottom:28px}.t2 #release .mood-in{order:2;padding-bottom:48px}.t2 #release .rels{order:3}
 .t2 .mood-in .lbl{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.t2 .mood-in .lbl small{display:inline;font:500 12px var(--min);font-style:normal;letter-spacing:.3em}
 @media(min-width:900px){.t2 #release h2{margin-bottom:36px}.t2 #release .mood-in{padding-bottom:72px}}
+/* 【お試し】?top=3 … Mood を Pick Up の次の、独立した段にする（Kさんの案。2026-11-14）。採用するなら段の番号（02/05 など）を振り直す */
+.mood-s{display:none}
+.t3 .mood-s{display:block}.t3 #release .mood-in{display:none}.t3 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.t3 .mood-s .moods{gap:10px}
+@media(min-width:900px){.t3 .mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.t3 .mood-s .moods{gap:14px}}
 .t1 #release{padding-bottom:0}
 .t1 .mood-in{padding:40px 0 44px;gap:18px;background:var(--faint);box-shadow:0 0 0 100vmax var(--faint);clip-path:inset(0 -100vmax)}
 .t1 .mood-in .lbl{font:500 34px/1 var(--en);color:var(--ink);display:flex;align-items:baseline;gap:14px}
@@ -526,7 +531,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');var tq=location.search.match(/[?&]top=([12])/);if(tq)document.documentElement.classList.add('t'+tq[1]);
+document.documentElement.classList.add('js');var tq=location.search.match(/[?&]top=([123])/);if(tq)document.documentElement.classList.add('t'+tq[1]);
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
