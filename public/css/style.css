@@ -34,6 +34,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .off{display:none}
 .t1 .off{display:grid;gap:12px;padding:36px 24px 0}.t1 .pu-ch{display:none}
 @media(min-width:900px){.t1 .off{grid-template-columns:auto 420px;align-items:center;justify-content:space-between;padding:56px max(32px,calc(50% - 540px)) 0}}
+/* 【お試し】?top=2 … Mood を Release の見出しのすぐ下に置く（Kさんの指定。2026-11-14） */
+.t2 #release{display:flex;flex-direction:column}.t2 #release h2{order:1;margin-bottom:28px}.t2 #release .mood-in{order:2;padding-bottom:48px}.t2 #release .rels{order:3}
+.t2 .mood-in .lbl{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.t2 .mood-in .lbl small{display:inline;font:500 12px var(--min);font-style:normal;letter-spacing:.3em}
+@media(min-width:900px){.t2 #release h2{margin-bottom:36px}.t2 #release .mood-in{padding-bottom:72px}}
 .t1 #release{padding-bottom:0}
 .t1 .mood-in{padding:40px 0 44px;gap:18px;background:var(--faint);box-shadow:0 0 0 100vmax var(--faint);clip-path:inset(0 -100vmax)}
 .t1 .mood-in .lbl{font:500 34px/1 var(--en);color:var(--ink);display:flex;align-items:baseline;gap:14px}

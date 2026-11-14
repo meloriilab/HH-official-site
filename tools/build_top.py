@@ -263,6 +263,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .off{display:none}
 .t1 .off{display:grid;gap:12px;padding:36px 24px 0}.t1 .pu-ch{display:none}
 @media(min-width:900px){.t1 .off{grid-template-columns:auto 420px;align-items:center;justify-content:space-between;padding:56px max(32px,calc(50% - 540px)) 0}}
+/* 【お試し】?top=2 … Mood を Release の見出しのすぐ下に置く（Kさんの指定。2026-11-14） */
+.t2 #release{display:flex;flex-direction:column}.t2 #release h2{order:1;margin-bottom:28px}.t2 #release .mood-in{order:2;padding-bottom:48px}.t2 #release .rels{order:3}
+.t2 .mood-in .lbl{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.t2 .mood-in .lbl small{display:inline;font:500 12px var(--min);font-style:normal;letter-spacing:.3em}
+@media(min-width:900px){.t2 #release h2{margin-bottom:36px}.t2 #release .mood-in{padding-bottom:72px}}
 .t1 #release{padding-bottom:0}
 .t1 .mood-in{padding:40px 0 44px;gap:18px;background:var(--faint);box-shadow:0 0 0 100vmax var(--faint);clip-path:inset(0 -100vmax)}
 .t1 .mood-in .lbl{font:500 34px/1 var(--en);color:var(--ink);display:flex;align-items:baseline;gap:14px}
@@ -522,7 +526,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');if(/[?&]top=1/.test(location.search))document.documentElement.classList.add('t1');
+document.documentElement.classList.add('js');var tq=location.search.match(/[?&]top=([12])/);if(tq)document.documentElement.classList.add('t'+tq[1]);
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
