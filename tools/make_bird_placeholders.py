@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 import build_top as T
 import build_pages as P
 
-REAL = {"01-1"}   # 本物の絵がある番号
+REAL = {"01-1", "01-2", "01-3", "02-1", "02-2", "04-1", "04-2", "04-3"}   # 本物の絵がある番号
 FONT = "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf"
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public", "images", "bird")
 W, H = 1352, 918   # 本物の絵（カワセミ）と同じ縦横比
