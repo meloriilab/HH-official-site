@@ -1,3 +1,4 @@
+import re
 # -*- coding: utf-8 -*-
 """トップページを組み立てる道具。
 
@@ -21,20 +22,51 @@ CHARS = [("TRT01","trt01","川瀬","帝翔","かわせ","みこと","#23989E"),(
          ("PRS01","prs01","三条","羽響","さんじょう","うきょう","#0D86C8"),("PRS02","prs02","若本","セイン","わかもと","","#C9A21E"),
          ("BLC01","blc01","烏丸","蓮司","からすま","れんじ","#473548"),("BLC02","blc02","笠木","涼佑","かさぎ","りょうすけ","#2B83AA"),("BLC03","blc03","筧","傑","かけい","すぐる","#1E9BD0"),
          ("ORB01","orb01","紅","ましろ","くれない","","#E3426A"),("ORB02","orb02","菊井","律","きくい","ただし","#B8A51F"),("ORB03","orb03","日滝","ルイ","ひたき","","#2A79C3"),("ORB04","orb04","日滝","ジョウ","ひたき","","#E28126")]
-UNITS = [("01","trt","TRT","Triattique","トリアティーク","日本の身近な野鳥 × 和ロック","#23989E",3),
+UNITS = [("01","trt","TRT","トリアティーク","","日本の身近な野鳥 × 和ロック","#23989E",3),
          ("02","nct","NCT","NocturnalFizz","ノクターナルフィズ","猛禽兄弟 × ジャズ","#B08A3E",2),
-         ("03","prs","PRS","Prisméa","プリスメア","シティポップ・デュオ","#0D86C8",2),
+         ("03","prs","PRS","Prisméa","プリズメア","シティポップ・デュオ","#0D86C8",2),
          ("04","blc","BLC","Blackveil Harmonic","ブラックヴェイル・ハーモニック","カラスたちの宴 × ロック","#5B4560",3),
          ("05","orb","ORB","ORYBIA","オリビア","14歳、地元アイドル四人組","#E3426A",4),
          ("06","wgo","WGO","Winged Oath","ウィングド・オウス","誓いの五人組","#3C5A7A",5)]
-RELS = [("003","blc","Rule The Darkness","","Blackveil Harmonic"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","Triattique")]
+# 曲の一覧（新しいものを上に）: (番号, ユニット, 曲名, ふりがな, ユニット名)
+# ジャケットの絵は images/jacket/<ユニット番号>-<そのユニットの何曲目か>.webp（題名なし版は _notitle 付き）
+JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   # 題名入りの正式なジャケット（題名なし版は _notitle。月日の奏の題名なし版は未着）
+RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule the Darkness","","Blackveil Harmonic"),("005","prs","Midnight Mirage","","Prisméa"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク")]   # 並び順＝YouTubeでMVを公開した日の新しい順（Kさんの回答 2026-11-14。日付は CRED）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
-NEWS = [("2026.07.07","MV","ミュージックビデオを公開しました"),("2026.07.07","MUSIC","楽曲の配信を開始しました"),("2026.07.07","INFO","Humming Hearts 公式サイトを公開しました")]
+NEWS = [("----.--.--","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開する日が決まったら入れる（未確定）
+# ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
+# (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
+PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
+# 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送る。ボタンの名前はどれも MV）
+MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu.be/Juhtev74lgU", "001": "https://youtu.be/gt1lyf8tnD0", "005": "https://youtu.be/Qr1X9lWdtyc"}
+# 気分の言葉（仮。確定版が来たら差し替える）と、曲ごとの気分（仮。題名とジャケットからの見立て。1曲に複数可）
+MOODS = ["おはよ","ノリノリ","闘志","真夜中","まったり","恋してる","恋したい","和と雅"]
+# ジャケットにカーソルを乗せたときに出す内容: 番号 -> (リリース日, 作詞, 作曲)。わからない欄は空（空の行は画面に出さない）
+# 作詞・作曲・日付はスタッフ用ツールの書き出し（2026-11-13）から。リリース日は「ショートMV公開」の日を仮に使用（どの日を出すかは未確定）
+CRED = {"001":("2026.08.12","川瀬帝翔","燕谷航"),"002":("2026.08.22","月嶺隼瞳","月嶺隼瞳"),"003":("2026.09.25","烏丸蓮司","筧傑"),"004":("2026.10.16","三条羽響","三条羽響"),"005":("2026.09.11","若本セイン","三条羽響")}
+def jo(n):
+    # 見出しは英字の斜体（Release / Lyrics / Music）、日付は英字、名前は明朝。作詞と作曲が同じ人なら1つにまとめる
+    d, ly, mu = CRED.get(n, ("", "", ""))
+    who = [("Lyrics &amp; Music", ly)] if ly and ly == mu else [(l, v) for l, v in (("Lyrics", ly), ("Music", mu)) if v]
+    rows = (f'<span class="jo-d"><i>Release</i>{d}</span>' if d else "") + (f'<span class="jo-n">{"".join(f"<span><i>{l}</i>{v}</span>" for l, v in who)}</span>' if who else "")
+    # 再生ボタンは、クレジットの帯を除いた残りの高さの真ん中に置く（.jo が縦に並べ、.jo-a が残りを全部使う）
+    return f'<span class="jo"><span class="jo-a"><i class="jo-p" aria-hidden="true"></i></span>' + (f'<span class="jo-c">{rows}</span>' if rows else "") + '</span>'
+MOOD = {"004":["まったり","和と雅"],"003":["闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ノリノリ"]}
+def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
+TRY = "Listen"   # プレイヤーを開くボタンの名前（ログイン中はフルで流れるので「試聴」とは書かない）
+def tid(n): return SPT[n].rsplit("/",1)[1] if n in SPT else ""   # Spotify の曲番号（試聴のプレイヤー用）
+def moods_nav(pre=""):
+    return '<p class="moods">'+f'<a class="md" href="{pre}songs.html">すべて</a>'+"".join(f'<a class="md" href="{pre}songs.html?m={m}">{m}</a>' for m in used_moods())+'</p>'
 # Spotify のアドレス。未確定のあいだは空にしておく（空ならボタンを出さない）
-SPOT = ""
+SPOT = "https://open.spotify.com/intl-ja/artist/5zFSrMpca51dx28SN4MqA7"   # アーティストのページ（TOP用）
+# 曲ごとの Spotify のアドレス
+SPT = {"004":"https://open.spotify.com/intl-ja/track/09G3RQDDX4gFqODCdNUIdB","003":"https://open.spotify.com/intl-ja/track/5mHORhSCXO1Ee7glWClH6o",
+       "002":"https://open.spotify.com/intl-ja/track/12PFLQPl0zbGCJhKa4KWj0","001":"https://open.spotify.com/intl-ja/track/5pJiXLZd6goH98a9wZuSsP",
+       "005":"https://open.spotify.com/intl-ja/track/6smsE3EpklyXBSPFZBL2hq"}
 # ピックアップ曲の絵（YouTube のサムネイル。読めないときは手元の絵を出す）
-YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/sddefault.jpg"
+YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/hq720.jpg"   # 横長（16:9）で、上下の黒い帯が無い絵
+YT_THUMB2 = "https://i.ytimg.com/vi/IlpEetoUMso/mqdefault.jpg"   # 上が読めないときの小さい絵
 # 旗に大きな絵を出すユニット（絵がそろっているものだけ。ほかは紋章を出す）
 KV = {"trt","nct","blc"}
 FONT = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Shippori+Mincho+B1:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap"
@@ -44,30 +76,134 @@ DESC = "鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲�
 # 画像のファイル名とページ内の行き先には、制作用の記号（TRT など）を使わない
 NO = {u: no for no, u, *_ in UNITS}
 SLUG = {u: n.lower().replace(" ", "-").replace("é", "e") for no, u, code, n, *_ in UNITS}
+SLUG["trt"] = "triattique"   # 表記はカタカナ（公式表記）。アドレスは半角のまま変えない（2026-11-13）
 def members_of(u): return [c for c in CHARS if c[1].startswith(u)]
+def kn(n):
+    # ユニット名がカタカナのとき（公式表記がカタカナのユニット）は、欧文の書体が当たらないので、明朝に切り替える印を付ける
+    return f'<span class="kn">{n}</span>' if re.search("[ァ-ヶ]", n) else n
 def name(c): return rb(c[2], c[4]) + rb(c[3], c[5])
 def fid(c): return f"{NO[c[1][:3]]}-{int(c[1][3:])}"
-def spot(cls): return f'<a class="{cls}" href="{SPOT}">Spotify</a>' if SPOT else ""
+# 立ち絵のファイル番号は素材フォルダの並び順で、ORYBIA だけ顔アイコンの番号と違う（素材フォルダの対応表どおり）
+ART = {"orb01":"05-3","orb02":"05-4","orb03":"05-2","orb04":"05-1"}
+def aid(c): return ART.get(c[1], fid(c))
+# 個別ページがあるユニットと、メンバーのページの名前（ローマ字。制作用の記号は使わない）
+PAGES = {"trt","nct","blc","prs","orb"}
+MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsubameya","nct01":"hayato-tsukimine","nct02":"aruto-tsukimine",
+         "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei",
+         "prs01":"ukyo-sanjo","prs02":"thane-wakamoto","orb01":"masiro-kurenai","orb02":"tadashi-kikui","orb03":"rui-hitaki","orb04":"jo-hitaki"}
+def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
+def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
+# ───────── エピソード（曲ごとのメンバーのチャット。文と写真は旧サイトのものをそのまま使う） ─────────
+# 中身は tools/episodes.json。ここに番号を足した曲だけ、曲の下に入口「Episode」が出る
+import json as _json, os as _os
+EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
+EP_ON = ["001", "002", "003"]
+ESLUG = {"001": "usukoubai", "002": "yoi-no-tsubasa", "003": "rule-the-darkness"}   # アドレス用の名前（制作用の記号は使わない）
+def _ch(cid): return next(c for c in CHARS if c[1] == cid)
+def _lum(h): return (0.299 * int(h[1:3], 16) + 0.587 * int(h[3:5], 16) + 0.114 * int(h[5:7], 16)) / 255
+def ep_btn(n, pre=""):
+    """曲の下に出す入口：話しているメンバーの丸い顔と Episode の文字（だれの話かが開く前にわかる）"""
+    if n not in EP_ON: return ""
+    who = list(dict.fromkeys(l["w"] for l in EP[n]["lines"]))
+    faces = "".join(f'<img src="{pre}images/face/{fid(_ch(w))}.webp" alt="">' for w in who)
+    return f'<p class="ep-in"><button type="button" data-ep="{ESLUG[n]}"><span class="ep-f">{faces}</span><b>Episode</b></button></p>'
+def ep_dialogs(inner, pre=""):
+    """そのページにある入口のぶんだけ、重ねて開く画面を用意する"""
+    out = ""
+    for n in EP_ON:
+        if f'data-ep="{ESLUG[n]}"' not in inner: continue
+        _, u, t, k, un = next(r for r in RELS if r[0] == n)
+        uc = next(x[6] for x in UNITS if x[1] == u)
+        rows = ""
+        for l in EP[n]["lines"]:
+            c = _ch(l["w"])
+            av = f'<img class="ep-av" src="{pre}images/face/{fid(c)}.webp" alt="">'
+            nm = f'<small>{l["n"]}</small>' if l.get("n") else ""
+            if l.get("k") == "mv":
+                bub = f'<a class="ep-mv" href="{MV.get(n, YT_CH)}"><img src="{pre}images/jacket/{JK[n]}.webp" alt=""><span><i>MV</i>{t}</span></a>'
+            elif l.get("k") == "img":
+                cap = f'<small>{l["cap"]}</small>' if l.get("cap") else ""
+                bub = f'<button class="ep-ph" type="button" aria-label="写真を大きく見る"><img src="{pre}images/episode/{l["img"]}" alt="{l.get("cap", "")}">{cap}</button>'
+            elif l.get("k") == "lc":   # 作中のお店のカード（実在のリンクではないので、押しても移動しない）
+                bub = f'<span class="ep-mv"><img src="{pre}images/episode/{l["img"]}" alt=""><span>{l["t"]}<i>{l["url"]}</i></span></span>'
+            else:
+                bub = f'<p>{l["t"]}</p>'
+            rows += f'<div class="ep-r{" me" if l["me"] else ""}">{av}<div>{nm}{bub}</div></div>'
+        out += (f'<dialog class="ep" id="ep-{ESLUG[n]}" aria-label="{t} のエピソード" style="--uc:{uc};--ut:{"#141414" if _lum(uc) > .6 else "#fff"}">'
+                f'<div class="ep-h"><img src="{pre}images/emblem/{NO[u]}.webp" alt=""><div><b>{EP[n]["room"]}</b><small>{t}</small></div>'
+                f'<button class="ep-sk" type="button">Skip</button><button class="ep-x" type="button" aria-label="閉じる"></button></div>'
+                f'<div class="ep-log" tabindex="0" autofocus>{rows}<p class="ep-end">End</p></div></dialog>')
+    return out
+def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
+def header(pre="", top=True):
+    """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
+    home = "#" if top else pre
+    sec = lambda k: f"#{k}" if top else f"{pre}#{k}"
+    # 丸いボタン：押すとユニットのページへ。カーソルを載せると、そのユニットのメンバー名が下に出る
+    def pill(u, n):
+        ms = members_of(u)
+        rows = "".join(
+            f'<a href="{mhref(c,pre)}">{c[2]} {c[3]}</a>' if mhref(c) else f'<span>{c[2]} {c[3]}</span>' for c in ms)
+        drop = f'<span class="up-m">{rows}</span>' if ms else ""
+        return f'<span class="up"><a class="up-a" href="{uhref(u,pre)}" data-u="{SLUG[u]}">{kn(n)}</a>{drop}</span>'
+    upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS if u in PAGES)   # ページがあるユニットだけ（Kさんの回答 2026-11-14）
+    return f'''
+<div class="prog" aria-hidden="true"><i></i></div>
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"><span>YouTube</span></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
+def footer():
+    return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+# 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
+import hashlib as _hl, glob as _gl
+VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
+SITE = "https://humming-hearts.com"   # 共有したときの画像は、完全なアドレスで書く決まり。ドメインをつなぐまでは、確認用のページでは画像が出ない
+def page(title, desc, pre, inner, css=(), attrs="", share=None):
+    # share … 共有ボタンで送る一言（ページごとに変えられる。決まっていないページは、ページの題名をそのまま送る）
+    links="".join(f'<link rel="stylesheet" href="{pre}css/{c}?v={VER}">' for c in ("style.css",)+tuple(css))
+    return f'''<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta name="share" content="{share or title}">
+<meta property="og:site_name" content="Humming Hearts"><meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:image" content="{SITE}/images/og.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{pre}favicon.png"><link rel="apple-touch-icon" href="{pre}apple-touch-icon.png">
+<meta name="theme-color" content="#FAFAF8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{FONT}">
+{links}</head><body{attrs}>{inner}{ep_dialogs(inner, pre)}<script src="{pre}js/main.js?v={VER}"></script></body></html>
+'''
+def lk(n):
+    """曲のカードの下のボタン。どのページでも MV・Spotify・Listen の3つ（Kさんの回答 2026-11-14）"""
+    t = f'<button type="button" data-try="{tid(n)}" aria-pressed="false">{TRY}</button>' if tid(n) else ""
+    return f'<p class="lk"><a href="{MV.get(n,YT_CH)}">MV</a>{spot("",SPT.get(n,""))}{t}</p>'
+def spot(cls, url=None):
+    url = SPOT if url is None else url
+    return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
 def body():
-    rels="".join(f'''
-      <article class="rel" data-speed="{sp}"><a class="ph" href="{YT_MV}"><img src="images/jacket/{NO[u]}.webp" alt="{t} のジャケット" data-speed=".1"></a>
-        <h3>{rb(t,k)}</h3><p class="by">{un}</p><p class="lk"><a href="{YT_MV}">MV</a>{spot("")}</p></article>''' for (n,u,t,k,un),sp in zip(RELS,[".1","-.14",".04"]))
+    # Mood：ジャケットを5曲ならべ、気分の言葉で選び直せる（Kさんの指示 2026-11-14「リリースとmoodが合体した感じ」）。5曲の選び方と並び順は、開くたびに画面側で変える
+    mcards="".join(f'''
+      <article class="rel" data-m="{"|".join(MOOD.get(n,[]))}"><a class="ph" href="{MV.get(n,YT_CH)}"><img src="images/jacket/{JK[n]}.webp" alt="{t} のジャケット">{jo(n)}</a>
+        <h3>{rb(t,k)}</h3><p class="by">{kn(un)}</p>{lk(n)}{ep_btn(n)}</article>''' for n,u,t,k,un in RELS)
+    mpills='<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>'+"".join(f'<button class="md" type="button" data-v="{m}" aria-pressed="false">{m}</button>' for m in used_moods())
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
+        tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">プロフィール</span>') if u in PAGES else ("div","div","")
         return f'''
-      <div class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
-        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{n}</span><span class="f-kana">{kana}</span><span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul></span>
-        <span class="f-pic">{art}</span></div>'''
-    units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS))
-    mem="".join(f'<div class="mem" data-speed="{[".0","-.12",".08"][CHARS.index(c)%3]}"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></div>' for c in CHARS)
+      <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
+        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
+        <span class="f-pic">{art}</span></{end}>'''
+    units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS) if u in PAGES)   # ページができるまで TOP に載せない（Kさんの回答 2026-11-14）
+    def face(c):
+        tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
+        return f'<{tag} class="mem" data-speed="{[".0","-.12",".08"][CHARS.index(c)%3]}"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
+    mem="".join(face(c) for c in CHARS)
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
-        u,i=k.split("-"); cs=order.get(u)
-        return name(cs[int(i)-1]) if cs else ""
+        return next((c[2]+c[3] for c in CHARS if c[1][:3] in NO and aid(c)==k), "")
     # (file, x%, size, bottom as a share of H, layer, scroll speed)
     FIG=[("05-1",39,.70,.44,1,".26"),("05-2",46,.74,.50,1,".26"),("05-3",56,.72,.46,1,".26"),("05-4",65,.70,.51,1,".26"),
          ("03-1",13,.82,.34,1,".22"),("03-2",24,.78,.40,1,".22"),("07-1",76,.76,.50,1,".22"),("07-2",91,.80,.46,1,".22"),
@@ -75,12 +211,8 @@ def body():
          ("02-1",8,1.12,-.24,2,".12"),("02-2",22,1.06,-.2,2,".12"),
          ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
-    upills="".join(f'<a href="#{SLUG[u]}" data-u="{SLUG[u]}">{n}</a>' for no,u,code,n,*_ in UNITS)
-    chan=f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
-    return f'''
-<div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="#">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="#release">Release</a><a href="#units">Units</a><a href="#members">Members</a><a href="#news">News</a></nav><a class="yt" href="{YT_CH}">YouTube</a><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
-<div class="menu" id="menu" hidden><nav class="m-nav"><a href="#release">Release<small>楽曲</small></a><a href="#units">Units<small>ユニット</small></a><a href="#members">Members<small>メンバー</small></a><a href="#news">News<small>お知らせ</small></a></nav>{chan}</div>
+    pu_u,PT,PK,PD,PMV=PICK; PN=NO[pu_u]; PUN=next(n for no,u,code,n,*_ in UNITS if u==pu_u)   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
+    return f'''{header()}
 <main>
 <section class="fv">
   <p class="word w1" aria-hidden="true" data-speed=".55">Humming</p><p class="word w2" aria-hidden="true" data-speed=".3" data-speedx="-.15">Hearts</p>
@@ -90,16 +222,16 @@ def body():
 </section>
 <section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
 <div class="pu-g">
-  <a class="pu-fr" href="{YT_MV}"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='images/kv/01.webp'" alt="薄紅梅 のミュージックビデオ" data-speed=".06"></span><span class="pu-play" aria-hidden="true"><i></i>MV</span><span class="pu-t">{rb("薄紅梅","うすこうばい")}<small>Triattique</small></span></a>
-  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{YT_MV}">MV</a>{spot("btn")}</p>{chan}</div>
+  <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
+  <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx=".35">Release</p><h2><span>Release</span><small>楽曲</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="rels">{rels}</div></section>
+<section class="sec mood-s" id="mood"><p class="ghost" aria-hidden="true" data-speedx=".35">Mood</p><h2><span>Mood</span><small>気分で選ぶ</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">Songs</a></p></section>
 <section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
-<section class="sec" id="news"><p class="ghost" aria-hidden="true" data-speedx="-.35">News</p><h2><span>News</span><small>お知らせ</small><i class="idx" aria-hidden="true">05<b>/05</b></i></h2><ul class="news">{news}</ul><p class="row one"><a class="btn" href="{XURL}">X</a></p></section>
+<section class="sec" id="news"><p class="ghost" aria-hidden="true" data-speedx="-.35">News</p><h2><span>News</span><small>お知らせ</small><i class="idx" aria-hidden="true">05<b>/05</b></i></h2><ul class="news">{news}</ul></section>
 </main>
-<footer class="ft"><p class="logo">Humming Hearts</p>{chan}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+{footer()}'''
 CSS="""
 :root{--bg:#FAFAF8;--ink:#141414;--sub:#6E6E6E;--faint:#E9E9E6;--line:#CFCFCB;
 --en:"Cormorant Garamond","Cormorant",Georgia,serif;--min:"Shippori Mincho B1","Yu Mincho",serif;--jp:"Zen Kaku Gothic New","Hiragino Sans",sans-serif}
@@ -118,13 +250,42 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .hd{flex-wrap:wrap;gap:14px}
 /* unit pills: jump straight to a unit from anywhere at the top; the one on screen is filled */
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
-.upills a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
-.upills a:hover,.upills a.on{background:var(--ink);color:var(--bg)}
+.up{position:relative;display:block;min-width:0}
+.up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
+.up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
+.up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
 .row{display:flex;gap:0;margin:0;border:1px solid var(--ink)}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
+button.btn,button.md,.lk button{appearance:none;background:none;border:0;border-radius:0;color:inherit;cursor:pointer;padding:0;margin:0}
+button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
+/* mood words: round pills that wrap onto more lines (never a sideways scroll) = pick songs by feeling */
+.moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
+.md:hover,.md.on{background:var(--ink);color:var(--bg)}
+/* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
+.mood-s{padding-bottom:96px}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
+/* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
+.mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
+.mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
+.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+/* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
+@media(max-width:899px){.fl1 .flag{min-height:70svh}}
+/* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
+.dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
+.dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
+.has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-.yt{margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
+/* YouTube へのリンク：小さい公式アイコン＋赤い文字（Kさんの決定 2026-11-14。外へ出る印は付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
+.yt-i{display:block;height:24px;width:auto;margin-right:10px;flex:none}
+@media(max-width:389px){.yt span{display:none}.yt-i{margin-right:2px}}
+.yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
+.sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
+.sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
+@media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt{font-size:15px}}
+@media(max-width:359px){.hd .logo{width:min-content;line-height:1}}
 .burger{position:relative;z-index:31;width:44px;height:44px;margin-right:-10px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
 .burger i{position:absolute;left:10px;right:10px;height:1px;background:currentColor;transition:transform .3s,top .3s}
 .burger i:first-child{top:18px}.burger i:last-child{top:26px}
@@ -132,7 +293,19 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .burger[aria-expanded=true] i{top:22px}.burger[aria-expanded=true] i:first-child{transform:rotate(45deg)}.burger[aria-expanded=true] i:last-child{transform:rotate(-45deg)}
 .menu{position:fixed;inset:0;z-index:30;background:var(--bg);padding:96px 24px 32px;display:flex;flex-direction:column;justify-content:space-between;overflow:auto;animation:menuIn .3s ease}
 .menu[hidden]{display:none}
-.menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt{visibility:hidden}
+/* member names under a unit pill: only where a cursor can rest on it (no touch screens) */
+.up-m{display:none;position:absolute;z-index:20;left:0;top:100%;min-width:100%;padding-top:5px}
+.up-m a,.up-m span{display:block;padding:9px 14px;background:var(--bg);border:1px solid var(--ink);border-top:0;font:500 13px/1.4 var(--min);letter-spacing:.06em;white-space:nowrap;transition:background .2s,color .2s}
+.up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
+.up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
+@media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
+/* 指で使う画面：1回目のタップでメンバーの一覧を開き、同じピルをもう一度押すとユニットのページへ行く（カーソルが無いので、載せて出すことができないため） */
+.up.open .up-m{display:block}.up.open .up-a{background:var(--ink);color:var(--bg)}
+/* unit pills: on the top page they stay out of the way and drop in as a bar at the top only while the Units part is on screen
+   (unit and member pages keep them in the header; pages outside Units do not show them) */
+.js body:not([data-u]) .upills{position:fixed;z-index:12;top:0;left:0;right:0;margin:0;padding:9px 16px;background:rgba(250,250,248,.94);border-bottom:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(-100%);transition:transform .35s ease,opacity .35s ease,visibility 0s .35s}
+.js.in-units body:not([data-u]) .upills{opacity:1;visibility:visible;transform:none;transition:transform .35s ease,opacity .35s ease}
+.menu-open .hd{z-index:40}.menu-open .upills,.menu-open .yt,.menu-open .sh{visibility:hidden}
 @keyframes menuIn{from{opacity:0}to{opacity:1}}
 .m-nav{display:grid}
 .m-nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:italic 500 38px/1.1 var(--en)}
@@ -149,15 +322,29 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .pu{padding-top:72px}
 h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.1em}
 .pu-g{display:grid;gap:28px}
-.pu-fr{position:relative;display:block;aspect-ratio:1/1;margin-inline:-8px}
-.pu-c{position:absolute;inset:0;border-radius:50%;overflow:hidden;display:block}
-.pu-c img{width:100%;height:100%;object-fit:cover;scale:1.35;transition:filter .8s ease,scale .8s cubic-bezier(.2,.7,.2,1)}
-.pu-c::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.2)}
-.pu-fr:hover .pu-c img{scale:1.42}
-.pu-play{position:absolute;left:50%;top:50%;width:23.3%;aspect-ratio:1/1;translate:-50% -50%;border-radius:50%;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 13px/1 var(--en);letter-spacing:.08em;transition:background .25s,color .25s}
-.pu-play i{width:0;height:0;border-left:11px solid currentColor;border-block:7px solid transparent;margin-left:3px}
-.pu-fr:hover .pu-play{background:var(--ink);color:var(--bg)}
-.pu-t{position:absolute;left:8px;bottom:0;max-width:71.6%;background:var(--bg);padding:12px 18px 0 0;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px}
+/* pick up: the picture stays whole. two ink doors stand in front of it and slide apart as the frame
+   comes to the middle of the screen, like a stage curtain; they close again as it leaves.
+   job: the opening marks "this is the song to watch now". --o is how far open (0 shut, 1 open) */
+/* the frame keeps the video's own 16:9 shape at every width, so nothing in the picture is cut off */
+.pu-fr{position:relative;display:block;margin-inline:-24px}
+.pu-w{position:relative;display:block;aspect-ratio:16/9;overflow:hidden}
+.pu-c{position:absolute;inset:0;display:block}
+.pu-c img{width:100%;height:100%;object-fit:cover;transition:filter .8s ease}
+.dr{position:absolute;top:0;bottom:0;width:50%;background:var(--ink);color:var(--bg);overflow:hidden;will-change:transform;--e:104px;--in:9px}
+.dl{left:0;transform:translateX(calc(var(--o,1)*-101%))}
+.drr{right:0;transform:translateX(calc(var(--o,1)*101%))}
+/* on the doors, each with a job:
+   thin frame line, open on the seam side = the two halves read as one pair of doors
+   the unit's emblem in one colour (the doors are black), half on each door = whose song is behind the doors; it parts when they open
+   four small words in the corners = what this is (Pick Up / MV), who (unit) and when (release date) */
+.dr::before{content:"";position:absolute;inset:var(--in);border:1px solid rgba(250,250,248,.55)}
+.dl::before{right:0;border-right:0}.drr::before{left:0;border-left:0}
+.dr img{position:absolute;top:50%;width:var(--e);height:var(--e);max-width:none;margin-top:calc(var(--e)/-2);filter:grayscale(1) contrast(1.1)}
+.dl img{right:calc(var(--e)/-2)}.drr img{left:calc(var(--e)/-2)}
+.dr b{position:absolute;font:italic 500 14px/1 var(--en);letter-spacing:.04em;white-space:nowrap}
+.d-a{top:calc(var(--in) + 9px)}.d-b{bottom:calc(var(--in) + 9px)}
+.dl b{left:calc(var(--in) + 10px)}.drr b{right:calc(var(--in) + 10px)}
+.pu-t{margin:14px 24px 0;font:500 30px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .pu-t small{font:italic 500 16px var(--en);letter-spacing:.02em;color:var(--sub)}
 .pu-s{display:grid;gap:14px}
 .lbl{margin:0;font:italic 500 17px/1 var(--en);color:var(--sub)}
@@ -165,11 +352,55 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .sec{position:relative;padding-top:128px;overflow:clip}
 h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:14px}
 h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
-.rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px}
-.rel:nth-child(2){margin-top:64px}
+.rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
+.rel:nth-child(even){margin-top:64px}
+/* top page: the newest song is shown large, the other four small = what is new reads first */
+.rels.lead{padding-bottom:72px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
 .rel .ph img{width:100%;aspect-ratio:1;object-fit:cover}
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
-.lk{margin:8px 0 0;display:flex;gap:18px;font:500 16px var(--en)}.lk a{border-bottom:1px solid var(--ink);padding-bottom:1px;min-width:44px;text-align:center}
+/* song links: a small joined row of boxes, same language as the big buttons; the first one (MV) is filled = the thing to press first */
+/* episode: entry under a song (round faces of the members who talk + label) */
+.ep-in{margin:10px 0 0}
+.ep-in button{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;min-height:40px;display:inline-flex;align-items:center;gap:10px;font:italic 500 17px/1 var(--en);letter-spacing:.03em}
+.ep-f{display:flex}.ep-f img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--bg);margin-left:-9px}.ep-f img:first-child{margin-left:-2px}
+.ep-in b{font-weight:500;padding-bottom:3px;border-bottom:1px solid var(--ink);transition:opacity .25s}.ep-in button:hover b{opacity:.55}
+/* episode: the chat opens over the page. phone = whole screen, wider = a tall sheet in the middle */
+html.ep-on{overflow:hidden}
+.ep{border:0;padding:0;margin:0;inset:0;width:100%;height:100%;max-width:none;max-height:none;background:var(--bg);color:var(--ink);flex-direction:column;overflow:hidden}
+.ep[open]{display:flex;animation:epIn .45s cubic-bezier(.16,1,.3,1)}
+.ep::backdrop{background:rgba(20,20,20,.7)}
+@keyframes epIn{from{opacity:0;translate:0 28px}}
+.ep-h{flex:none;display:flex;align-items:center;gap:12px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--ink)}
+.ep-h>img{width:36px;height:36px;object-fit:contain}
+.ep-h>div{min-width:0;margin-right:auto}.ep-h b{display:block;font:500 17px/1.3 var(--en);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ep-h small{display:block;font:500 12px/1.5 var(--min);color:var(--sub);letter-spacing:.06em}
+.ep-h button{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;min-height:44px}
+.ep-sk{padding-inline:10px!important;font:italic 500 16px/1 var(--en)}
+.ep-x{position:relative;width:44px}.ep-x::before,.ep-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.ep-x::after{rotate:-45deg}
+.ep-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 16px 34px;display:flex;flex-direction:column;gap:14px;outline:0}
+.ep-r{display:flex;align-items:flex-end;gap:9px;max-width:88%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
+.ep-av{flex:none;width:36px;height:36px;border-radius:50%;object-fit:cover}
+.ep-r>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}.ep-r.me>div{align-items:flex-end}
+.ep-r small{margin:0 6px 3px;font:400 12px/1.4 var(--jp);color:var(--sub);letter-spacing:.06em}
+.ep-r p{margin:0;padding:9px 15px;border:1px solid var(--ink);border-radius:20px;font:400 15px/1.7 var(--jp);letter-spacing:.03em;white-space:pre-line}
+.ep-r.me p{background:var(--uc);border-color:var(--uc);color:var(--ut)}
+.ep-mv{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border:1px solid var(--ink);border-radius:20px;font:500 15px/1.4 var(--min)}
+.ep-mv img{width:64px;height:64px;border-radius:13px;object-fit:cover}.ep-mv i{display:block;font:italic 500 14px/1.3 var(--en);color:var(--sub)}
+.ep-ph{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;cursor:zoom-in;text-align:left}.ep-ph img{display:block;width:min(240px,62vw);border-radius:20px;transition:width .45s cubic-bezier(.16,1,.3,1)}
+.ep-ph.big{cursor:zoom-out}.ep-ph.big img{width:min(100%,560px)}.ep-ph small{margin:6px 6px 0!important;font-family:var(--min)!important}
+.ep-r:has(.ep-ph.big){max-width:100%}
+.ep .ep-log:focus-visible{outline:0}
+.ep-ty p{display:flex;align-items:center;gap:6px;padding:17px 17px}.ep-ty i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;animation:epDot 1s ease-in-out infinite}.ep-ty i:nth-child(2){animation-delay:.16s}.ep-ty i:nth-child(3){animation-delay:.32s}
+@keyframes epDot{30%{opacity:1;translate:0 -3px}60%{opacity:.25;translate:0}}
+.ep-end{align-self:center;margin:10px 0 0;font:italic 500 15px/1 var(--en);color:var(--sub);letter-spacing:.08em}
+.js .ep-log>:not(.in){display:none}.js .ep-log>.in{animation:epRow .5s cubic-bezier(.16,1,.3,1)}
+@keyframes epRow{from{opacity:0;translate:0 12px}}
+@media(min-width:700px){.ep{inset:0;margin:auto;width:460px;height:min(92vh,780px)}.ep-log{padding:26px 22px 38px}}
+@media(prefers-reduced-motion:reduce){.ep[open]{animation:none}.js .ep-log>.in{animation:none}.ep-ph img{transition:none}}
+.lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
+.lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
+.lk>*+*,.lk>button{border-left:1px solid var(--ink)}
+@media(max-width:359px){.lk{font-size:13px;letter-spacing:0}}
+.lk>:first-child,.lk>:hover,.lk>.on{background:var(--ink);color:var(--bg)}
 /* restrained decoration, each with a job:
    .idx   small section number at the end of the heading rule = where you are among the four sections
    h2 rule draws itself from the left when the section arrives = marks the start of a section
@@ -187,15 +418,42 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 .hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
 .hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top;animation:fall 2.4s cubic-bezier(.7,0,.2,1) infinite}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.3em;transition:background .25s,color .25s}
+a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
 .ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
-.rel .ph{display:block;overflow:hidden;aspect-ratio:1}.rel .ph img{scale:1.22}
+/* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
+.rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
+/* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
+.jo{display:none}
+@media(hover:hover){
+ .rel .ph::after{content:"";position:absolute;inset:0;background:rgba(20,20,20,.22);opacity:0;transition:opacity .3s}
+ .jo{display:flex;flex-direction:column;position:absolute;z-index:1;inset:0}
+ .jo-a{flex:1;min-height:0;display:grid;place-items:center}
+ /* play mark: a hairline ring (same 1px line language as the page) with a small triangle; one thin ring spreads out once on hover, like sound */
+ .jo-p{position:relative;width:72px;height:72px;border:1px solid rgba(255,255,255,.92);border-radius:50%;background:rgba(20,20,20,.14);opacity:0;scale:.84;transition:opacity .3s,scale .55s cubic-bezier(.16,1,.3,1)}
+ .jo-p::before{content:"";position:absolute;left:50%;top:50%;translate:-36% -50%;border-left:17px solid #fff;border-block:10px solid transparent}
+ .jo-p::after{content:"";position:absolute;inset:-1px;border:1px solid #fff;border-radius:50%;opacity:0}
+ .rel .ph:hover .jo-p::after,.rel .ph:focus-visible .jo-p::after{animation:joR 1s cubic-bezier(.2,.6,.3,1) .12s 1}
+ @keyframes joR{from{opacity:.75;scale:1}to{opacity:0;scale:1.6}}
+ .jo-c{display:block;padding:14px 18px 15px;background:rgba(20,20,20,.78);color:#f4f4f0;translate:0 101%;transition:translate .45s cubic-bezier(.16,1,.3,1)}
+ .jo-c i{font:italic 500 14px/1 var(--en);letter-spacing:.04em;opacity:.7}
+ .jo-d{display:flex;align-items:baseline;gap:10px;font:500 21px/1.2 var(--en);letter-spacing:.06em}
+ .jo-n{display:flex;flex-wrap:wrap;gap:4px 22px;font:500 15px/1.6 var(--min);letter-spacing:.08em}
+ .jo-d+.jo-n{margin-top:9px;padding-top:9px;border-top:1px solid rgba(244,244,240,.28)}
+ .jo-n span{display:inline-flex;align-items:baseline;gap:9px;white-space:nowrap}
+ .rel .ph:hover::after,.rel .ph:focus-visible::after,.rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{opacity:1}
+ .rel .ph:hover .jo-p,.rel .ph:focus-visible .jo-p{scale:1}
+ .rel .ph:hover .jo-c,.rel .ph:focus-visible .jo-c{translate:0}
+ @media(prefers-reduced-motion:reduce){.jo-p,.jo-c,.rel .ph::after{transition:none}.rel .ph .jo-p::after{animation:none!important}}
+}
 /* unit flags: full-width, stack over the previous one; grey until they take the screen */
 .flags{margin-top:8px}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
 .flag.lit{filter:none}
 .f-txt{display:block;padding:72px 24px 24px}
 .f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
+.kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
 .f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.16em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
 .f-mem{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid currentColor;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font:500 15px/1.7 var(--min)}
@@ -215,58 +473,129 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 [data-speed]{will-change:translate}
 @media(min-width:900px){
- .hd,.sec,.nr,.ft{padding-inline:calc(50% - 540px)}
+ .hd,.sec,.nr,.ft{padding-inline:max(32px,calc(50% - 540px))}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
- .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}.upills a{min-height:24px;font-size:13px;padding-inline:14px}
+ .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}
+ .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(6,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
- .catch{right:calc(50% - 540px);top:150px;font-size:30px}
- .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 560px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.pu-t{left:0;font-size:44px;padding:16px 26px 0 0}.pu-play{font-size:16px}.pu-play i{border-left-width:14px;border-block-width:9px}
+ .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
+ .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
- .rels{grid-template-columns:repeat(3,1fr);gap:48px}.rel:nth-child(2){margin-top:120px}.rel h3{font-size:21px}
+ .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
  .ghost{font-size:380px;top:60px}
  .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
- .hint{display:block;left:auto;right:calc(50% - 540px)}
+ .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
- .f-txt{padding:120px 60px 60px calc(50vw - 540px);align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:48px 20px}.mem .ph{width:116px;height:116px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
 }
+/* narrow PC and tablets held sideways (900 to 1139px): same layout, with the menu button instead of the word links */
+@media(min-width:900px) and (max-width:1139px){
+ .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
+ .trio{left:0;margin-left:0;width:88%}
+ .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
+ h2 span{font-size:88px}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.ph img,.trio img{filter:none}}
 """
-JS="""(function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
+JS="""/* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
+(function(){var d,ctl,api,wait;
+function mark(b){[].forEach.call(document.querySelectorAll('[data-try]'),function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')})}
+function shut(){if(d){try{ctl&&ctl.destroy()}catch(e){}ctl=null;d.parentNode.removeChild(d);d=null;document.documentElement.classList.remove('has-dock');mark(null)}}
+function plain(id){var h=d&&d.querySelector('.dock-p');if(h)h.innerHTML='<iframe title="Spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'"></iframe>'}
+function start(id){var h=d&&d.querySelector('.dock-p');if(!h)return;
+if(ctl){try{ctl.loadUri('spotify:track:'+id);ctl.play();return}catch(e){ctl=null}}
+h.innerHTML='<div></div>';
+try{api.createController(h.firstChild,{uri:'spotify:track:'+id,width:'100%',height:80},function(c){ctl=c;var go=function(){try{c.play()}catch(e){}};c.addListener('ready',go);go()})}catch(e){plain(id)}}
+function load(id){if(api){start(id);return}
+window.onSpotifyIframeApiReady=function(a){api=a;clearTimeout(wait);if(d&&d.dataset.id)start(d.dataset.id)};
+if(!document.getElementById('sp-api')){var s=document.createElement('script');s.id='sp-api';s.async=true;s.src='https://open.spotify.com/embed/iframe-api/v1';s.onerror=function(){clearTimeout(wait);if(d)plain(d.dataset.id)};document.head.appendChild(s)}
+clearTimeout(wait);wait=setTimeout(function(){if(!api&&d)plain(d.dataset.id)},4000)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-try]');if(!b)return;var was=b.classList.contains('on');if(was||!b.dataset.try){shut();return}
+if(!d){d=document.createElement('div');d.className='dock';d.setAttribute('role','region');d.setAttribute('aria-label','Spotify');
+d.innerHTML='<div class="dock-p"></div><button type="button">閉じる</button>';d.querySelector('button').addEventListener('click',shut);document.body.appendChild(d);document.documentElement.classList.add('has-dock')}
+d.dataset.id=b.dataset.try;mark(b);load(b.dataset.try)})})();
+/* Mood: five jackets picked at random; a mood word picks again among the songs of that mood (fewer than five = all of them) */
+(function(){var w=document.querySelector('.mds');if(!w)return;var cs=[].slice.call(w.children),ps=[].slice.call(document.querySelectorAll('.mood-s .md')),more=document.querySelector('.mood-s .more a'),
+mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
+function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
+cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
+w.classList.toggle('ev',pk.length%2===0);
+ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
+if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
+if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
+ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});draw('',false)})();
+(function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');
+document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
-var pill={};[].forEach.call(document.querySelectorAll('.upills a'),function(a){pill[a.dataset.u]=a});
-function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=fs.length?fs[fs.length-1].dataset.u:'';for(var k in pill)pill[k].classList.toggle('on',k===cur)}
+var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
+if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});
+function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
 /* layers move at their own speed */
 var px=[].slice.call(document.querySelectorAll('[data-speed],[data-speedx]')).map(function(el){return{el:el,s:parseFloat(el.dataset.speed)||0,x:parseFloat(el.dataset.speedx)||0,h:el.closest('.flag,.rel,section')||el.parentNode}}),tk=false;
-function fr(){tk=false;var vh=innerHeight;pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
+var pu=document.querySelector('.pu-fr'),us=document.getElementById('units'),fl=document.querySelector('.flags');
+function fr(){tk=false;var vh=innerHeight;if(us&&fl)document.documentElement.classList.toggle('in-units',us.getBoundingClientRect().top<vh*.55&&fl.getBoundingClientRect().bottom>vh*.35);if(pu){var q=pu.getBoundingClientRect(),o=1.25-Math.abs(q.top+q.height/2-vh/2)/(vh*.42);o=Math.max(0,Math.min(1,o));pu.style.setProperty('--o',(o*o*(3-2*o)).toFixed(3))}pg.style.setProperty('--p',(scrollY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4));px.forEach(function(p){var r=p.h.getBoundingClientRect();if(r.bottom<-500||r.top>vh+500)return;
  var d=(r.top+r.height/2)-vh/2;p.el.style.translate=(-d*p.x).toFixed(1)+'px '+(-d*p.s).toFixed(1)+'px'})}
-addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();"""
+addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(fr)}},{passive:true});addEventListener('resize',fr);fr();})();
+/* Episode: opens the chat over the page; lines appear one by one (Skip shows all). #episode-<song> opens it directly. */
+(function(){var tm=0;
+function rows(d){return d.querySelectorAll('.ep-log>*')}
+function noty(d){[].forEach.call(d.querySelectorAll('.ep-ty'),function(x){x.remove()})}
+function all(d){clearTimeout(tm);noty(d);[].forEach.call(rows(d),function(x){x.classList.add('in')});d.querySelector('.ep-sk').hidden=true}
+/* before each line, the speaker's side shows moving dots ("typing") for a moment, then the line takes their place */
+function play(d){var r=[].slice.call(rows(d)),i=0,log=d.querySelector('.ep-log');log.scrollTop=0;
+ function down(){log.scrollTo({top:log.scrollHeight,behavior:'smooth'})}
+ function show(x){noty(d);x.classList.add('in');i++;down();tm=setTimeout(step,Math.min(1700,450+x.textContent.length*45))}
+ function step(){if(!d.open)return;if(i>=r.length){d.querySelector('.ep-sk').hidden=true;return}
+  var x=r[i];if(!x.classList.contains('ep-r')){show(x);return}
+  var t=document.createElement('div');t.className='ep-r ep-ty in'+(x.classList.contains('me')?' me':'');t.setAttribute('aria-hidden','true');
+  t.innerHTML='<img class="ep-av" src="'+x.querySelector('.ep-av').getAttribute('src')+'" alt=""><div><p><i></i><i></i><i></i></p></div>';
+  log.insertBefore(t,x);down();tm=setTimeout(function(){show(x)},520+Math.min(900,x.textContent.length*28))}
+ step()}
+function open(s){var d=document.getElementById('ep-'+s);if(!d||!d.showModal||d.open)return;
+ noty(d);[].forEach.call(rows(d),function(x){x.classList.remove('in')});d.querySelector('.ep-sk').hidden=false;
+ d.showModal();document.documentElement.classList.add('ep-on');history.replaceState(null,'','#episode-'+s);
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)all(d);else tm=setTimeout(function(){play(d)},380)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]');if(b){open(b.dataset.ep);return}
+ var d=e.target.closest('dialog.ep');if(!d)return;
+ if(e.target===d||e.target.closest('.ep-x'))d.close();else if(e.target.closest('.ep-ph'))e.target.closest('.ep-ph').classList.toggle('big');else if(e.target.closest('.ep-sk')){all(d);d.querySelector('.ep-log').scrollTop=0}});
+[].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);noty(d);document.documentElement.classList.remove('ep-on');
+ if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
+var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
+
+/* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
+(function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;
+function shut(){if(pop){pop.remove();pop=null;b.setAttribute('aria-expanded','false')}}
+b.addEventListener('click',function(e){e.stopPropagation();var m=document.querySelector('meta[name="share"]'),t=(m&&m.content)||document.title,u=location.href;
+ if(navigator.share&&matchMedia('(pointer:coarse)').matches){navigator.share({title:document.title,text:t,url:u}).catch(function(){});return}
+ if(pop){shut();return}
+ pop=document.createElement('p');pop.className='sh-p';
+ var x=document.createElement('a');x.className='btn';x.textContent='X';x.target='_blank';x.rel='noopener';x.href='https://x.com/intent/post?text='+encodeURIComponent(t)+'&url='+encodeURIComponent(u);
+ var c=document.createElement('button');c.type='button';c.className='btn';c.textContent='Copy';
+ c.addEventListener('click',function(ev){ev.stopPropagation();var done=function(){c.textContent='Copied';setTimeout(shut,900)};
+  if(navigator.clipboard)navigator.clipboard.writeText(u).then(done,function(){prompt('',u)});else prompt('',u)});
+ pop.appendChild(x);pop.appendChild(c);document.body.appendChild(pop);
+ var r=b.getBoundingClientRect();pop.style.margin='0';pop.style.top=(r.bottom+scrollY+4)+'px';pop.style.left=Math.max(8,Math.min(r.right-216,innerWidth-224))+'px';b.setAttribute('aria-expanded','true')});
+addEventListener('click',shut);addEventListener('keydown',function(e){if(e.key==='Escape')shut()});addEventListener('resize',shut)})();
+"""
 
 def main():
-    html = f'''<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Humming Hearts OFFICIAL SITE</title>
-<meta name="description" content="{DESC}">
-<meta name="theme-color" content="#FAFAF8">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONT}">
-<link rel="stylesheet" href="css/style.css"></head><body>{body()}<script src="js/main.js"></script></body></html>
-'''
+    html = page("Humming Hearts OFFICIAL SITE", DESC, "", body())
     for path, text in (("index.html", html), ("css/style.css", CSS.lstrip("\n")), ("js/main.js", JS + "\n")):
         with open(os.path.join(ROOT, path), "w", encoding="utf-8") as f: f.write(text)
         print("ok", path)
