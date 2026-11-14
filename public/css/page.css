@@ -3,6 +3,9 @@
 /* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
 .flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
 .md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
+/* phone: the same choices as two pulldowns (name on the left, one line each) = no cramped rows of pills, no ragged gaps */
+.sel{display:none;appearance:none;-webkit-appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;border:1px solid var(--ink);border-radius:999px;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;color:var(--ink);font:500 16px/1 var(--jp);letter-spacing:.06em;cursor:pointer}
+@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.sel{display:block}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -16,6 +19,12 @@
 .prose p{margin:0 0 1.6em;font-size:15px;line-height:2.2}
 .mems.big{grid-template-columns:repeat(3,1fr);gap:28px 10px;max-width:640px}.mems.big .ph{width:104px;height:104px}.mems.big .mem{font-size:14px}
 .rels.solo{grid-template-columns:minmax(0,300px)}
+/* member page songs: one thin row per song (small jacket, title, the three buttons) = stays short as songs are added */
+.sl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.sl-i{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:72px;height:72px;object-fit:cover}
+.sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
+.sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
 .others{padding-top:96px}.others .lbl{margin-bottom:8px}
 .others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.12em}
 /* unit first screen */
@@ -134,10 +143,24 @@
 .pn a:first-child{padding-left:14px}.pn a+a{padding-right:14px}
 .pn small{font:italic 500 16px/1 var(--en);color:var(--sub)}
 .pn a:hover{background:var(--ink);color:var(--bg)}.pn a:hover small{color:inherit}
+/* スマホ：タグは立ち絵の右下に、右寄せの帯で出す（Kさんの指示 2026-11-14。左にはセリフの帯があるので右へ）。出方はPCと同じで、向きだけ左右逆 */
+@media(max-width:699px){
+ .tags-a{position:absolute;z-index:4;right:0;bottom:44px;margin:0;padding:0;list-style:none;display:grid;gap:6px;justify-items:end}
+ .tags-a li{padding:5px 22px 5px 14px;background:var(--cm);color:var(--tc);font:500 13px/1.5 var(--jp);letter-spacing:.06em}
+ .js .tags-a li{clip-path:inset(0 0 0 100%);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
+ .js .tags-a li span{display:inline-block;opacity:0;transform:translateX(18px);transition:opacity .2s ease,transform .3s ease}
+ .rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
+ .rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
+ .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
+ .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
+ @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
+ .ch-t .tags{display:none}
+}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
+ .sl-i{grid-template-columns:88px minmax(0,1fr) 252px 150px;column-gap:28px;padding:16px 0}.sl-j{grid-row:auto}.sl-j img{width:88px;height:88px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
  .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
  .uh-em{width:300px;height:300px;margin:0 0 20px -18px}

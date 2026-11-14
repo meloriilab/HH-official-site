@@ -89,7 +89,9 @@ def songs_page():
     def row(k, lbl, aria, items):
         ps = f'<button class="md on" type="button" data-k="{k}" data-v="" aria-pressed="true">すべて</button>' + "".join(
             f'<button class="md" type="button" data-k="{k}" data-v="{esc(v)}" aria-pressed="false">{esc(t)}</button>' for v, t in items)
-        return f'<div class="flt"><p class="lbl">{lbl}</p><div class="moods" role="group" aria-label="{aria}">{ps}</div></div>'
+        # スマホは同じ中身をプルダウンで出す（Kさんの指示 2026-11-14：丸いボタンだと窮屈で余白も無駄になる）。PCは丸いボタンのまま。どちらも同じ一覧から作るので手間は増えない
+        sel = f'<select class="sel" data-k="{k}" aria-label="{aria}"><option value="">すべて</option>' + "".join(f'<option value="{esc(v)}">{esc(t)}</option>' for v, t in items) + '</select>'
+        return f'<div class="flt"><p class="lbl">{lbl}</p><div class="moods" role="group" aria-label="{aria}">{ps}</div>{sel}</div>'
     units = [(T.SLUG[u], UNIT[u]["name"]) for u in UNIT if any(r[1] == u for r in T.RELS)]   # 曲があるユニットだけ
     rows = row("m", "Mood", "気分で選ぶ", [(m, m) for m in T.used_moods()]) + row("u", "Unit", "ユニットで選ぶ", units)
     cards = "".join(f'''
@@ -106,11 +108,12 @@ def songs_page():
 {T.footer()}<script>{SGJS}</script>'''
     return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分とユニットで選べます。", pre, inner, css=("page.css",))
 
-SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),st={m:'',u:''};
+SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),ss=[].slice.call(document.querySelectorAll('.sg .sel')),st={m:'',u:''};
 function ok(c,m,u){return(!m||c.dataset.m.split('|').indexOf(m)>=0)&&(!u||c.dataset.u===u)}
 function draw(){ps.forEach(function(p){var k=p.dataset.k,v=p.dataset.v,on=st[k]===v;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false');
 /* a word that would leave no song with the other row's choice is dimmed and cannot be pressed = never an empty page */
 p.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})});
+ss.forEach(function(s){var k=s.dataset.k;s.value=st[k];[].forEach.call(s.options,function(o){var v=o.value;o.disabled=st[k]!==v&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})})});
 /* reorder motion: each jacket slides from where it was to where it goes, so the eye can follow which songs stayed */
 var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!document.body.animate,old=new Map();
 if(mv)cs.forEach(function(c){if(!c.hidden)old.set(c,c.getBoundingClientRect())});
@@ -118,8 +121,9 @@ cs.forEach(function(c){c.hidden=!ok(c,st.m,st.u)});
 if(mv)cs.forEach(function(c){if(c.hidden)return;var n=c.getBoundingClientRect(),o=old.get(c);
 if(o){var dx=o.left-n.left,dy=o.top-n.top;if(dx||dy)c.animate([{transform:'translate('+dx+'px,'+dy+'px)'},{transform:'none'}],{duration:480,easing:'cubic-bezier(.2,.7,.2,1)'})}
 else c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:120,easing:'ease-out',fill:'backwards'})})}
-ps.forEach(function(p){p.addEventListener('click',function(){st[p.dataset.k]=p.dataset.v;draw();
-try{var q=[];if(st.m)q.push('m='+encodeURIComponent(st.m));if(st.u)q.push('u='+encodeURIComponent(st.u));history.replaceState(null,'',q.length?'?'+q.join('&'):location.pathname)}catch(e){}})});
+function put(){try{var q=[];if(st.m)q.push('m='+encodeURIComponent(st.m));if(st.u)q.push('u='+encodeURIComponent(st.u));history.replaceState(null,'',q.length?'?'+q.join('&'):location.pathname)}catch(e){}}
+ps.forEach(function(p){p.addEventListener('click',function(){st[p.dataset.k]=p.dataset.v;draw();put()})});
+ss.forEach(function(s){s.addEventListener('change',function(){st[s.dataset.k]=s.value;draw();put()})});
 [].forEach.call(document.querySelectorAll('.sgs .tg'),function(t){t.addEventListener('click',function(){st.m=t.dataset.v;if(!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';draw()})});
 try{var sp=new URLSearchParams(location.search);['m','u'].forEach(function(k){var v=sp.get(k)||'';if(v&&ps.some(function(p){return p.dataset.k===k&&p.dataset.v===v}))st[k]=v})}catch(e){}
 if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
@@ -180,12 +184,13 @@ def char_page(cid):
            f'<a class="nx" href="{T.mhref(nx, PRE)}" aria-label="次のメンバー：{nx[2]}{nx[3]}"></a></p>')
     # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
     prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl></div>'
-    # そのメンバーが歌っている曲（＝ユニットの曲）。カードはユニットのページと同じもの（Kさんの回答 2026-11-14）
+    # そのメンバーが歌っている曲（＝ユニットの曲）。ページのいちばん最後に、小さいジャケットの1行ずつの一覧で出す
+    # （Kさんの指示 2026-11-14：キャラのページは縦に長くしない。曲は今後増えるので小さくまとめる。ほかのページのカードの並べ方は使い回さない）
     songs = "".join(f'''
-      <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
-        <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
-    k = 1 if songs else 0   # 曲の段がある人は、後ろの段の番号が1つずつ増える
-    songs_sec = f'''<section class="sec" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p>{h2("Songs", "楽曲", 2, 4, (1, 3))}<div class="rels solo">{songs}</div><p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p></section>''' if songs else ""
+      <li class="sl-i"><a class="sl-j" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット" loading="lazy"></a>
+        <h3>{T.rb(t, k)}</h3>{T.lk(n)}{T.ep_btn(n, PRE)}</li>''' for n, ru, t, k, un in T.RELS if ru == u)
+    k = 1 if songs else 0   # 曲の段がある人は、段の数が1つ増える
+    songs_sec = f'''<section class="sec sl-s" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p>{h2("Songs", "参加曲", 4, 4, (3, 3))}<ul class="sl">{songs}</ul><p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p></section>''' if songs else ""
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
@@ -193,9 +198,9 @@ def char_page(cid):
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}{prof}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
+<section class="sec{" has-b" + tall if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
+<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 {songs_sec}
-<section class="sec{" has-b" + tall if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2 + k, 3 + k, (1 + k, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3 + k, 3 + k, (2 + k, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
 {T.footer()}<script>{SWJS}</script><script>{TGV}{RDY}</script>'''
@@ -211,6 +216,9 @@ CSS = """
 /* two rows of words, each with a small name on the left: Mood = by feeling, Unit = by who sings */
 .flts{display:grid;gap:18px;margin-bottom:40px}.flt{display:grid;gap:10px}
 .md:disabled{opacity:.3;cursor:default;background:none;color:inherit}
+/* phone: the same choices as two pulldowns (name on the left, one line each) = no cramped rows of pills, no ragged gaps */
+.sel{display:none;appearance:none;-webkit-appearance:none;width:100%;min-height:46px;margin:0;padding:0 44px 0 20px;border:1px solid var(--ink);border-radius:999px;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:6px 6px,6px 6px;background-position:right 24px center,right 18px center;color:var(--ink);font:500 16px/1 var(--jp);letter-spacing:.06em;cursor:pointer}
+@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.sel{display:block}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -224,6 +232,12 @@ CSS = """
 .prose p{margin:0 0 1.6em;font-size:15px;line-height:2.2}
 .mems.big{grid-template-columns:repeat(3,1fr);gap:28px 10px;max-width:640px}.mems.big .ph{width:104px;height:104px}.mems.big .mem{font-size:14px}
 .rels.solo{grid-template-columns:minmax(0,300px)}
+/* member page songs: one thin row per song (small jacket, title, the three buttons) = stays short as songs are added */
+.sl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.sl-i{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:72px;height:72px;object-fit:cover}
+.sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
+.sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
 .others{padding-top:96px}.others .lbl{margin-bottom:8px}
 .others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.12em}
 /* unit first screen */
@@ -342,10 +356,24 @@ CSS = """
 .pn a:first-child{padding-left:14px}.pn a+a{padding-right:14px}
 .pn small{font:italic 500 16px/1 var(--en);color:var(--sub)}
 .pn a:hover{background:var(--ink);color:var(--bg)}.pn a:hover small{color:inherit}
+/* スマホ：タグは立ち絵の右下に、右寄せの帯で出す（Kさんの指示 2026-11-14。左にはセリフの帯があるので右へ）。出方はPCと同じで、向きだけ左右逆 */
+@media(max-width:699px){
+ .tags-a{position:absolute;z-index:4;right:0;bottom:44px;margin:0;padding:0;list-style:none;display:grid;gap:6px;justify-items:end}
+ .tags-a li{padding:5px 22px 5px 14px;background:var(--cm);color:var(--tc);font:500 13px/1.5 var(--jp);letter-spacing:.06em}
+ .js .tags-a li{clip-path:inset(0 0 0 100%);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
+ .js .tags-a li span{display:inline-block;opacity:0;transform:translateX(18px);transition:opacity .2s ease,transform .3s ease}
+ .rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
+ .rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
+ .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
+ .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
+ @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
+ .ch-t .tags{display:none}
+}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
+ .sl-i{grid-template-columns:88px minmax(0,1fr) 252px 150px;column-gap:28px;padding:16px 0}.sl-j{grid-row:auto}.sl-j img{width:88px;height:88px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
  .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
  .uh-em{width:300px;height:300px;margin:0 0 20px -18px}

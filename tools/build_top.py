@@ -149,7 +149,7 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS if u in PAGES)   # ページがあるユニットだけ（Kさんの回答 2026-11-14）
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"><span>YouTube</span><svg class="ext" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M4.5 1.5h-3v9h9v-3M7 1.5h3.5V5M10.5 1.5 5.5 6.5"/></svg></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"><span>YouTube</span></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer():
     return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
@@ -278,9 +278,9 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-/* YouTube へのリンク：赤い文字＋外へ出る印（Kさんの案 2026-11-14）。【お試し】?yt=1 … 小さい公式アイコンを前に付ける（余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける。不採用なら .yt-i と main.js の yt1 を消す） */
-.yt .ext{fill:none;stroke:currentColor;stroke-width:1;margin:-8px 0 0 4px;flex:none}.yt-i{display:none;height:24px;width:auto;margin-right:10px;flex:none}.yt1 .yt-i{display:block}
-@media(max-width:389px){.yt1 .yt span{display:none}.yt1 .yt-i{margin-right:2px}}
+/* YouTube へのリンク：小さい公式アイコン＋赤い文字（Kさんの決定 2026-11-14。外へ出る印は付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
+.yt-i{display:block;height:24px;width:auto;margin-right:10px;flex:none}
+@media(max-width:389px){.yt span{display:none}.yt-i{margin-right:2px}}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
@@ -299,6 +299,8 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
 .up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
 @media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
+/* 指で使う画面：1回目のタップでメンバーの一覧を開き、同じピルをもう一度押すとユニットのページへ行く（カーソルが無いので、載せて出すことができないため） */
+.up.open .up-m{display:block}.up.open .up-a{background:var(--ink);color:var(--bg)}
 /* unit pills: on the top page they stay out of the way and drop in as a bar at the top only while the Units part is on screen
    (unit and member pages keep them in the header; pages outside Units do not show them) */
 .js body:not([data-u]) .upills{position:fixed;z-index:12;top:0;left:0;right:0;margin:0;padding:9px 16px;background:rgba(250,250,248,.94);border-bottom:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(-100%);transition:transform .35s ease,opacity .35s ease,visibility 0s .35s}
@@ -535,11 +537,12 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');if(/[?&]yt=1/.test(location.search))document.documentElement.classList.add('yt1');
+document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
 var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
+if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});
 function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});

@@ -43,9 +43,9 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-/* YouTube へのリンク：赤い文字＋外へ出る印（Kさんの案 2026-11-14）。【お試し】?yt=1 … 小さい公式アイコンを前に付ける（余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける。不採用なら .yt-i と main.js の yt1 を消す） */
-.yt .ext{fill:none;stroke:currentColor;stroke-width:1;margin:-8px 0 0 4px;flex:none}.yt-i{display:none;height:24px;width:auto;margin-right:10px;flex:none}.yt1 .yt-i{display:block}
-@media(max-width:389px){.yt1 .yt span{display:none}.yt1 .yt-i{margin-right:2px}}
+/* YouTube へのリンク：小さい公式アイコン＋赤い文字（Kさんの決定 2026-11-14。外へ出る印は付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
+.yt-i{display:block;height:24px;width:auto;margin-right:10px;flex:none}
+@media(max-width:389px){.yt span{display:none}.yt-i{margin-right:2px}}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
@@ -64,6 +64,8 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .up-m>:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.up-m>:last-child{border-radius:0 0 12px 12px}.up-m>:only-child{border-radius:12px}
 .up-m a:hover{background:var(--ink);color:var(--bg)}.up-m span{color:var(--sub)}
 @media(hover:hover){.up:hover .up-m,.up:focus-within .up-m{display:block}}
+/* 指で使う画面：1回目のタップでメンバーの一覧を開き、同じピルをもう一度押すとユニットのページへ行く（カーソルが無いので、載せて出すことができないため） */
+.up.open .up-m{display:block}.up.open .up-a{background:var(--ink);color:var(--bg)}
 /* unit pills: on the top page they stay out of the way and drop in as a bar at the top only while the Units part is on screen
    (unit and member pages keep them in the header; pages outside Units do not show them) */
 .js body:not([data-u]) .upills{position:fixed;z-index:12;top:0;left:0;right:0;margin:0;padding:9px 16px;background:rgba(250,250,248,.94);border-bottom:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(-100%);transition:transform .35s ease,opacity .35s ease,visibility 0s .35s}
