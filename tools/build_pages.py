@@ -158,7 +158,7 @@ def guideline_page():
     def tail(h):   # 段落・箇条書きの終わりの5文字は途中で折り返さない（「す。」だけが次の行に落ちるのを防ぐ。Kさんの指摘 2026-11-15）
         return re.sub(r"([^<>]{5})(</p>|</li>)", r'<span class="nb">\1</span>\2', h)
     items = [(t, tail(b)) for t, b in items]
-    lead = tail("<p class=\"gl-l\">Humming Hearts のキャラクターや世界を使った創作を歓迎します。みんなが気持ちよく楽しめるように、お願いしたいことをまとめました。</p>")
+    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
     note = tail('<p class="gl-x">ガイドラインの内容は予告なく変わることがあります。</p>')   # いちばん下の注意書き（Kさんの指示 2026-11-15。「草案です」の一文は外す）
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
