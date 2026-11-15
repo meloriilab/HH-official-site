@@ -94,7 +94,7 @@ html.pop-on{overflow:hidden}
  #profile .pf dt{line-height:1.6}#profile .pf dd{font-size:14px;line-height:1.7}#profile .ch-x{margin-top:20px}#profile .ch-mm{margin-top:20px}#profile .prose p{font-size:14px;line-height:1.95}}
 .nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
-.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;align-content:flex-start}   /* 2026-11-15 隣の曲のタグが2段になると、1つだけの札が縦に伸びて楕円になっていた */
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
 .tg:hover{border-color:var(--ink);color:var(--ink)}
 .lk button{font:inherit;letter-spacing:inherit}
