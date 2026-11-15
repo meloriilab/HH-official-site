@@ -30,6 +30,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
 button.btn,button.md,.lk button{appearance:none;background:none;border:0;border-radius:0;color:inherit;cursor:pointer;padding:0;margin:0}
+.lk button{font:inherit;letter-spacing:inherit}   /* 2026-11-15: Listen は MV・Spotify と同じ書体（以前はトップだけ端末の標準の書体になっていた） */
 button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 /* mood words: round pills that wrap onto more lines (never a sideways scroll) = pick songs by feeling */
 .moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
@@ -42,8 +43,6 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
 @media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
-/* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
-@media(max-width:899px){.fl1 .flag{min-height:70svh}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -79,7 +78,7 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 @keyframes menuIn{from{opacity:0}to{opacity:1}}
 .m-nav{display:grid}
 .m-nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:italic 500 38px/1.1 var(--en)}
-.m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.2em}
+.m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.06em}
 .menu .row{margin:32px 0 0}
 .fv{position:relative;height:730px;overflow:hidden}
 .word{position:absolute;margin:0;font:500 112px/1 var(--en);color:var(--faint);white-space:nowrap;letter-spacing:-.02em}
@@ -90,7 +89,7 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .catch{position:absolute;z-index:3;right:22px;top:150px;margin:0;writing-mode:vertical-rl;font:500 21px/1.6 var(--min);letter-spacing:.3em}
 .catch span{display:block;white-space:nowrap}.catch span+span{padding-top:4em}
 .pu{padding-top:72px}
-h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.1em}
+h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.06em}
 .pu-g{display:grid;gap:28px}
 /* pick up: the picture stays whole. two ink doors stand in front of it and slide apart as the frame
    comes to the middle of the screen, like a stage curtain; they close again as it leaves.
@@ -121,7 +120,7 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .nr-t{margin:0 0 6px;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px}.nr-t small{font:italic 500 17px var(--en);color:var(--sub)}
 .sec{position:relative;padding-top:128px;overflow:clip}
 h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:14px}
-h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
+h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.06em;color:var(--sub)}
 .rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
 /* top page: the newest song is shown large, the other four small = what is new reads first */
@@ -169,29 +168,28 @@ html.ep-on{overflow:hidden}
 .lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
 .lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
 .lk>*+*,.lk>button{border-left:1px solid var(--ink)}
+@media(max-width:599px){.lk{font-size:14px;letter-spacing:0}}   /* 2026-11-15: スマホの2列では Spotify が枠の線に触れていた */
 @media(max-width:359px){.lk{font-size:13px;letter-spacing:0}}
 .lk>:first-child,.lk>:hover,.lk>.on{background:var(--ink);color:var(--bg)}
-/* restrained decoration, each with a job:
-   .idx   small section number at the end of the heading rule = where you are among the four sections
-   h2 rule draws itself from the left when the section arrives = marks the start of a section
+/* restrained decoration, each with a job (2026-11-15, frontend-design pass: the showcase is "art turns to colour in the middle of the screen";
+   the faint big word behind each heading, the 01/05 numbers, the self-drawing heading rule and the drifting face rows were removed):
+   h2 rule    1px line under the heading = marks the start of a section
    .prog  1px line that fills with scroll = how far down the page you are
-   .hint  small word + falling line at the bottom of the first screen = there is more below
+   .hint  small word + still line at the bottom of the first screen = there is more below
    .f-mark the unit's own emblem beside its name = repeats each unit's mark so the flag reads as theirs */
 h2{position:relative;border-bottom:0!important}
 h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform-origin:left}
-.js h2::after{transform:scaleX(0);transition:transform 1.1s cubic-bezier(.7,0,.2,1)}
-.js h2.in::after{transform:none}
-.idx{margin-left:auto;font:italic 500 20px/1 var(--en);font-style:italic;letter-spacing:.04em}
-.idx b{font-weight:500;color:var(--sub);font-size:13px;margin-left:3px}
 .prog{position:fixed;z-index:40;left:0;top:0;width:100%;height:2px;pointer-events:none}
 .prog i{display:block;height:100%;background:var(--ink);transform-origin:left;transform:scaleX(var(--p,0))}
 .hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
-.hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top;animation:fall 2.4s cubic-bezier(.7,0,.2,1) infinite}
+.hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.3em;transition:background .25s,color .25s}
+.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
-.f-mark{width:48px;height:48px;margin-bottom:14px}
-.ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
+/* 2026-11-15 Kさん：紋章は白一色にして、ユニット名の左横に置く（試し） */
+.f-hd{display:flex;align-items:center;gap:14px}
+.f-mark{flex:none;width:48px;height:48px;filter:brightness(0) invert(1)}
+.flag.dark .f-mark{filter:brightness(0)}   /* 文字が黒の旗（NocturnalFizz）は、紋章も黒にそろえる。白い文字は旗の色との差が足りない（約3.2:1） */
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
@@ -222,21 +220,23 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
 .flag.lit{filter:none}
 .f-txt{display:block;padding:72px 24px 24px}
-.f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
+.f-name{display:block;min-width:0;font:500 44px/1 var(--en);letter-spacing:-.01em}   /* 2026-11-15 Kさん：もう少し小さく（58px→44px） */
 .kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
-.f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.16em;opacity:.85}
+.f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.06em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
 .f-mem{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid currentColor;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font:500 15px/1.7 var(--min)}
 .f-mem .tbd{font:400 12px var(--jp);grid-column:1/-1}
 .f-pic{position:relative;display:block;min-height:260px;overflow:hidden}
 .f-art{position:absolute;left:0;top:-15%;width:100%;height:130%;object-fit:cover;object-position:50% 20%}
 .f-em{position:absolute;height:80%;left:50%;top:10%;margin-left:-40%;width:80%;object-fit:contain}
+/* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
+@media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
 .mems{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 12px}
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
-.news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.14em}
+.news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
 .ft{margin-top:128px;padding-block:56px 40px;border-top:1px solid var(--ink);display:grid;gap:20px}.ft .logo{font-size:34px}.note{margin:0;font-size:12px;color:var(--sub)}
@@ -255,12 +255,12 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
- .ghost{font-size:380px;top:60px}
- .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
+
+ .f-mark{width:60px;height:60px}.f-hd{gap:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
- .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:48px 20px}.mem .ph{width:116px;height:116px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
