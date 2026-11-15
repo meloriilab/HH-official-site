@@ -154,7 +154,7 @@ html.ep-on{overflow:hidden}
 .ep-sk{padding-inline:10px!important;font:italic 500 16px/1 var(--en)}
 .ep-x{position:relative;width:44px}.ep-x::before,.ep-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.ep-x::after{rotate:-45deg}
 .ep-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 16px 34px;display:flex;flex-direction:column;gap:14px;outline:0}
-.ep-r{display:flex;align-items:flex-end;gap:9px;max-width:88%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
+.ep-r{display:flex;align-items:flex-start;gap:9px;max-width:88%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
 .ep-av{flex:none;width:36px;height:36px;border-radius:50%;object-fit:cover}
 .ep-r>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}.ep-r.me>div{align-items:flex-end}
 .ep-r small{margin:0 6px 3px;font:400 12px/1.4 var(--jp);color:var(--sub);letter-spacing:.06em}
