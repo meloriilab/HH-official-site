@@ -1,3 +1,4 @@
+import re
 # -*- coding: utf-8 -*-
 """ユニットとメンバーの個別ページを組み立てる道具。
 
@@ -64,7 +65,7 @@ def unit_page(u):
     no = m["no"]
     # 紹介文とキャッチコピーが無いユニットは、旧サイトの短い紹介文を出し、キャッチコピーの行は出さない（文は作らない）
     intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d.get("intro") or [d["blurb"]])
-    catch = f'<p class="uh-c">{esc(d["catch"])}</p>' if d.get("catch") else ""
+    catch = f'<p class="uh-c">{"<br class=\"br-w\">".join("".join(f'<span class="nw">{esc(x)}</span>' for x in re.split(r"(?<=、)", l) if x) for l in d["catch"].split(chr(10)))}</p>' if d.get("catch") else ""
     kv = u in T.KV   # 集合絵が無いユニットは、絵の場所に紋章を大きく出す
     mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06", "-.04"]))
     more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
@@ -264,7 +265,7 @@ CSS = """
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
-.nw{white-space:nowrap}
+.nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
@@ -397,7 +398,7 @@ CSS = """
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
  .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
  .uh-em{width:140px;height:140px;margin:0 0 20px -8px}
- .uh-t{padding:0}.uh h1{font-size:84px}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
+ .uh-t{padding:0}.uh h1{font-size:84px;word-break:keep-all}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
  .uh-pic{margin-top:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
