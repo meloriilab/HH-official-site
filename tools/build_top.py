@@ -256,7 +256,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 /* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
 .uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
 .uf[aria-expanded=true]{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
-@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf+.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
+@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf~.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
 @media(max-width:359px){body[data-ch] .hd{gap:6px}}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
 .up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
