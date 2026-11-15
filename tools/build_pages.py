@@ -50,13 +50,12 @@ def ruby_text(s):
     return re.sub(r"\[\[([^\]]+)\]\]", r"\1", s)
 
 def h2(en, jp, i, n, pc=None):
-    num = lambda a, b: f'{a:02d}<b>/{b:02d}</b>'
-    idx = num(i, n) if pc is None else f'<span class="n-sp">{num(i, n)}</span><span class="n-pc">{num(*pc)}</span>'
-    return f'<h2><span>{en}</span><small>{jp}</small><i class="idx" aria-hidden="true">{idx}</i></h2>'
+    # i, n, pc は以前の「01 /04」の番号用。2026-11-15 に番号を外した（区切りは順番に読むものではないため）
+    return f'<h2><span>{en}</span><small>{jp}</small></h2>'
 
 def face(cid, speed=".0"):
     c = CH[cid]
-    return f'<a class="mem" href="{T.mhref(c, PRE)}" data-speed="{speed}"><span class="ph"><img src="{PRE}images/face/{T.fid(c)}.webp" alt=""></span><span>{T.name(c)}</span></a>'
+    return f'<a class="mem" href="{T.mhref(c, PRE)}"><span class="ph"><img src="{PRE}images/face/{T.fid(c)}.webp" alt=""></span><span>{T.name(c)}</span></a>'
 
 def rels_of(u): return [r for r in T.RELS if r[1] == u]
 
@@ -79,9 +78,9 @@ def unit_page(u):
   <div class="uh-t">{f'<img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1><p class="uh-tag">{esc(d["tagline"])}</p>{catch}</div>
   {f'<div class="uh-pic ph"><img src="{PRE}images/kv/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
 </section>
-<section class="sec" id="about"><p class="ghost" aria-hidden="true" data-speedx="-.35">About</p>{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
-<section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p>{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
-<section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx="-.35">Release</p>{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
+<section class="sec" id="about">{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
+<section class="sec" id="members">{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
+<section class="sec" id="release">{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
 <nav class="sec others" aria-label="ほかのユニット"><p class="lbl">Units</p><div class="m-nav">{others}</div></nav>
 </main>
 {T.footer(PRE)}'''
@@ -106,7 +105,7 @@ def songs_page():
         {T.lk(n)}{T.ep_btn(n, pre)}</article>''' for n, ru, t, k, un in T.RELS)
     inner = f'''{T.header(pre, top=False)}
 <main>
-<section class="sec sg" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p><h2><span>Songs</span><small>楽曲</small></h2>
+<section class="sec sg" id="songs"><h2><span>Songs</span><small>楽曲</small></h2>
   <div class="flts">{rows}</div>
   <div class="rels sgs">{cards}</div>
 </section>
@@ -164,7 +163,7 @@ def guideline_page():
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
 <main>
-<section class="sec gl" id="guideline"><p class="ghost" aria-hidden="true" data-speedx=".35">Guideline</p><h2><span>Guideline</span><small>ガイドライン</small></h2>
+<section class="sec gl" id="guideline"><h2><span>Guideline</span><small>ガイドライン</small></h2>
   {lead}
   <div class="gl-s">{rows}</div>
   {note}
@@ -225,16 +224,16 @@ def char_page(cid):
       <li class="sl-i"><a class="sl-j" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット" loading="lazy"></a>
         <h3>{T.rb(t, k)}</h3>{T.lk(n)}{T.ep_btn(n, PRE)}</li>''' for n, ru, t, k, un in T.RELS if ru == u)
     k = 1 if songs else 0   # 曲の段がある人は、段の数が1つ増える
-    songs_sec = f'''<section class="sec sl-s" id="songs"><p class="ghost" aria-hidden="true" data-speedx=".35">Songs</p>{h2("Songs", "参加曲", 4, 4, (3, 3))}<ul class="sl">{songs}</ul><p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p></section>''' if songs else ""
+    songs_sec = f'''<section class="sec sl-s" id="songs">{h2("Songs", "参加曲", 4, 4, (3, 3))}<ul class="sl">{songs}</ul><p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p></section>''' if songs else ""
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
 </section>
-<section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
-<section class="sec{" has-b" + tall if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{kana_wrap(m["kana"])}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
+<section class="sec{" has-b" + tall if bird else ""}" id="motif">{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
+<section class="sec" id="unit">{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{kana_wrap(m["kana"])}</small></a></p><div class="mems big">{mates}</div></section>
 {songs_sec}
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
@@ -265,8 +264,6 @@ CSS = """
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
-/* 2026-11-15: 見出しの番号（スマホ用・PC用の2つ）が見出しの大きな文字の決まりを受けて大きくなっていたのを、トップと同じ小さな番号にそろえる */
-.idx span{font:inherit;letter-spacing:inherit}
 .nw{white-space:nowrap}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -287,15 +284,15 @@ CSS = """
 .sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
 .sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
 .others{padding-top:96px}.others .lbl{margin-bottom:8px}
-.others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.12em}
+.others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.06em}
 /* unit first screen */
 .uh{height:auto;overflow:clip;padding-top:150px}
 /* the unit's emblem, large: on its own page the mark is the first thing seen */
 .uh-em{width:176px;height:176px;margin:0 0 18px -10px}
 .uh-t{position:relative;z-index:2;padding-inline:24px}
 .uh h1{margin:0;font:500 50px/1 var(--en);letter-spacing:-.01em}
-.uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.16em;color:var(--sub)}
-.uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.12em;color:var(--sub)}
+.uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
 .uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
 .uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
@@ -377,11 +374,11 @@ CSS = """
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
 .pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
 .pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
-.pf dt{font:500 12px/2.4 var(--jp);letter-spacing:.14em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.pf dt{font:500 12px/2.4 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
 .mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
-.un small{font:500 12px/1 var(--jp);font-style:normal;color:var(--sub);letter-spacing:.2em}
+.un small{font:500 12px/1 var(--jp);font-style:normal;color:var(--sub);letter-spacing:.06em}
 .pn{padding-top:96px;display:grid;grid-template-columns:1fr 1fr}
 .pn a{display:grid;gap:4px;padding:18px 0;border-block:1px solid var(--ink);font:500 16px/1.6 var(--min);letter-spacing:.06em;transition:background .25s,color .25s}
 .pn a+a{text-align:right;border-left:1px solid var(--ink)}

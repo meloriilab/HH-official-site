@@ -198,7 +198,7 @@ def body():
     units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS) if u in PAGES)   # ページができるまで TOP に載せない（Kさんの回答 2026-11-14）
     def face(c):
         tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
-        return f'<{tag} class="mem" data-speed="{[".0","-.12",".08"][CHARS.index(c)%3]}"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
+        return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
     mem="".join(face(c) for c in CHARS)
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
@@ -220,16 +220,16 @@ def body():
   <h1 class="catch"><span>本能のまま、</span><span>歌う。</span></h1>
   <p class="hint" aria-hidden="true">Scroll</p>
 </section>
-<section class="sec pu" id="pickup"><p class="ghost" aria-hidden="true" data-speedx="-.35">Pick Up</p><h2><span>Pick Up</span><small>ピックアップ曲</small><i class="idx" aria-hidden="true">01<b>/05</b></i></h2>
+<section class="sec pu" id="pickup"><h2><span>Pick Up</span><small>ピックアップ曲</small></h2>
 <div class="pu-g">
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec mood-s" id="mood"><p class="ghost" aria-hidden="true" data-speedx=".35">Mood</p><h2><span>Mood</span><small>気分で選ぶ</small><i class="idx" aria-hidden="true">02<b>/05</b></i></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">Songs</a></p></section>
-<section class="sec" id="units"><p class="ghost" aria-hidden="true" data-speedx="-.35">Units</p><h2><span>Units</span><small>ユニット</small><i class="idx" aria-hidden="true">03<b>/05</b></i></h2></section>
+<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">Songs</a></p></section>
+<section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
-<section class="sec" id="members"><p class="ghost" aria-hidden="true" data-speedx=".35">Members</p><h2><span>Members</span><small>メンバー</small><i class="idx" aria-hidden="true">04<b>/05</b></i></h2><div class="mems">{mem}</div></section>
-<section class="sec" id="news"><p class="ghost" aria-hidden="true" data-speedx="-.35">News</p><h2><span>News</span><small>お知らせ</small><i class="idx" aria-hidden="true">05<b>/05</b></i></h2><ul class="news">{news}</ul></section>
+<section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
+<section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
 {footer()}'''
 CSS="""
@@ -315,7 +315,7 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 @keyframes menuIn{from{opacity:0}to{opacity:1}}
 .m-nav{display:grid}
 .m-nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:italic 500 38px/1.1 var(--en)}
-.m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.2em}
+.m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.06em}
 .menu .row{margin:32px 0 0}
 .fv{position:relative;height:730px;overflow:hidden}
 .word{position:absolute;margin:0;font:500 112px/1 var(--en);color:var(--faint);white-space:nowrap;letter-spacing:-.02em}
@@ -326,7 +326,7 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .catch{position:absolute;z-index:3;right:22px;top:150px;margin:0;writing-mode:vertical-rl;font:500 21px/1.6 var(--min);letter-spacing:.3em}
 .catch span{display:block;white-space:nowrap}.catch span+span{padding-top:4em}
 .pu{padding-top:72px}
-h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.1em}
+h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.06em}
 .pu-g{display:grid;gap:28px}
 /* pick up: the picture stays whole. two ink doors stand in front of it and slide apart as the frame
    comes to the middle of the screen, like a stage curtain; they close again as it leaves.
@@ -357,7 +357,7 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .nr-t{margin:0 0 6px;font:500 32px/1.3 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px}.nr-t small{font:italic 500 17px var(--en);color:var(--sub)}
 .sec{position:relative;padding-top:128px;overflow:clip}
 h2{margin:0 0 44px;display:flex;align-items:baseline;gap:14px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:14px}
-h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.3em;color:var(--sub)}
+h2 span{font:500 56px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.06em;color:var(--sub)}
 .rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
 /* top page: the newest song is shown large, the other four small = what is new reads first */
@@ -408,27 +408,22 @@ html.ep-on{overflow:hidden}
 @media(max-width:599px){.lk{font-size:14px;letter-spacing:0}}   /* 2026-11-15: スマホの2列では Spotify が枠の線に触れていた */
 @media(max-width:359px){.lk{font-size:13px;letter-spacing:0}}
 .lk>:first-child,.lk>:hover,.lk>.on{background:var(--ink);color:var(--bg)}
-/* restrained decoration, each with a job:
-   .idx   small section number at the end of the heading rule = where you are among the four sections
-   h2 rule draws itself from the left when the section arrives = marks the start of a section
+/* restrained decoration, each with a job (2026-11-15, frontend-design pass: the showcase is "art turns to colour in the middle of the screen";
+   the faint big word behind each heading, the 01/05 numbers, the self-drawing heading rule and the drifting face rows were removed):
+   h2 rule    1px line under the heading = marks the start of a section
    .prog  1px line that fills with scroll = how far down the page you are
-   .hint  small word + falling line at the bottom of the first screen = there is more below
+   .hint  small word + still line at the bottom of the first screen = there is more below
    .f-mark the unit's own emblem beside its name = repeats each unit's mark so the flag reads as theirs */
 h2{position:relative;border-bottom:0!important}
 h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform-origin:left}
-.js h2::after{transform:scaleX(0);transition:transform 1.1s cubic-bezier(.7,0,.2,1)}
-.js h2.in::after{transform:none}
-.idx{margin-left:auto;font:italic 500 20px/1 var(--en);font-style:italic;letter-spacing:.04em}
-.idx b{font-weight:500;color:var(--sub);font-size:13px;margin-left:3px}
 .prog{position:fixed;z-index:40;left:0;top:0;width:100%;height:2px;pointer-events:none}
 .prog i{display:block;height:100%;background:var(--ink);transform-origin:left;transform:scaleX(var(--p,0))}
 .hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
-.hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top;animation:fall 2.4s cubic-bezier(.7,0,.2,1) infinite}
+.hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.3em;transition:background .25s,color .25s}
+.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-mark{width:48px;height:48px;margin-bottom:14px}
-.ghost{position:absolute;left:0;top:40px;margin:0;font:500 150px/1 var(--en);color:var(--faint);white-space:nowrap;z-index:-1;letter-spacing:-.02em}
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
@@ -461,7 +456,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-txt{display:block;padding:72px 24px 24px}
 .f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
 .kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
-.f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.16em;opacity:.85}
+.f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.06em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
 .f-mem{list-style:none;margin:18px 0 0;padding:14px 0 0;border-top:1px solid currentColor;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font:500 15px/1.7 var(--min)}
 .f-mem .tbd{font:400 12px var(--jp);grid-column:1/-1}
@@ -473,7 +468,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .mem .ph{display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
-.news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.14em}
+.news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
 .ft{margin-top:128px;padding-block:56px 40px;border-top:1px solid var(--ink);display:grid;gap:20px}.ft .logo{font-size:34px}.note{margin:0;font-size:12px;color:var(--sub)}
@@ -492,8 +487,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
- .ghost{font-size:380px;top:60px}
- .idx{font-size:26px}.idx b{font-size:15px}.f-mark{width:64px;height:64px;margin-bottom:20px}
+
+ .f-mark{width:64px;height:64px;margin-bottom:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
