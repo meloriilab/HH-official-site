@@ -152,7 +152,7 @@ def header(pre="", top=True):
 <header class="hd"><a class="logo" href="{home}"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939"></a><nav class="upills" id="upills" aria-label="ユニット">{upills}</nav><button class="uf" type="button" aria-expanded="false" aria-controls="upills">Units</button><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer(pre=""):
-    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="ft-l"><a href="{pre}guideline.html">Guideline</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
 # 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
 import hashlib as _hl, glob as _gl
 VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
@@ -475,6 +475,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
 .ft{margin-top:128px;padding-block:56px 40px;border-top:1px solid var(--ink);display:grid;gap:20px}.ft .logo{font-size:34px}.note{margin:0;font-size:12px;color:var(--sub)}
+.ft-l{margin:0;grid-column:1/-1}.ft-l a{display:inline-flex;align-items:center;min-height:44px;font:italic 500 18px/1 var(--en);letter-spacing:.02em;text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 [data-speed]{will-change:translate}
 @media(min-width:900px){
