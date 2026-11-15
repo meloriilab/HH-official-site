@@ -127,7 +127,7 @@ def ep_dialogs(inner, pre=""):
                 bub = f'<a class="ep-mv" href="{MV.get(n, YT_CH)}"><img src="{pre}images/jacket/{JK[n]}.webp" alt=""><span><i>MV</i>{t}</span></a>'
             elif l.get("k") == "img":
                 cap = f'<small>{l["cap"]}</small>' if l.get("cap") else ""
-                bub = f'<button class="ep-ph" type="button" aria-label="写真を大きく見る"><img src="{pre}images/episode/{l["img"]}" alt="{l.get("cap", "")}">{cap}</button>'
+                bub = f'<button class="ep-ph{" pol" if l.get("pol") else ""}" type="button" aria-label="写真を大きく見る"><img src="{pre}images/episode/{l["img"]}" alt="{l.get("cap", "")}">{cap}</button>'
             elif l.get("k") == "lc":   # 作中のお店のカード（実在のリンクではないので、押しても移動しない）
                 bub = f'<span class="ep-mv"><img src="{pre}images/episode/{l["img"]}" alt=""><span>{l["t"]}<i>{l["url"]}</i></span></span>'
             else:
@@ -416,6 +416,12 @@ html.ep-on{overflow:hidden}
 .ep-ph{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;cursor:zoom-in;text-align:left}.ep-ph img{display:block;width:min(240px,62vw);border-radius:20px;transition:width .45s cubic-bezier(.16,1,.3,1)}
 .ep-ph.big{cursor:zoom-out}.ep-ph.big img{width:min(100%,560px)}.ep-ph small{margin:6px 6px 0!important;font-family:var(--min)!important}
 .ep-r:has(.ep-ph.big){max-width:100%}
+@media(max-width:699px){.ep-r{max-width:94%}.ep-r p{letter-spacing:.02em}}@media(max-width:374px){.ep-r p{font-size:14px}}   /* スマホでも、台詞の行が途中で折れにくいように（Kさんの改行どおりに見せる。2026-11-15） */
+/* ポラロイド写真（作中で「ポラロイド写真」と呼ばれる1枚。Kさん 2026-11-15）：白い縁、下だけ広い余白に手書きの添え書き、絵は正方形に切る */
+.ep-ph.pol{padding:10px 10px 0;background:#fff;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.18);rotate:-2deg;transition:rotate .45s cubic-bezier(.16,1,.3,1)}
+.ep-ph.pol img{width:min(200px,52vw);aspect-ratio:1;object-fit:cover;border-radius:0}
+.ep-ph.pol small{display:block;margin:0!important;padding:10px 4px 14px;color:#2b2b2b;font-size:13px!important;text-align:center}
+.ep-ph.pol.big{rotate:0deg}.ep-ph.pol.big img{width:min(100%,420px)}
 .ep .ep-log:focus-visible{outline:0}
 /* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
 .ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{left:auto!important;top:auto!important;right:8px;bottom:8px;width:auto!important;height:54%}}.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
