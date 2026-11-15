@@ -18,17 +18,16 @@ UD = {u["id"].lower(): u for u in D["units"]}
 CD = {c["id"].lower(): c for c in D["chars"]}
 PRE = "../"
 
-# キャラ性を表すタグ（K さんが決めた言葉そのまま）。無い人は「未確定」で、タグの段を出さない
-TAGS = {"trt01": ["ストイックなカワセミ", "渓流釣り", "魚は骨だけ残す職人芸"],
-        "trt02": ["ムードメーカーなメジロ", "実は茶道家三男坊", "スイーツラブ"],
-        "trt03": ["風まかせな旅ツバメ", "三味線", "写真好き"],
-        # ここから下は Kさんが 2026-11-13 に決めたもの（/mnt/project-files/plan/member-tags-final.md）
-        "nct01": ["孤高のハヤブサ", "ブラコン（本人は否定）", "実は下戸"],
+# キャラ性を表すタグ（管理サイトの「サイト用タグ」から、2026-11-15 に取り込み）。無い人は「未確定」で、タグの段を出さない
+TAGS = {"trt01": ["ストイックなカワセミ", "釣った命は美味しくいただく", "21:00就寝、05:00起床"],
+        "trt02": ["ムードメーカーなメジロ", "ファンレター募集中！！", "初恋がまだ来ません"],
+        "trt03": ["風まかせな旅ツバメ", "いいや違うべったら派", "温泉ソムリエです"],
+        "nct01": ["孤高のハヤブサ", "ブラコン（本人は否定）", "兄さんの恋人募集中"],
         "nct02": ["みんなのお兄ちゃんフクロウ", "カカオ中毒", "私服はちょいダサ"],
         "prs01": ["自然派のサンコウチョウ", "古民家暮らし", "トリートメントは使ってません"],
         "prs02": ["陽キャなワカケホンセイインコ", "人類皆兄弟！", "巷で評判のチャラ兄"],
         "blc01": ["カリスマカラス", "意外と常識人", "こだわりのバスローブ"],
-        "blc02": ["面倒見のいいカササギ", "脳みそは筋肉です", "セインはジム友"],
+        "blc02": ["面倒見のいいカササギ", "隼瞳さんとツーリング希望", "セインはジム友"],
         "blc03": ["天才肌なカケス", "省エネ主義", "積みゲー消化中"],
         "orb01": ["エスコート上手なベニマシコ", "アイドルに憧れて", "僕はみんなのもの"],
         "orb02": ["元気っ子なキクイタダキ", "基本的に見切り発車", "日曜の夕方は笑点一択"],
@@ -87,7 +86,6 @@ def unit_page(u):
     rels = "".join(f'''
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
         <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
-    others = "".join(f'<a href="{T.uhref(o, PRE)}">{T.kn(UNIT[o]["name"])}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
     # 2026-11-15 Kさんの指示：ユニットページは1画面にまとめる（Members・Release・Unitsの一覧は外す）。
     # 絵の下側にメンバーのピル（メンバーカラー＋名前→キャラページ）、About は重ねて開く画面、Songs は曲一覧をこのユニットで絞った状態で開く。
     # 左右の丸ボタンでユニットを切り替える（キャラページの左右ボタンと同じ形）。
@@ -298,7 +296,7 @@ CSS = """
 .dd-m button[aria-selected="true"]{background:var(--ink);color:var(--bg)}.dd-m button:disabled{color:var(--line);cursor:default}
 /* 2つを1段に並べる（Kさんの指示 2026-11-15：場所を取らない）。名前（Mood / Unit）は枠の中に小さく入れ、開く一覧は2つ分の幅いっぱいに出す */
 @media(max-width:699px){.flts{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.flt{display:block}.flt>.lbl,.flt .moods{display:none}.dd{display:block}.dd-m{right:auto;min-width:100%;width:max-content;max-width:calc(100vw - 32px)}.flt+.flt .dd-m{left:auto;right:0}
- .dd-b{display:flex;align-items:center;gap:8px;padding:0 30px 0 14px;font-size:13px;background-position:right 17px center,right 12px center}.dd-b i{flex:none;font:italic 500 15px/1 var(--en);letter-spacing:.02em;opacity:.6}.dd-b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+ .dd-b{display:flex;align-items:center;gap:6px;padding:0 26px 0 12px;font-size:13px;background-position:right 17px center,right 12px center}.dd-b i{flex:none;font:italic 500 15px/1 var(--en);letter-spacing:.02em;opacity:.6}.dd-b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
@@ -370,18 +368,16 @@ html.pop-on{overflow:hidden}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
 .mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
 .mm-i img{width:64px;height:64px;border-radius:50%;object-fit:cover}
-/* キャラページの参加曲：上の空きと見出しを小さくして詰める（2026-11-15） */
-.sl-s{padding-top:80px}.sl-s h2{margin-bottom:20px}.sl-s h2 span{font-size:44px}.sl-s .more{margin-top:20px}
-@media(min-width:900px){.sl-s{padding-top:110px}.sl-s h2{margin-bottom:28px}.sl-s h2 span{font-size:64px}}
+.sl-s .more{margin-top:20px}
 /* PCのキャラページ：最初の画面だけで完結して見えるので、下に参加曲があることをトップと同じ「Scroll」で知らせる（画面の下端の少し上に置く） */
 @media(min-width:900px){.ch-hint{top:calc(100svh - 130px);bottom:auto}}
 /* スマホのキャラページのプロフィール：項目を2列にして、見出しと上の空きも小さくする（2026-11-15） */
-@media(max-width:899px){#profile{padding-top:56px}#profile h2{margin-bottom:16px}#profile h2 span{font-size:44px}
+@media(max-width:899px){#profile{padding-top:56px}
  #profile .pf{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px}#profile .pf div{display:block;padding:7px 0}
  #profile .pf dt{line-height:1.6}#profile .pf dd{font-size:14px;line-height:1.7}#profile .ch-x{margin-top:20px}#profile .ch-mm{margin-top:20px}#profile .prose p{font-size:14px;line-height:1.95}}
-.nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
+.nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
-.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;align-content:flex-start}   /* 2026-11-15 隣の曲のタグが2段になると、1つだけの札が縦に伸びて楕円になっていた */
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
 .tg:hover{border-color:var(--ink);color:var(--ink)}
 .lk button{font:inherit;letter-spacing:inherit}
@@ -390,7 +386,6 @@ html.pop-on{overflow:hidden}
 /* 個別ページ（ユニット・メンバー）だけの見た目。色・文字・見出し・線の約束は style.css と同じ */
 .prose{max-width:640px}
 .prose p{margin:0 0 1.6em;font-size:15px;line-height:2.2}
-.mems.big{grid-template-columns:repeat(3,1fr);gap:28px 10px;max-width:640px}.mems.big .ph{width:104px;height:104px}.mems.big .mem{font-size:14px}
 .rels.solo{grid-template-columns:minmax(0,300px)}
 /* member page songs: one thin row per song (small jacket, title, the three buttons) = stays short as songs are added */
 .sl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
@@ -398,20 +393,8 @@ html.pop-on{overflow:hidden}
 .sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:56px;height:56px;object-fit:cover}
 .sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
 .sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
-.others{padding-top:96px}.others .lbl{margin-bottom:8px}
-.others .m-nav a{font-size:30px;flex-wrap:wrap;gap:6px 14px}.others .m-nav small{white-space:nowrap;letter-spacing:.06em}
-/* unit first screen */
-.uh{height:auto;overflow:clip;padding-top:150px}
-/* the unit's emblem, large: on its own page the mark is the first thing seen */
-.uh-em{width:96px;height:96px;margin:0 0 16px -5px}
-.uh-t{position:relative;z-index:2;padding-inline:var(--gx)}
-.uh h1{margin:0;font:500 50px/1 var(--en);letter-spacing:-.01em}
-.uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
-.uh-pic{display:block;margin-top:36px;aspect-ratio:1;overflow:hidden}
-.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.12}   /* ユニットのヒーロー画像（Kさんの正方形の絵。2026-11-15）。少しだけ拡大して、ゆっくり動かしても端が見えないようにする */
-.uh-pic.em{aspect-ratio:1;max-width:420px;margin-inline:auto;padding-inline:24px}.uh-pic.em img{object-fit:contain;scale:1}
 .more{margin:28px auto 0;width:fit-content}.more .btn{min-width:180px}
 /* member first screen, as on the old site: the member's main colour slides in as a panel, a square in the
    sub colour turns into place, the accent line grows down the edge, a slanted two-colour strip closes the foot,
@@ -494,26 +477,14 @@ html.pop-on{overflow:hidden}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
 .un small{font:500 12px/1 var(--jp);font-style:normal;color:var(--sub);letter-spacing:.06em}
-.pn{padding-top:96px;display:grid;grid-template-columns:1fr 1fr}
-.pn a{display:grid;gap:4px;padding:18px 0;border-block:1px solid var(--ink);font:500 16px/1.6 var(--min);letter-spacing:.06em;transition:background .25s,color .25s}
-.pn a+a{text-align:right;border-left:1px solid var(--ink)}
-.pn a:first-child{padding-left:14px}.pn a+a{padding-right:14px}
-.pn small{font:italic 500 16px/1 var(--en);color:var(--sub)}
-.pn a:hover{background:var(--ink);color:var(--bg)}.pn a:hover small{color:inherit}
 /* スマホ：立ち絵の段を画面の高さに合わせて少し低くし、1画面に名前まで入れる（Kさんの指示 2026-11-15）。上のピルはたたんであるので、上の余白も詰める */
 @media(max-width:699px){.ch{padding-top:84px}.ch-art{height:clamp(340px,calc(100svh - 270px),470px)}}
 /* 幅のとても狭いスマホ（360px未満）は、低くするとセリフの帯とタグの帯が重なるので、立ち絵の段の高さは変えない */
 @media(max-width:359px){.ch-art{height:470px}}
 @media(min-width:900px){
  .prose p{font-size:16px}
- .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
  .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
- .others{padding-top:160px}.others .m-nav a{font-size:44px}
- .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:var(--gx)}
- .uh-em{width:140px;height:140px;margin:0 0 20px -8px}
- .uh-t{padding:0}.uh h1{font-size:84px;word-break:keep-all}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
- .uh-pic{margin-top:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}
@@ -525,11 +496,10 @@ html.pop-on{overflow:hidden}
  .tags-a{bottom:76px}.tags-a li{font-size:15px;padding:8px 18px}
  #profile,.n-sp{display:none}.n-pc{display:inline}.ch .tags{margin-top:22px;padding-top:18px;font-size:15px}
  .pf div{grid-template-columns:160px 1fr}
- .pn{padding-top:160px}.pn a{font-size:20px;padding:26px 24px}
 }
 @media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
 /* ガイドライン：読むためのページ。1行を40字ほどに収め、番号と見出しで目当ての項目を探せるようにする。PCは左に見出し・右に本文 */
-.gl{padding-bottom:96px}
+.gl{padding-bottom:16px}
 .gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}
 .gl-s{border-top:1px solid var(--ink)}
 .gl-i{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:14px;align-items:baseline;padding:28px 0 30px;border-bottom:1px solid var(--line)}
@@ -541,7 +511,7 @@ html.pop-on{overflow:hidden}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
 .gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
-@media(min-width:900px){.gl{padding-bottom:140px}.gl-l{margin-bottom:72px;font-size:16px}
+@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
 """
 

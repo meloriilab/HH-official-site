@@ -25,7 +25,7 @@ w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
-ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});draw('',false)})();
+ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});/* tags: mixed on every visit; only as many as fit on two rows (measured on the real width). すべて stays first; the chosen word is kept in view */var bx=ps[0].parentNode,rest=sh(ps.slice(1)),lw=0;rest.forEach(function(p){bx.appendChild(p)});function fit(){var cur=ps.filter(function(p){return p.classList.contains('on')})[0];var od=[ps[0]].concat(cur&&cur!==ps[0]?[cur]:[],rest.filter(function(p){return p!==cur}));od.forEach(function(p){p.hidden=false;bx.appendChild(p)});var tops=[];od.forEach(function(p){var t=p.offsetTop;if(tops.indexOf(t)<0)tops.push(t);if(tops.indexOf(t)>1)p.hidden=true})}draw('',false);fit();addEventListener('resize',function(){if(innerWidth!==lw){lw=innerWidth;fit()}});lw=innerWidth})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
