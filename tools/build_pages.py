@@ -148,17 +148,22 @@ def guideline_page():
     items = [
         ("二次創作", "<p>イラスト、漫画、小説、音楽、コスプレなど、ファンによる非営利の二次創作を歓迎します。</p><p>公式とは関係のない創作だと分かる形で楽しんでください。原作の雰囲気やキャラクターのイメージを大切にしてもらえると嬉しいです。</p>"),
         ("収益化", "<p>同人誌やグッズなど、個人や少人数のサークルの範囲での頒布は問題ありません。</p><p>大量生産しての販売、公式と間違われる商品化、ブランドや第三者のライセンスを侵害する利用はご遠慮ください。</p>"),
-        ("AIの利用", "<p>Humming Hearts は生成AIを活用して制作しています。二次創作にAIを使うこと自体は禁止しません。</p><p>公式の画像や音源をそのまま学習データとして再配布すること、公式になりすます利用はお控えください。</p>"),
+        ("AIの利用", "<p>Humming Hearts は生成AIを活用して制作しています。そのため、二次創作にAIを使うこと自体は禁止しておりません。</p><p>公式の画像や音源をそのまま学習データとして使用すること、再配布すること、公式になりすます利用はお控えください。</p>"),
         ("禁止事項", "<ul><li>公式・公認であるかのような誤認を招く表現</li><li>過度に暴力的・差別的な内容、特定の個人や団体を誹謗中傷する内容</li><li>政治・宗教・反社会的活動への利用</li><li>ロゴ・エンブレムなどの公式素材の無断使用、改変しての配布</li></ul>"),
-        ("お問い合わせ", f'<p>Humming Hearts には、お問い合わせの窓口がありません。個別のご質問やご連絡にはお返事できませんので、あらかじめご了承ください。</p><p>最新のお知らせは、公式の <a href="{T.XURL}">X</a> と <a href="{T.YT_CH}">YouTube</a> でご確認ください。</p>'),
+        ("お問い合わせ", f'<p>Humming Hearts は現在、お問い合わせの窓口を設けておりません。個別のご質問やご連絡にはお返事できませんので、あらかじめご了承ください。</p><p>最新のお知らせは、公式の <a href="{T.XURL}">X</a> と <a href="{T.YT_CH}">YouTube</a> でご確認ください。</p>'),
     ]
+    def tail(h):   # 段落・箇条書きの終わりの5文字は途中で折り返さない（「す。」だけが次の行に落ちるのを防ぐ。Kさんの指摘 2026-11-15）
+        return re.sub(r"([^<>]{5})(</p>|</li>)", r'<span class="nb">\1</span>\2', h)
+    items = [(t, tail(b)) for t, b in items]
+    lead = tail("<p class=\"gl-l\">Humming Hearts のキャラクターや世界を使った創作を歓迎します。みんなが気持ちよく楽しめるように、お願いしたいことをまとめました。</p>")
+    note = tail('<p class="gl-x">ガイドラインの内容は予告なく変わることがあります。</p>')   # いちばん下の注意書き（Kさんの指示 2026-11-15。「草案です」の一文は外す）
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
 <main>
 <section class="sec gl" id="guideline"><p class="ghost" aria-hidden="true" data-speedx=".35">Guideline</p><h2><span>Guideline</span><small>ガイドライン</small></h2>
-  <p class="gl-l">Humming Hearts のキャラクターや世界を使った創作を歓迎します。みんなが気持ちよく楽しめるように、お願いしたいことをまとめました。</p>
+  {lead}
   <div class="gl-s">{rows}</div>
-  <p class="gl-x">このガイドラインは草案です。内容は予告なく変わることがあります。詳しい内容は、あらためて公開する予定です。</p>
+  {note}
 </section>
 </main>
 {T.footer()}'''
@@ -413,8 +418,8 @@ CSS = """
 .gl-b p{margin:0}.gl-b p+p{margin-top:.9em}
 .gl-b ul{margin:0;padding:0;list-style:none}.gl-b li{position:relative;padding-left:20px}.gl-b li+li{margin-top:.5em}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
-.gl-b a{border-bottom:1px solid var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
+.gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
 @media(min-width:900px){.gl{padding-bottom:140px}.gl-l{margin-bottom:72px;font-size:16px}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
 """
