@@ -40,8 +40,8 @@ NEWS = [("----.--.--","INFO","公式サイトOpen")]   # Kさんの回答（2026
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
 # 曲ごとのMVのアドレス。わかっているものだけ（無い曲は YouTube のチャンネルへ送る。ボタンの名前はどれも MV）
 MV = {"004": YT_MV, "003": "https://youtu.be/2K_apMZ29IU", "002": "https://youtu.be/Juhtev74lgU", "001": "https://youtu.be/gt1lyf8tnD0", "005": "https://youtu.be/Qr1X9lWdtyc"}
-# 気分の言葉（仮。確定版が来たら差し替える）と、曲ごとの気分（仮。題名とジャケットからの見立て。1曲に複数可）
-MOODS = ["おはよ","ノリノリ","闘志","真夜中","まったり","恋してる","恋したい","和と雅"]
+# 気分の言葉（Kさんが決めた10個。2026-11-15「曲のムードタグ案を出す」スレッド）と、曲ごとの気分（同スレッドの案B。1曲に複数可）
+MOODS = ["朝イチ","気合い注入","踊りたい","お祭り","移動中","ほっと一息","夜ふかし","眠る前","泣きたい夜","君を想う"]
 # ジャケットにカーソルを乗せたときに出す内容: 番号 -> (リリース日, 作詞, 作曲)。わからない欄は空（空の行は画面に出さない）
 # 作詞・作曲・日付はスタッフ用ツールの書き出し（2026-11-13）から。リリース日は「ショートMV公開」の日を仮に使用（どの日を出すかは未確定）
 CRED = {"001":("2026.08.12","川瀬帝翔","燕谷航"),"002":("2026.08.22","月嶺隼瞳","月嶺隼瞳"),"003":("2026.09.25","烏丸蓮司","筧傑"),"004":("2026.10.16","三条羽響","三条羽響"),"005":("2026.09.11","若本セイン","三条羽響")}
@@ -52,7 +52,7 @@ def jo(n):
     rows = (f'<span class="jo-d"><i>Release</i>{d}</span>' if d else "") + (f'<span class="jo-n">{"".join(f"<span><i>{l}</i>{v}</span>" for l, v in who)}</span>' if who else "")
     # 再生ボタンは、クレジットの帯を除いた残りの高さの真ん中に置く（.jo が縦に並べ、.jo-a が残りを全部使う）
     return f'<span class="jo"><span class="jo-a"><i class="jo-p" aria-hidden="true"></i></span>' + (f'<span class="jo-c">{rows}</span>' if rows else "") + '</span>'
-MOOD = {"004":["まったり","和と雅"],"003":["闘志"],"002":["真夜中","まったり"],"001":["和と雅","恋してる"],"005":["真夜中","ノリノリ"]}
+MOOD = {"001":["君を想う"],"002":["夜ふかし"],"003":["気合い注入"],"004":["朝イチ","眠る前"],"005":["踊りたい","夜ふかし"]}
 def used_moods(): return [m for m in MOODS if any(m in v for v in MOOD.values())]   # 曲が1つも無い気分は出さない
 TRY = "Listen"   # プレイヤーを開くボタンの名前（ログイン中はフルで流れるので「試聴」とは書かない）
 def tid(n): return SPT[n].rsplit("/",1)[1] if n in SPT else ""   # Spotify の曲番号（試聴のプレイヤー用）
@@ -286,8 +286,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 /* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
 .mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
-.mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
-@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+/* 2026-11-15 Kさんの指示：タグは開くたびに混ぜて、2行に収まる分だけ出す（「すべて」は先頭に固定）。幅は5文字の言葉に合わせてそろえる。スマホは3列 */
+.mood-s .md{min-height:44px;padding:0 10px;justify-content:center;font-size:13px}.mood-s .moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mood-s .md[hidden]{display:none}
+@media(min-width:700px){.mood-s .moods{display:flex}.mood-s .md{min-width:8.6em;padding:0 16px;font-size:14px}}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;min-width:9em;padding:0 20px;font-size:16px}.mood-s .moods{gap:14px}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -561,7 +563,7 @@ w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
-ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});draw('',false)})();
+ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,true)})});/* tags: mixed on every visit; only as many as fit on two rows (measured on the real width). すべて stays first; the chosen word is kept in view */var bx=ps[0].parentNode,rest=sh(ps.slice(1)),lw=0;rest.forEach(function(p){bx.appendChild(p)});function fit(){var cur=ps.filter(function(p){return p.classList.contains('on')})[0];var od=[ps[0]].concat(cur&&cur!==ps[0]?[cur]:[],rest.filter(function(p){return p!==cur}));od.forEach(function(p){p.hidden=false;bx.appendChild(p)});var tops=[];od.forEach(function(p){var t=p.offsetTop;if(tops.indexOf(t)<0)tops.push(t);if(tops.indexOf(t)>1)p.hidden=true})}draw('',false);fit();addEventListener('resize',function(){if(innerWidth!==lw){lw=innerWidth;fit()}});lw=innerWidth})();
 (function(){var b=document.querySelector('.burger'),m=document.getElementById('menu');if(!b||!m)return;
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
