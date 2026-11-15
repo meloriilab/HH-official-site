@@ -229,7 +229,8 @@ def char_page(cid):
     quote = "".join(f'<span class="col{" low" if k else ""}">{esc(x)}</span>' for x, k in reversed(cols))
     rows = [("誕生日", d["birthday"]), ("身長", f'{d["height"]}cm'), ("年齢", f'{d["age"]}歳'),
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
-    dl = "".join(f"<div><dt>{k}</dt><dd>{esc(str(v))}</dd></div>" for k, v in rows)
+    # 値は「、」の後でだけ折り返す（趣味などが2行になっても、ことばの途中で切れない。2026-11-15）
+    dl = "".join(f"<div><dt>{k}</dt><dd>{''.join(f'<span class=nw>{esc(x)}</span>' for x in phrases(str(v)) if x)}</dd></div>" for k, v in rows)
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
     # タブレット幅では、タグを立ち絵の上にメインカラーの帯で縦に並べる。帯が明るい色の人は、白ではなく黒の文字にして読めるようにする
     r, g, b = (int(col["main"][i:i + 2], 16) / 255 for i in (1, 3, 5))
