@@ -142,6 +142,28 @@ ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 QCUT = {"でもそれ以上にワクワクしてるッス！": 7}   # 帯を分ける位置の指定（行の文 → 何字目の後ろで分けるか）。律：Kさんの指定（2026-11-13）。文は変えない
 QMAX, QLOW = 17, 14   # せりふの帯1本の字数の上限／下げる帯がこの字数以上なら上下を入れ替える
 
+def guideline_page():
+    """ガイドライン：ファンが「これはやっていい？」を確かめに来る場所。読むためのページなので、絵も動きも足さず、番号と見出しで探しやすくする。
+    文は旧サイトのファンガイドラインがもと（Kさんの指示 2026-11-15：このサイトに合わせた言葉遣いにする。決まりごとの中身は変えない）"""
+    items = [
+        ("二次創作", "<p>イラスト、漫画、小説、音楽、コスプレなど、ファンによる非営利の二次創作を歓迎します。</p><p>公式とは関係のない創作だと分かる形で楽しんでください。原作の雰囲気やキャラクターのイメージを大切にしてもらえると嬉しいです。</p>"),
+        ("収益化", "<p>同人誌やグッズなど、個人や少人数のサークルの範囲での頒布は問題ありません。</p><p>大量生産しての販売、公式と間違われる商品化、ブランドや第三者のライセンスを侵害する利用はご遠慮ください。</p>"),
+        ("AIの利用", "<p>Humming Hearts は生成AIを活用して制作しています。二次創作にAIを使うこと自体は禁止しません。</p><p>公式の画像や音源をそのまま学習データとして再配布すること、公式になりすます利用はお控えください。</p>"),
+        ("禁止事項", "<ul><li>公式・公認であるかのような誤認を招く表現</li><li>過度に暴力的・差別的な内容、特定の個人や団体を誹謗中傷する内容</li><li>政治・宗教・反社会的活動への利用</li><li>ロゴ・エンブレムなどの公式素材の無断使用、改変しての配布</li></ul>"),
+        ("お問い合わせ", f'<p>Humming Hearts には、お問い合わせの窓口がありません。個別のご質問やご連絡にはお返事できませんので、あらかじめご了承ください。</p><p>最新のお知らせは、公式の <a href="{T.XURL}">X</a> と <a href="{T.YT_CH}">YouTube</a> でご確認ください。</p>'),
+    ]
+    rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
+    inner = f'''{T.header("", top=False)}
+<main>
+<section class="sec gl" id="guideline"><p class="ghost" aria-hidden="true" data-speedx=".35">Guideline</p><h2><span>Guideline</span><small>ガイドライン</small></h2>
+  <p class="gl-l">Humming Hearts のキャラクターや世界を使った創作を歓迎します。みんなが気持ちよく楽しめるように、お願いしたいことをまとめました。</p>
+  <div class="gl-s">{rows}</div>
+  <p class="gl-x">このガイドラインは草案です。内容は予告なく変わることがあります。詳しい内容は、あらためて公開する予定です。</p>
+</section>
+</main>
+{T.footer()}'''
+    return T.page("ガイドライン | Humming Hearts", "Humming Hearts の二次創作についてのお願いをまとめています。", "", inner, css=("page.css",))
+
 def char_page(cid):
     d, c = CD[cid], CH[cid]
     u = cid[:3]; m = UNIT[u]
@@ -380,12 +402,28 @@ CSS = """
  .pn{padding-top:160px}.pn a{font-size:20px;padding:26px 24px}
 }
 @media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
+/* ガイドライン：読むためのページ。1行を40字ほどに収め、番号と見出しで目当ての項目を探せるようにする。PCは左に見出し・右に本文 */
+.gl{padding-bottom:96px}
+.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}
+.gl-s{border-top:1px solid var(--ink)}
+.gl-i{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:14px;align-items:baseline;padding:28px 0 30px;border-bottom:1px solid var(--line)}
+.gl-n{margin:0;font:italic 500 22px/1 var(--en);color:var(--sub)}
+.gl-i h3{margin:0;font:500 19px/1.5 var(--min);letter-spacing:.08em}
+.gl-b{grid-column:1/-1;max-width:40em;font-size:15px;line-height:2.1}
+.gl-b p{margin:0}.gl-b p+p{margin-top:.9em}
+.gl-b ul{margin:0;padding:0;list-style:none}.gl-b li{position:relative;padding-left:20px}.gl-b li+li{margin-top:.5em}
+.gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
+.gl-b a{border-bottom:1px solid var(--ink)}
+.gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
+@media(min-width:900px){.gl{padding-bottom:140px}.gl-l{margin-bottom:72px;font-size:16px}
+ .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
 """
 
 def main():
     out = [(f"units/{T.SLUG[u]}.html", unit_page(u)) for u in UNIT if u in T.PAGES]
     out += [(f"members/{T.MSLUG[c]}.html", char_page(c)) for c in ORDER]
     out.append(("songs.html", songs_page()))
+    out.append(("guideline.html", guideline_page()))
     out.append(("css/page.css", CSS.lstrip("\n")))
     for path, text in out:
         full = os.path.join(T.ROOT, path)
