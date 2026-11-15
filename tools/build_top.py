@@ -19,9 +19,9 @@ def rb(b, r): return f"<ruby>{b}<rt>{r}</rt></ruby>" if r else b
 
 CHARS = [("TRT01","trt01","川瀬","帝翔","かわせ","みこと","#23989E"),("TRT02","trt02","目代","煎之介","めじろ","せんのすけ","#8E9334"),("TRT03","trt03","燕谷","航","つばめや","わたる","#C9432E"),
          ("NCT01","nct01","月嶺","隼瞳","つきみね","はやと","#9C8E5E"),("NCT02","nct02","月嶺","有智","つきみね","あると","#835E41"),
-         ("PRS01","prs01","三条","羽響","さんじょう","うきょう","#0D86C8"),("PRS02","prs02","若本","セイン","わかもと","","#C9A21E"),
+         ("PRS01","prs01","三条","羽響","さんじょう","うきょう","#0D86C8"),("PRS02","prs02","若本","セイン","わかもと","","#EEF27E"),
          ("BLC01","blc01","烏丸","蓮司","からすま","れんじ","#473548"),("BLC02","blc02","笠木","涼佑","かさぎ","りょうすけ","#2B83AA"),("BLC03","blc03","筧","傑","かけい","すぐる","#1E9BD0"),
-         ("ORB01","orb01","紅","ましろ","くれない","","#E3426A"),("ORB02","orb02","菊井","律","きくい","ただし","#B8A51F"),("ORB04","orb04","日滝","ジョウ","ひたき","","#E28126"),("ORB03","orb03","日滝","ルイ","ひたき","","#2A79C3")]   # ジョウが兄なので、ジョウ→ルイの順（Kさん 2026-11-15）
+         ("ORB01","orb01","紅","ましろ","くれない","","#E3426A"),("ORB02","orb02","菊井","律","きくい","ただし","#C9CBB0"),("ORB04","orb04","日滝","ジョウ","ひたき","","#E28126"),("ORB03","orb03","日滝","ルイ","ひたき","","#2A79C3")]   # ジョウが兄なので、ジョウ→ルイの順（Kさん 2026-11-15）
 UNITS = [("01","trt","TRT","トリアティーク","","日本の身近な野鳥 × 和ロック","#23989E",3),
          ("02","nct","NCT","NocturnalFizz","ノクターナルフィズ","猛禽兄弟 × ジャズ","#B08A3E",2),
          ("03","prs","PRS","Prisméa","プリズメア","シティポップ・デュオ","#0D86C8",2),
@@ -188,7 +188,7 @@ def body():
     mpills='<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>'+"".join(f'<button class="md" type="button" data-v="{m}" aria-pressed="false">{m}</button>' for m in used_moods())
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
-        art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
+        art=f'<img class="f-art" src="images/unit/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
         tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">View More</span>') if u in PAGES else ("div","div","")
         return f'''
@@ -217,7 +217,8 @@ def body():
 <section class="fv">
   <p class="word w1" aria-hidden="true" data-speed=".55">Humming</p><p class="word w2" aria-hidden="true" data-speed=".3" data-speedx="-.15">Hearts</p>
   <div class="trio">{lineup}</div>
-  <h1 class="catch"><span>本能のまま、</span><span>歌う。</span></h1>
+  <h1 class="hx"><small>野鳥擬人化×AI楽曲</small><b>ハミングハーツ</b></h1>
+  <p class="catch"><span>本能のまま、</span><span>歌う。</span></p>
   <p class="hint" aria-hidden="true">Scroll</p>
 </section>
 <section class="sec pu" id="pickup"><h2><span>Pick Up</span><small>ピックアップ曲</small></h2>
@@ -229,6 +230,13 @@ def body():
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
+<section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
+<p class="ab-c">もし、野鳥がアイドルになったら…<br>森での雑談から生まれたソナヴィアンたち<br>歌も、彼ら自身も、元になった野鳥も<br>まるごと楽しもう！</p>
+<dl class="ab-l">
+<div><dt>ソナヴィアン</dt><dd>野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて<span class="nw">届けます。</span></dd></div>
+<div><dt><ruby>奏樹市<rt>そうじゅし</rt></ruby></dt><dd>ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まって<span class="nw">います。</span></dd></div>
+<div><dt>制作について</dt><dd>「ハミングハーツ」は、melorii lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てて<span class="nw">います。</span></dd></div>
+</dl></section>
 <section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
 {footer()}'''
@@ -243,7 +251,9 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .ph img,.trio img{filter:grayscale(1) contrast(1.05);transition:filter .8s ease}
 .lit .ph img,.ph.lit img,.fv.lit .trio img,a:hover .ph img{filter:none}
 .sec{isolation:isolate}
-.hd,.sec,.nr,.ft{padding-inline:24px}
+.hd,.sec,.nr,.ft{padding-inline:var(--gx)}
+/* 左右の余白（ページ共通）：スマホ24px／タブレット画面幅の6%／PCは本文1080pxを中央に。2026-11-15 */
+:root{--gx:24px}@media(min-width:700px){:root{--gx:6vw}}@media(min-width:900px){:root{--gx:max(6vw,calc(50vw - 540px))}}
 .hd{position:absolute;inset:0 0 auto;z-index:10;display:flex;justify-content:space-between;align-items:center;padding-block:20px}
 .logo{margin:0;font:500 22px/1 var(--en);letter-spacing:.02em}
 /* ロゴは画像（仮置き。Kさんの指示 2026-11-15）。上の帯では高さ44px、いちばん下では大きめに出す */
@@ -272,12 +282,12 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .md,button.md{min-height:36px;padding:0 16px;display:inline-flex;align-items:center;border:1px solid var(--ink);border-radius:999px;font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;transition:background .25s,color .25s}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
 /* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
-.mood-s{padding-bottom:96px}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
+.mood-s{padding-bottom:0}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
 /* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
 .mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
-@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -323,6 +333,10 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .trio{--H:340px}.trio img{transform:translateX(-50%);width:auto;height:calc(var(--H)*var(--s));bottom:calc(var(--H)*var(--y))!important}
 .catch{position:absolute;z-index:3;right:22px;top:150px;margin:0;writing-mode:vertical-rl;font:500 21px/1.6 var(--min);letter-spacing:.3em}
 .catch span{display:block;white-space:nowrap}.catch span+span{padding-top:4em}
+/* 名前と説明（案A）。いちばん先に読む場所＝左上の空いたところに横組みで置き、右の縦組みのキャッチと左右で釣り合わせる */
+.hx{position:absolute;z-index:3;left:var(--gx);top:96px;margin:0}
+.hx small{display:block;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.hx b{display:block;margin-top:4px;font:500 26px/1.4 var(--min);letter-spacing:.12em;white-space:nowrap}
 .pu{padding-top:72px}
 h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.06em}
 .pu-g{display:grid;gap:28px}
@@ -416,8 +430,11 @@ h2{position:relative;border-bottom:0!important}
 h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform-origin:left}
 .prog{position:fixed;z-index:40;left:0;top:0;width:100%;height:2px;pointer-events:none}
 .prog i{display:block;height:100%;background:var(--ink);transform-origin:left;transform:scaleX(var(--p,0))}
-.hint{display:none;position:absolute;z-index:3;left:24px;bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
+.hint{display:none;position:absolute;z-index:3;left:var(--gx);bottom:0;margin:0;padding-bottom:54px;font:italic 500 14px/1 var(--en);letter-spacing:.08em;writing-mode:vertical-rl}
 .hint::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:44px;background:var(--ink);transform-origin:top}
+/* 2026-11-15 Kさん：Scroll の線を動かす（上から伸びて下へ抜ける＝下に続きがある）。動きを減らす設定の人には動かさない */
+.hint::after{animation:fall 2.4s cubic-bezier(.65,0,.35,1) infinite}
+@media(prefers-reduced-motion:reduce){.hint::after{animation:none}}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 .f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
@@ -454,7 +471,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .flags{margin-top:8px}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
 .flag.lit{filter:none}
-.f-txt{display:block;padding:72px 24px 24px}
+.f-txt{display:block;padding:72px var(--gx) 24px}
 .f-name{display:block;min-width:0;font:500 44px/1 var(--en);letter-spacing:-.01em}   /* 2026-11-15 Kさん：もう少し小さく（58px→44px） */
 .kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
 .f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.06em;opacity:.85}
@@ -471,6 +488,13 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .mem .ph{display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
+/* About。旧サイトのTOPの紹介文（Introduction）をそのまま使う。下の方に小さく置くので、見出しも本文も控えめにする */
+.ab-c{margin:0;font:500 15px/2.1 var(--min);letter-spacing:.04em}
+.nw{white-space:nowrap}
+.ab-l{margin:40px 0 0;border-top:1px solid var(--line)}
+.ab-l div{padding:18px 0;border-bottom:1px solid var(--line)}
+.ab-l dt{font:500 15px/1.6 var(--min);letter-spacing:.04em}.ab-l rt{font:500 9px var(--jp);letter-spacing:.1em;color:var(--sub)}
+.ab-l dd{margin:6px 0 0;font-size:13px;line-height:1.9;color:var(--sub)}
 .news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
@@ -479,23 +503,24 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 [data-speed]{will-change:translate}
 @media(min-width:900px){
- .hd,.sec,.nr,.ft{padding-inline:max(32px,calc(50% - 540px))}
+ .hd,.sec,.nr,.ft{padding-inline:var(--gx)}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
  .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}
  .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(6,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
- .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
+ .catch{right:var(--gx);top:150px;font-size:30px}
+ .hx{left:var(--gx);top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
- .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
+ .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}.ab-c{font-size:17px}.ab-l{margin-top:56px}.ab-l div{display:grid;grid-template-columns:220px 1fr;align-items:baseline;padding:24px 0}.ab-l dt{font-size:17px}.ab-l dd{margin:0;font-size:14px;max-width:40em}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
- .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
+ .hint{display:block;left:auto;right:var(--gx)}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
- .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{padding:120px 60px 60px var(--gx);align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:48px 20px}.mem .ph{width:116px;height:116px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
@@ -584,6 +609,18 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]'
 [].forEach.call(document.querySelectorAll('dialog.ep'),function(d){d.addEventListener('close',function(){clearTimeout(tm);noty(d);document.documentElement.classList.remove('ep-on');
  if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
 var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
+
+/* 重ねて開く画面（ユニットの About・キャラのモチーフ）：[data-pop="x"] で #pop-x を開く。
+   PC・タブレットはボタンのすぐ上に、画面を暗くせずに出す。スマホは下から出す。外側・×・Esc で閉じる */
+(function(){var wide=matchMedia('(min-width:700px)');
+function shut(){[].forEach.call(document.querySelectorAll('dialog.pop[open]'),function(d){d.close()})}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
+ if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(!d||!d.showModal)return;if(d.open){d.close();return}shut();
+  if(wide.matches)d.show();else{d.showModal();document.documentElement.classList.add('pop-on')}return}
+ var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
+ shut()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})})})();
 
 /* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
 (function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;

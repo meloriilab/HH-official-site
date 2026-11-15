@@ -1,3 +1,4 @@
+import re
 # -*- coding: utf-8 -*-
 """ユニットとメンバーの個別ページを組み立てる道具。
 
@@ -39,6 +40,18 @@ UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana,
 CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
+
+def phrases(line):
+    """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
+    out, cur = [], ""
+    for i, ch in enumerate(line):
+        cur += ch
+        nxt = line[i + 1] if i + 1 < len(line) else ""
+        if ch == "、" or (ch in "をにとがのはへで" and nxt and not ("\u3041" <= nxt <= "\u309f") and nxt not in "、。！ "):
+            out.append(cur); cur = ""
+    if cur: out.append(cur)
+    return out
+
 def kana_wrap(s):
     """ユニットの読みがなを「・」の所でだけ折る（2026-11-15。以前は「ハ／ーモニック」のように言葉の途中で折れていた）"""
     return "・<wbr>".join(f'<span class="nw">{esc(p)}</span>' for p in s.split("・"))
@@ -59,12 +72,15 @@ def face(cid, speed=".0"):
 
 def rels_of(u): return [r for r in T.RELS if r[1] == u]
 
+# ユニットの絵の中で、各メンバーが立っている位置（左端からの％）。ピルをその人の足もとに置く（Kさんの指示 2026-11-15）
+ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83}
+
 def unit_page(u):
     d, m = UD[u], UNIT[u]
     no = m["no"]
     # 紹介文とキャッチコピーが無いユニットは、旧サイトの短い紹介文を出し、キャッチコピーの行は出さない（文は作らない）
     intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d.get("intro") or [d["blurb"]])
-    catch = f'<p class="uh-c">{esc(d["catch"])}</p>' if d.get("catch") else ""
+    catch = f'<p class="uh-c">{"<br class=\"br-w\">".join("".join(f'<span class="nw">{esc(x)}</span>' for x in phrases(l)) for l in d["catch"].split(chr(10)))}</p>' if d.get("catch") else ""
     kv = u in T.KV   # 集合絵が無いユニットは、絵の場所に紋章を大きく出す
     mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06", "-.04"]))
     more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
@@ -72,16 +88,32 @@ def unit_page(u):
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
         <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{T.kn(UNIT[o]["name"])}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
+    # 2026-11-15 Kさんの指示：ユニットページは1画面にまとめる（Members・Release・Unitsの一覧は外す）。
+    # 絵の下側にメンバーのピル（メンバーカラー＋名前→キャラページ）、About は重ねて開く画面、Songs は曲一覧をこのユニットで絞った状態で開く。
+    # 左右の丸ボタンでユニットを切り替える（キャラページの左右ボタンと同じ形）。
+    order = [o for o in UNIT if o in T.PAGES]
+    i = order.index(u)
+    pv, nx = order[i - 1], order[(i + 1) % len(order)]
+    def pill(cid):
+        c = CH[cid]; col = c[6]
+        x = f";--x:{ART_X[cid]}%" if kv and cid in ART_X else ""
+        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}{x}">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
+    ids = [i2.lower() for i2 in d["members"]]
+    if kv: ids.sort(key=lambda x: ART_X.get(x, 0))   # 絵の左から順に並べる（読み上げの順も、見た目の順と同じにする）
+    pills = "".join(pill(x) for x in ids)
+    art = (f'<img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}">' if kv else f'<img class="em" src="{PRE}images/emblem/{no}.webp" alt="">')
+    songs = f'<a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a>' if rels_of(u) else ""
+    about = f'<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>'
     inner = f'''{T.header(PRE, top=False)}
 <main>
-<section class="fv uh">
-  <div class="uh-t">{f'<img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1><p class="uh-tag">{esc(d["tagline"])}</p>{catch}</div>
-  {f'<div class="uh-pic ph"><img src="{PRE}images/kv/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
+<section class="uv">
+  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms{" at" if kv else ""}" aria-label="メンバー">{pills}</nav><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
+  <div class="uv-t">
+    <div class="uv-n">{f'<img class="uv-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1></div>
+    <p class="uh-tag">{esc(d["tagline"])}</p>{catch}
+    <div class="uv-bar pop-w"><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p>{about}</div>
+  </div>
 </section>
-<section class="sec" id="about">{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
-<section class="sec" id="members">{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
-<section class="sec" id="release">{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
-<nav class="sec others" aria-label="ほかのユニット"><p class="lbl">Units</p><div class="m-nav">{others}</div></nav>
 </main>
 {T.footer(PRE)}'''
     return T.page(f'{m["name"]} | Humming Hearts', esc(d.get("catch") or d["blurb"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
@@ -158,7 +190,7 @@ def guideline_page():
     def tail(h):   # 段落・箇条書きの終わりの5文字は途中で折り返さない（「す。」だけが次の行に落ちるのを防ぐ。Kさんの指摘 2026-11-15）
         return re.sub(r"([^<>]{5})(</p>|</li>)", r'<span class="nb">\1</span>\2', h)
     items = [(t, tail(b)) for t, b in items]
-    lead = tail("<p class=\"gl-l\">Humming Hearts のキャラクターや世界を使った創作を歓迎します。みんなが気持ちよく楽しめるように、お願いしたいことをまとめました。</p>")
+    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
     note = tail('<p class="gl-x">ガイドラインの内容は予告なく変わることがあります。</p>')   # いちばん下の注意書き（Kさんの指示 2026-11-15。「草案です」の一文は外す）
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
@@ -197,7 +229,8 @@ def char_page(cid):
     quote = "".join(f'<span class="col{" low" if k else ""}">{esc(x)}</span>' for x, k in reversed(cols))
     rows = [("誕生日", d["birthday"]), ("身長", f'{d["height"]}cm'), ("年齢", f'{d["age"]}歳'),
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
-    dl = "".join(f"<div><dt>{k}</dt><dd>{esc(str(v))}</dd></div>" for k, v in rows)
+    # 値は「、」の後でだけ折り返す（趣味などが2行になっても、ことばの途中で切れない。2026-11-15）
+    dl = "".join(f"<div><dt>{k}</dt><dd>{''.join(f'<span class=nw>{esc(x)}</span>' for x in phrases(str(v)) if x)}</dd></div>" for k, v in rows)
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
     # タブレット幅では、タグを立ち絵の上にメインカラーの帯で縦に並べる。帯が明るい色の人は、白ではなく黒の文字にして読めるようにする
     r, g, b = (int(col["main"][i:i + 2], 16) / 255 for i in (1, 3, 5))
@@ -217,7 +250,14 @@ def char_page(cid):
     nav = (f'<p class="ch-nv"><a class="pv" href="{T.mhref(pv, PRE)}" aria-label="前のメンバー：{pv[2]}{pv[3]}"></a>'
            f'<a class="nx" href="{T.mhref(nx, PRE)}" aria-label="次のメンバー：{nx[2]}{nx[3]}"></a></p>')
     # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
-    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl></div>'
+    # モチーフは重ねて開く小さな画面（背景に鳥の絵、上に文）。同じユニットのメンバーは小さな丸い顔で詰めて並べる（Kさんの指示 2026-11-15）
+    mm = "".join(f'<a class="mm-i" href="{T.mhref(CH[x.lower()], PRE)}"><img src="{PRE}images/face/{T.fid(CH[x.lower()])}.webp" alt=""><span>{T.name(CH[x.lower()])}</span></a>' for x in UD[u]["members"] if x.lower() != cid)
+    bimg = f'<img class="mtp-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="">' if bird else ""
+    motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(d["motif"])}">{bimg}<div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
+             f'<div class="pop-b"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></dialog>')
+    extra = (f'<div class="pop-w ch-x"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{{M}}</div>'
+             f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>')
+    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{extra.replace("{M}", motif)}</div>'
     # そのメンバーが歌っている曲（＝ユニットの曲）。ページのいちばん最後に、小さいジャケットの1行ずつの一覧で出す
     # （Kさんの指示 2026-11-14：キャラのページは縦に長くしない。曲は今後増えるので小さくまとめる。ほかのページのカードの並べ方は使い回さない）
     songs = "".join(f'''
@@ -230,12 +270,10 @@ def char_page(cid):
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
+  <p class="hint ch-hint" aria-hidden="true">Scroll</p>
 </section>
-<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
-<section class="sec{" has-b" + tall if bird else ""}" id="motif">{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit">{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{kana_wrap(m["kana"])}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 1 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl>{extra.replace("{M}", motif.replace('id="pop-motif"', 'id="pop-motif-sp"')).replace('data-pop="motif"', 'data-pop="motif-sp"')}</section>
 {songs_sec}
-<nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
 {T.footer(PRE)}<script>{SWJS}</script><script>{RDY}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}" data-ch', share=f'{c[2]}{c[3]}（{m["name"]}） | Humming Hearts')   # 共有の文面のたたき台（Kさんの確認待ち）
@@ -264,7 +302,84 @@ CSS = """
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
-.nw{white-space:nowrap}
+
+/* ユニットページ（1画面。2026-11-15）
+   スマホ：上に絵（少し小さく）、下半分に紋章・名前・キャッチ・ボタン。左右のユニット切り替えは、親指の届く一番下の列に About・Songs と並べる */
+.uv{padding:147px 0 28px;display:flex;flex-direction:column}
+.uv-pic{position:relative;height:clamp(230px,38svh,380px);overflow:hidden}
+.uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
+.uv-ms{position:absolute;left:var(--gx);right:var(--gx);bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
+.uv-m{min-height:32px;padding:0 11px 0 14px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
+.uv-m:hover{opacity:.8}
+.uv-ms.at{left:0;right:0}.uv-ms.at .uv-m{position:absolute;bottom:0;left:var(--x);translate:-50% 0}
+@media(max-width:359px){.uv-m{font-size:12px;padding:0 9px 0 11px;gap:5px}}
+.uv-m i{width:6px;height:6px;margin-left:2px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;rotate:45deg}
+.uv-t{padding:20px var(--gx) 0}
+.uv-n{display:flex;align-items:center;gap:12px}
+.uv-em{flex:none;width:56px;height:56px;object-fit:contain}
+.uv h1{margin:0;font:500 34px/1.1 var(--en);letter-spacing:-.01em;word-break:keep-all}
+.uv h1 small{display:block;margin-top:6px;font:400 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.uv .uh-tag{margin-top:16px}.uv .uh-c{font-size:19px}
+.uv-bar{display:flex;align-items:center;gap:12px;margin-top:20px}
+.uv-bar .row{flex:1}
+/* ユニットの切り替え：絵の左右の端（About・Songs と離して、別の操作だとわかるように） */
+.uv-ar{position:absolute;top:calc(50% - 23px);width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;background:rgba(250,250,248,.88);color:var(--ink);transition:background .25s,color .25s}.uv-ar.pv{left:10px}.uv-ar.nx{right:10px}
+.uv-ar:hover{background:var(--ink);color:var(--bg)}
+.uv-ar::before{content:"";position:absolute;left:13px;top:21px;width:18px;height:1px;background:currentColor}
+.uv-ar::after{content:"";position:absolute;top:18px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.uv-ar.nx::after{right:13px;rotate:45deg}.uv-ar.pv::after{left:13px;rotate:-135deg}
+/* About：重ねて開く画面。スマホは下から、PCは真ん中に */
+html.pop-on{overflow:hidden}
+.pop-w{position:relative}
+.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:36svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
+.pop::backdrop{background:rgba(20,20,20,.45)}
+.pop[open]{display:flex;flex-direction:column}
+.pop-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:2px 4px 2px var(--gx);border-bottom:1px solid var(--line)}
+.pop-h b{font:500 19px/1 var(--en);letter-spacing:.02em}
+.pop-x{appearance:none;background:none;border:0;padding:0;cursor:pointer;color:inherit;position:relative;width:44px;height:44px}
+.pop-x::before,.pop-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.pop-x::after{rotate:-45deg}
+.pop-b{overflow-y:auto;overscroll-behavior:contain;padding:14px var(--gx) 24px}
+.pop-b.prose p{margin:0;font-size:13px;line-height:1.95;letter-spacing:.04em}.pop-b.prose p+p{margin-top:.8em}.pop-b rt{font-size:8px}
+@media(min-width:700px){.pop{position:absolute;z-index:30;inset:auto auto calc(100% + 10px) 0;margin:0;width:min(460px,calc(100vw - 2 * var(--gx)));max-height:min(60svh,420px);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.12)}.pop-h{padding-left:24px}.pop-b{padding:16px 24px 24px}.pop-b.prose p{font-size:14px}}
+/* 縦長のタブレット：スマホと同じ縦の並びのまま、大きくする（横に並べると、上下が大きく空くため） */
+@media(min-width:700px) and (orientation:portrait){.uv{padding-top:150px}.uv-pic{height:min(52svh,100vw)}.uv-t{padding-top:32px}.uv-em{width:80px;height:80px}.uv h1{font-size:52px}.uv .uh-tag{font-size:14px}.uv .uh-c{font-size:24px}.uv-bar{margin-top:28px;max-width:520px}.uv-ms{bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}}
+/* 横長の画面（PC・横持ちのタブレット）：左に絵、右に文字。1画面に収める */
+@media(min-width:700px) and (orientation:landscape){
+ .uv{padding:100px var(--gx) 40px;min-height:100svh;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:clamp(32px,5vw,72px)}
+ .uv-pic{height:auto;width:min(44vw,calc(100svh - 160px),640px);aspect-ratio:1}
+ .uv-pic.e>img{padding:48px 48px 80px}
+ .uv-ms{left:16px;right:16px;bottom:16px;gap:8px}.uv-ms.at{left:0;right:0}.uv-m{min-height:34px;font-size:14px;padding:0 13px 0 16px}
+ .uv-t{padding:0}
+ .uv-n{display:block}.uv-em{width:clamp(72px,9vw,120px);height:clamp(72px,9vw,120px);margin:0 0 16px -6px}
+ .uv h1{font-size:clamp(36px,5vw,72px)}.uv h1 small{font-size:12px;margin-top:10px}
+ .uv .uh-tag{margin-top:24px;font-size:14px}.uv .uh-c{font-size:clamp(18px,2.1vw,26px)}
+ .uv-bar{margin-top:32px;max-width:420px}
+}
+@media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
+/* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
+.mtp{overflow:hidden}
+.mtp-b{position:absolute;z-index:0;right:-2%;bottom:-4%;height:96%;width:auto;max-width:70%;object-fit:contain;opacity:.42;pointer-events:none}
+.mtp .pop-h,.mtp .pop-b{position:relative;z-index:1}
+.mtp .pop-h{border-bottom-color:transparent}
+.mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
+.mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
+.mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
+.ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
+.ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
+.mm{display:flex;flex-wrap:wrap;gap:14px 22px}
+.mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
+.mm-i img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+/* キャラページの参加曲：上の空きと見出しを小さくして詰める（2026-11-15） */
+.sl-s{padding-top:80px}.sl-s h2{margin-bottom:20px}.sl-s h2 span{font-size:44px}.sl-s .more{margin-top:20px}
+@media(min-width:900px){.sl-s{padding-top:110px}.sl-s h2{margin-bottom:28px}.sl-s h2 span{font-size:64px}}
+/* PCのキャラページ：最初の画面だけで完結して見えるので、下に参加曲があることをトップと同じ「Scroll」で知らせる（画面の下端の少し上に置く） */
+@media(min-width:900px){.ch-hint{top:calc(100svh - 130px);bottom:auto}}
+/* スマホのキャラページのプロフィール：項目を2列にして、見出しと上の空きも小さくする（2026-11-15） */
+@media(max-width:899px){#profile{padding-top:56px}#profile h2{margin-bottom:16px}#profile h2 span{font-size:44px}
+ #profile .pf{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px}#profile .pf div{display:block;padding:7px 0}
+ #profile .pf dt{line-height:1.6}#profile .pf dd{font-size:14px;line-height:1.7}#profile .ch-x{margin-top:20px}#profile .ch-mm{margin-top:20px}#profile .prose p{font-size:14px;line-height:1.95}}
+.nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
@@ -279,8 +394,8 @@ CSS = """
 .rels.solo{grid-template-columns:minmax(0,300px)}
 /* member page songs: one thin row per song (small jacket, title, the three buttons) = stays short as songs are added */
 .sl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-.sl-i{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:72px;height:72px;object-fit:cover}
+.sl-i{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:56px;height:56px;object-fit:cover}
 .sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
 .sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
 .others{padding-top:96px}.others .lbl{margin-bottom:8px}
@@ -288,14 +403,14 @@ CSS = """
 /* unit first screen */
 .uh{height:auto;overflow:clip;padding-top:150px}
 /* the unit's emblem, large: on its own page the mark is the first thing seen */
-.uh-em{width:176px;height:176px;margin:0 0 18px -10px}
-.uh-t{position:relative;z-index:2;padding-inline:24px}
+.uh-em{width:96px;height:96px;margin:0 0 16px -5px}
+.uh-t{position:relative;z-index:2;padding-inline:var(--gx)}
 .uh h1{margin:0;font:500 50px/1 var(--en);letter-spacing:-.01em}
 .uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
-.uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
-.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
+.uh-pic{display:block;margin-top:36px;aspect-ratio:1;overflow:hidden}
+.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.12}   /* ユニットのヒーロー画像（Kさんの正方形の絵。2026-11-15）。少しだけ拡大して、ゆっくり動かしても端が見えないようにする */
 .uh-pic.em{aspect-ratio:1;max-width:420px;margin-inline:auto;padding-inline:24px}.uh-pic.em img{object-fit:contain;scale:1}
 .more{margin:28px auto 0;width:fit-content}.more .btn{min-width:180px}
 /* member first screen, as on the old site: the member's main colour slides in as a panel, a square in the
@@ -336,7 +451,7 @@ CSS = """
 @keyframes pBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes pUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pRoll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
-.ch-t{position:relative;padding:30px 24px 0}
+.ch-t{position:relative;padding:30px var(--gx) 0}
 .ch-p,.n-pc{display:none}
 /* motif bird: below the text on phones, beside the text on wide screens; it never sits under the words */
 /* モチーフの鳥: 下から2番目の層（薄い大きな見出し文字のすぐ上、文章の下）に大きく薄く置く。文章と少し重なってよい。段の外へは出さない（切らない） */
@@ -346,7 +461,7 @@ CSS = """
 /* phone: a smaller bird (the text over it stays easy to read) and no spare room kept under it (K 2026-11-14) */
 @media(max-width:699px){.has-b{padding-bottom:32px;min-height:calc(48vw + 262px)}.mt-b{width:72vw;left:14vw}.mt-b.tall{width:46vw;left:27vw}.has-b.tall{min-height:calc(74vw + 262px)}}
 @media(min-width:700px){.mt-b.tall{width:min(26vw,330px);left:auto}.has-b.tall{min-height:calc(min(26vw,330px)*1.6 + 380px)}}
-@media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}}
+@media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:var(--gx);top:250px;width:min(62vw,760px)}}
 /* 縦長の鳥（フクロウ、サンコウチョウ）は、PCでは見出しの線より下から始める（段の番号の数字に頭が重ならないように） */
 @media(min-width:700px){.mt-b.tall{top:340px}.has-b.tall{min-height:calc(min(26vw,330px)*1.62 + 470px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}.vq{top:18%}}
@@ -373,8 +488,8 @@ CSS = """
 .ch h1{margin:0;font:500 40px/1.5 var(--min);letter-spacing:.1em}
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
 .pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
-.pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
-.pf dt{font:500 12px/2.4 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
 .mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
@@ -393,11 +508,11 @@ CSS = """
  .prose p{font-size:16px}
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
- .sl-i{grid-template-columns:88px minmax(0,1fr) 252px 150px;column-gap:28px;padding:16px 0}.sl-j{grid-row:auto}.sl-j img{width:88px;height:88px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
+ .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
- .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
- .uh-em{width:300px;height:300px;margin:0 0 20px -18px}
- .uh-t{padding:0}.uh h1{font-size:84px}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
+ .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:var(--gx)}
+ .uh-em{width:140px;height:140px;margin:0 0 20px -8px}
+ .uh-t{padding:0}.uh h1{font-size:84px;word-break:keep-all}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
  .uh-pic{margin-top:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
@@ -405,7 +520,7 @@ CSS = """
  .vq{left:64px;top:16%;gap:11px}.vq .col{font-size:19px;letter-spacing:.14em;line-height:1.7;padding:18px 10px}.vq .col.low{margin-top:74px}
  .ch-t{box-sizing:border-box;padding:0 32px 0 72px;max-width:684px}.ch h1{font-size:54px}.ch-nv{right:32px;top:10px}.ch-u{font-size:22px;margin-bottom:14px}.ch-u img{width:72px;height:72px;margin-left:-6px}
  .ch-p{display:block;margin-top:26px}.ch-p p{margin:0;font-size:15px;line-height:2}
- .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:9px 0}.ch-p .pf dd{font-size:14px;line-height:2.1}
+ .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:6px 0}.ch-p .pf dd{font-size:14px;line-height:1.9}
  @media(max-width:1099px){.ch-t{padding-left:44px}.ch h1{font-size:46px}.ch-p .pf{column-gap:20px}.ch-p .pf div{grid-template-columns:76px 1fr}}
  .tags-a{bottom:76px}.tags-a li{font-size:15px;padding:8px 18px}
  #profile,.n-sp{display:none}.n-pc{display:inline}.ch .tags{margin-top:22px;padding-top:18px;font-size:15px}
