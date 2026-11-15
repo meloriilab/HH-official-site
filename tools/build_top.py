@@ -278,8 +278,6 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
 .mood-s .md{min-height:44px;padding:0 20px;font-size:14px}.mood-s .moods{gap:10px}
 @media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s{padding-bottom:140px}.mood-s .md{min-height:52px;padding:0 28px;font-size:16px}.mood-s .moods{gap:14px}}
-/* 【お試し】?flag=1 … スマホだけ、ユニットの旗を低くする（Kさんの判断待ち。不採用ならこの1行と main.js の fl1 を消す） */
-@media(max-width:899px){.fl1 .flag{min-height:70svh}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -463,6 +461,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-pic{position:relative;display:block;min-height:260px;overflow:hidden}
 .f-art{position:absolute;left:0;top:-15%;width:100%;height:130%;object-fit:cover;object-position:50% 20%}
 .f-em{position:absolute;height:80%;left:50%;top:10%;margin-left:-40%;width:80%;object-fit:contain}
+/* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
+@media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:36px;height:36px;margin-bottom:8px}}
 .mems{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 12px}
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;margin-bottom:10px}
@@ -540,7 +540,7 @@ b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click'
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
-document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.search))document.documentElement.classList.add('fl1');
+document.documentElement.classList.add('js');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
