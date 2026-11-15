@@ -166,12 +166,10 @@ html.ep-on{overflow:hidden}
 .ep-ph.big{cursor:zoom-out}.ep-ph.big img{width:min(100%,560px)}.ep-ph small{margin:6px 6px 0!important;font-family:var(--min)!important}
 .ep-r:has(.ep-ph.big){max-width:100%}
 .ep .ep-log:focus-visible{outline:0}
-/* 話している人の挿絵：スマホはチャットの後ろに薄く（Motif の鳥の絵と同じ濃さ）、PCはチャットの左に縦いっぱいに（2026-11-15） */
-.ep-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;opacity:.3;pointer-events:none}
+/* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
+.ep-art{order:1;flex:none;display:block;width:100%;height:24svh;object-fit:cover;object-position:50% var(--fy,30%);pointer-events:none}.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
 .ep-h{position:relative;z-index:1;background:var(--bg)}.ep-log{position:relative;z-index:1}
-.ep-r:not(.me) p{background:color-mix(in oklab,var(--bg) 82%,transparent)}.ep-r.me p{background:var(--uc)}
-.ep-mv{background:color-mix(in oklab,var(--bg) 82%,transparent)}
-@media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{right:auto;width:calc(var(--eh) * .4558);opacity:1;object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
+@media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%;object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
 .ep-ty p{display:flex;align-items:center;gap:6px;padding:17px 17px}.ep-ty i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;animation:epDot 1s ease-in-out infinite}.ep-ty i:nth-child(2){animation-delay:.16s}.ep-ty i:nth-child(3){animation-delay:.32s}
 @keyframes epDot{30%{opacity:1;translate:0 -3px}60%{opacity:.25;translate:0}}
 .ep-end{align-self:center;margin:10px 0 0;font:italic 500 15px/1 var(--en);color:var(--sub);letter-spacing:.08em}
