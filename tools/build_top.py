@@ -230,10 +230,10 @@ def body():
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
-<section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 <section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
 <p class="ab-c">もし、野鳥がアイドルになったら…<br>森での雑談から生まれたソナヴィアンたち<br>歌も、彼ら自身も、元になった野鳥も<br>まるごと楽しもう！</p>
 <p class="ab-n">「ハミングハーツ」は、melorii lab が制作する同人創作企画です。<br>キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しています。</p></section>
+<section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
 {footer()}'''
 CSS="""
