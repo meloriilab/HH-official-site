@@ -85,16 +85,29 @@ def unit_page(u):
       <article class="rel"><a class="ph" href="{T.MV.get(n, T.YT_CH)}"><img src="{PRE}images/jacket/{T.JK[n]}.webp" alt="{t} のジャケット">{T.jo(n)}</a>
         <h3>{T.rb(t, k)}</h3><p class="by">{T.kn(un)}</p>{T.lk(n)}{T.ep_btn(n, PRE)}</article>''' for n, ru, t, k, un in T.RELS if ru == u)
     others = "".join(f'<a href="{T.uhref(o, PRE)}">{T.kn(UNIT[o]["name"])}<small>{UNIT[o]["kana"]}</small></a>' for o in UNIT if o != u and o in T.PAGES)
+    # 2026-11-15 Kさんの指示：ユニットページは1画面にまとめる（Members・Release・Unitsの一覧は外す）。
+    # 絵の下側にメンバーのピル（メンバーカラー＋名前→キャラページ）、About は重ねて開く画面、Songs は曲一覧をこのユニットで絞った状態で開く。
+    # 左右の丸ボタンでユニットを切り替える（キャラページの左右ボタンと同じ形）。
+    order = [o for o in UNIT if o in T.PAGES]
+    i = order.index(u)
+    pv, nx = order[i - 1], order[(i + 1) % len(order)]
+    def pill(cid):
+        c = CH[cid]; col = c[6]
+        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}">{c[2]}{c[3]}</a>'
+    pills = "".join(pill(i2.lower()) for i2 in d["members"])
+    art = (f'<img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}">' if kv else f'<img class="em" src="{PRE}images/emblem/{no}.webp" alt="">')
+    songs = f'<a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a>' if rels_of(u) else ""
     inner = f'''{T.header(PRE, top=False)}
 <main>
-<section class="fv uh">
-  <div class="uh-t">{f'<img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1><p class="uh-tag">{esc(d["tagline"])}</p>{catch}</div>
-  {f'<div class="uh-pic ph"><img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
+<section class="uv">
+  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms" aria-label="メンバー">{pills}</nav></div>
+  <div class="uv-t">
+    <div class="uv-n">{f'<img class="uv-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1></div>
+    <p class="uh-tag">{esc(d["tagline"])}</p>{catch}
+    <div class="uv-bar"><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
+  </div>
 </section>
-<section class="sec" id="about">{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
-<section class="sec" id="members">{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
-<section class="sec" id="release">{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
-<nav class="sec others" aria-label="ほかのユニット"><p class="lbl">Units</p><div class="m-nav">{others}</div></nav>
+<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>
 </main>
 {T.footer(PRE)}'''
     return T.page(f'{m["name"]} | Humming Hearts', esc(d.get("catch") or d["blurb"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
@@ -277,6 +290,56 @@ CSS = """
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
+
+/* ユニットページ（1画面。2026-11-15）
+   スマホ：上に絵（少し小さく）、下半分に紋章・名前・キャッチ・ボタン。左右のユニット切り替えは、親指の届く一番下の列に About・Songs と並べる */
+.uv{padding:147px 0 28px;display:flex;flex-direction:column}
+.uv-pic{position:relative;height:clamp(230px,38svh,380px);overflow:hidden}
+.uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
+.uv-ms{position:absolute;left:var(--gx);right:var(--gx);bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
+.uv-m{min-height:30px;padding:0 14px;display:inline-flex;align-items:center;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
+.uv-m:hover{opacity:.8}
+.uv-t{padding:20px var(--gx) 0}
+.uv-n{display:flex;align-items:center;gap:12px}
+.uv-em{flex:none;width:56px;height:56px;object-fit:contain}
+.uv h1{margin:0;font:500 34px/1.1 var(--en);letter-spacing:-.01em;word-break:keep-all}
+.uv h1 small{display:block;margin-top:6px;font:400 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.uv .uh-tag{margin-top:16px}.uv .uh-c{font-size:19px}
+.uv-bar{display:flex;align-items:center;gap:12px;margin-top:20px}
+.uv-bar .row{flex:1}
+.uv-ar{flex:none;position:relative;width:46px;height:46px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
+.uv-ar:hover{background:var(--ink);color:var(--bg)}
+.uv-ar::before{content:"";position:absolute;left:14px;top:22px;width:18px;height:1px;background:currentColor}
+.uv-ar::after{content:"";position:absolute;top:19px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.uv-ar.nx::after{right:14px;rotate:45deg}.uv-ar.pv::after{left:14px;rotate:-135deg}
+/* About：重ねて開く画面。スマホは下から、PCは真ん中に */
+html.pop-on{overflow:hidden}
+.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:82svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
+.pop::backdrop{background:rgba(20,20,20,.45)}
+.pop[open]{display:flex;flex-direction:column}
+.pop-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px var(--gx);border-bottom:1px solid var(--line)}
+.pop-h b{font:500 24px/1 var(--en);letter-spacing:.02em}
+.pop-x{appearance:none;background:none;border:0;padding:0;cursor:pointer;color:inherit;position:relative;width:44px;height:44px}
+.pop-x::before,.pop-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.pop-x::after{rotate:-45deg}
+.pop-b{overflow-y:auto;overscroll-behavior:contain;padding:18px var(--gx) 32px}
+.pop-b p{margin:0}.pop-b p+p{margin-top:1em}
+@media(min-width:700px){.pop{margin:auto;width:min(640px,calc(100% - 64px));max-height:80svh;border:1px solid var(--ink)}}
+/* 縦長のタブレット：スマホと同じ縦の並びのまま、大きくする（横に並べると、上下が大きく空くため） */
+@media(min-width:700px) and (orientation:portrait){.uv{padding-top:150px}.uv-pic{height:min(52svh,100vw)}.uv-t{padding-top:32px}.uv-em{width:80px;height:80px}.uv h1{font-size:52px}.uv .uh-tag{font-size:14px}.uv .uh-c{font-size:24px}.uv-bar{margin-top:28px;max-width:520px}.uv-ms{bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}}
+/* 横長の画面（PC・横持ちのタブレット）：左に絵、右に文字。1画面に収める */
+@media(min-width:700px) and (orientation:landscape){
+ .uv{padding:100px var(--gx) 40px;min-height:100svh;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:clamp(32px,5vw,72px)}
+ .uv-pic{height:auto;width:min(44vw,calc(100svh - 160px),640px);aspect-ratio:1}
+ .uv-pic.e>img{padding:48px 48px 80px}
+ .uv-ms{left:16px;right:16px;bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}
+ .uv-t{padding:0}
+ .uv-n{display:block}.uv-em{width:clamp(72px,9vw,120px);height:clamp(72px,9vw,120px);margin:0 0 16px -6px}
+ .uv h1{font-size:clamp(36px,5vw,72px)}.uv h1 small{font-size:12px;margin-top:10px}
+ .uv .uh-tag{margin-top:24px;font-size:14px}.uv .uh-c{font-size:clamp(18px,2.1vw,26px)}
+ .uv-bar{margin-top:32px;max-width:420px}
+}
+@media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 .nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}

@@ -74,6 +74,12 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-ep]'
  if(/^#episode-/.test(location.hash))history.replaceState(null,'',location.pathname+location.search)})});
 var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 
+/* 重ねて開く画面（ユニットの About など）：[data-pop="x"] で #pop-x を開く。外側・×で閉じる */
+(function(){document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
+ if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(d&&d.showModal&&!d.open){d.showModal();document.documentElement.classList.add('pop-on')}return}
+ var d2=e.target.closest('dialog.pop');if(d2&&(e.target===d2||e.target.closest('.pop-x')))d2.close()});
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})})})();
+
 /* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
 (function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;
 function shut(){if(pop){pop.remove();pop=null;b.setAttribute('aria-expanded','false')}}
