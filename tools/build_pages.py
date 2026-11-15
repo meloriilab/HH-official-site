@@ -269,6 +269,7 @@ def char_page(cid):
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
+  <p class="hint ch-hint" aria-hidden="true">Scroll</p>
 </section>
 <section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 1 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl>{extra.replace("{M}", motif.replace('id="pop-motif"', 'id="pop-motif-sp"')).replace('data-pop="motif"', 'data-pop="motif-sp"')}</section>
 {songs_sec}
@@ -371,6 +372,12 @@ html.pop-on{overflow:hidden}
 /* キャラページの参加曲：上の空きと見出しを小さくして詰める（2026-11-15） */
 .sl-s{padding-top:80px}.sl-s h2{margin-bottom:20px}.sl-s h2 span{font-size:44px}.sl-s .more{margin-top:20px}
 @media(min-width:900px){.sl-s{padding-top:110px}.sl-s h2{margin-bottom:28px}.sl-s h2 span{font-size:64px}}
+/* PCのキャラページ：最初の画面だけで完結して見えるので、下に参加曲があることをトップと同じ「Scroll」で知らせる（画面の下端の少し上に置く） */
+@media(min-width:900px){.ch-hint{top:calc(100svh - 130px);bottom:auto}}
+/* スマホのキャラページのプロフィール：項目を2列にして、見出しと上の空きも小さくする（2026-11-15） */
+@media(max-width:899px){#profile{padding-top:56px}#profile h2{margin-bottom:16px}#profile h2 span{font-size:44px}
+ #profile .pf{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px}#profile .pf div{display:block;padding:7px 0}
+ #profile .pf dt{line-height:1.6}#profile .pf dd{font-size:14px;line-height:1.7}#profile .ch-x{margin-top:20px}#profile .ch-mm{margin-top:20px}#profile .prose p{font-size:14px;line-height:1.95}}
 .nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
