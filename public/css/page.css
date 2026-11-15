@@ -41,7 +41,7 @@
 /* unit first screen */
 .uh{height:auto;overflow:clip;padding-top:150px}
 /* the unit's emblem, large: on its own page the mark is the first thing seen */
-.uh-em{width:176px;height:176px;margin:0 0 18px -10px}
+.uh-em{width:96px;height:96px;margin:0 0 16px -5px}
 .uh-t{position:relative;z-index:2;padding-inline:24px}
 .uh h1{margin:0;font:500 50px/1 var(--en);letter-spacing:-.01em}
 .uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
@@ -149,7 +149,7 @@
  .sl-i{grid-template-columns:88px minmax(0,1fr) 252px 150px;column-gap:28px;padding:16px 0}.sl-j{grid-row:auto}.sl-j img{width:88px;height:88px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
  .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:max(32px,calc(50% - 540px))}
- .uh-em{width:300px;height:300px;margin:0 0 20px -18px}
+ .uh-em{width:140px;height:140px;margin:0 0 20px -8px}
  .uh-t{padding:0}.uh h1{font-size:84px}.uh-tag{font-size:14px;margin-top:32px}.uh-c{font-size:28px}
  .uh-pic{margin-top:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}

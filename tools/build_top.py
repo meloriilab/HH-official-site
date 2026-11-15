@@ -188,7 +188,7 @@ def body():
     mpills='<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>'+"".join(f'<button class="md" type="button" data-v="{m}" aria-pressed="false">{m}</button>' for m in used_moods())
     INK={"nct":"#1B1712"}
     def unit(i,no,u,n,kana,tg,c):
-        art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
+        art=f'<img class="f-art" src="images/unit/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
         tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">View More</span>') if u in PAGES else ("div","div","")
         return f'''
