@@ -193,7 +193,7 @@ def body():
         tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">View More</span>') if u in PAGES else ("div","div","")
         return f'''
       <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
-        <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
+        <span class="f-txt"><span class="f-hd"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span></span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
         <span class="f-pic">{art}</span></{end}>'''
     units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS) if u in PAGES)   # ページができるまで TOP に載せない（Kさんの回答 2026-11-14）
     def face(c):
@@ -225,7 +225,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">Songs</a></p></section>
+<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">All Songs</a></p></section>
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
@@ -421,7 +421,9 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 .f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
-.f-mark{width:48px;height:48px;margin-bottom:14px}
+/* 2026-11-15 Kさん：紋章は白一色にして、ユニット名の左横に置く（試し） */
+.f-hd{display:flex;align-items:center;gap:14px}
+.f-mark{flex:none;width:48px;height:48px;filter:brightness(0) invert(1)}
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
@@ -452,7 +454,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .flag{position:sticky;top:0;display:grid;min-height:100svh;background:var(--c);color:var(--tx);grid-template-rows:auto 1fr;overflow:hidden;filter:grayscale(1);transition:filter .9s ease}
 .flag.lit{filter:none}
 .f-txt{display:block;padding:72px 24px 24px}
-.f-name{display:block;font:500 58px/.95 var(--en);letter-spacing:-.01em}
+.f-name{display:block;min-width:0;font:500 44px/1 var(--en);letter-spacing:-.01em}   /* 2026-11-15 Kさん：もう少し小さく（58px→44px） */
 .kn{font-family:var(--min);font-style:normal;font-size:.7em;letter-spacing:.08em}
 .f-kana{display:block;margin-top:10px;font-size:12px;letter-spacing:.06em;opacity:.85}
 .f-tag{display:block;margin-top:14px;font:500 18px/1.6 var(--min)}
@@ -462,7 +464,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-art{position:absolute;left:0;top:-15%;width:100%;height:130%;object-fit:cover;object-position:50% 20%}
 .f-em{position:absolute;height:80%;left:50%;top:10%;margin-left:-40%;width:80%;object-fit:contain}
 /* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
-@media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:36px;height:36px;margin-bottom:8px}}
+@media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
 .mems{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 12px}
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:84px;height:84px;border-radius:50%;overflow:hidden;margin-bottom:10px}
@@ -488,11 +490,11 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
- .f-mark{width:64px;height:64px;margin-bottom:20px}
+ .f-mark{width:60px;height:60px}.f-hd{gap:20px}
  .hint{display:block;left:auto;right:max(32px,calc(50% - 540px))}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
  .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
- .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:76px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{padding:120px 60px 60px max(32px,calc(50vw - 540px));align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:48px 20px}.mem .ph{width:116px;height:116px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
