@@ -11,11 +11,18 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .hd,.sec,.nr,.ft{padding-inline:24px}
 .hd{position:absolute;inset:0 0 auto;z-index:10;display:flex;justify-content:space-between;align-items:center;padding-block:20px}
 .logo{margin:0;font:500 22px/1 var(--en);letter-spacing:.02em}
+/* ロゴは画像（仮置き。Kさんの指示 2026-11-15）。上の帯では高さ44px、いちばん下では大きめに出す */
+.logo img{display:block;height:44px;width:auto}.ft .logo img{height:96px}
 .hd .gnav{display:none}
 .hd{flex-wrap:wrap;gap:14px}
 /* unit pills: jump straight to a unit from anywhere at the top; the one on screen is filled */
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
 .up{position:relative;display:block;min-width:0}
+/* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
+.uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
+.uf[aria-expanded=true]{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
+@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf+.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
+@media(max-width:359px){body[data-ch] .hd{gap:6px}}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
 .up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
@@ -43,14 +50,12 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-/* YouTube へのリンク：小さい公式アイコン＋赤い文字（Kさんの決定 2026-11-14。外へ出る印は付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
-.yt-i{display:block;height:24px;width:auto;margin-right:10px;flex:none}
-@media(max-width:389px){.yt span{display:none}.yt-i{margin-right:2px}}
+/* YouTube へのリンク：小さい公式アイコンだけ（Kさんの決定 2026-11-15。文字も、外へ出る印も付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
+.yt-i{display:block;height:24px;width:auto;flex:none}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
 @media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt{font-size:15px}}
-@media(max-width:359px){.hd .logo{width:min-content;line-height:1}}
 .burger{position:relative;z-index:31;width:44px;height:44px;margin-right:-10px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
 .burger i{position:absolute;left:10px;right:10px;height:1px;background:currentColor;transition:transform .3s,top .3s}
 .burger i:first-child{top:18px}.burger i:last-child{top:26px}

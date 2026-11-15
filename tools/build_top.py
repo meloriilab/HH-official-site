@@ -149,10 +149,10 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS if u in PAGES)   # ページがあるユニットだけ（Kさんの回答 2026-11-14）
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}">Humming Hearts</a><nav class="upills" aria-label="ユニット">{upills}</nav><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"><span>YouTube</span></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<header class="hd"><a class="logo" href="{home}"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939"></a><nav class="upills" id="upills" aria-label="ユニット">{upills}</nav><button class="uf" type="button" aria-expanded="false" aria-controls="upills">Units</button><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
-def footer():
-    return f'''<footer class="ft"><p class="logo">Humming Hearts</p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+def footer(pre=""):
+    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
 # 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
 import hashlib as _hl, glob as _gl
 VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
@@ -190,7 +190,7 @@ def body():
     def unit(i,no,u,n,kana,tg,c):
         art=f'<img class="f-art" src="images/kv/{NO[u]}.webp" alt="" data-speed=".12">' if u in KV else f'<img class="f-em" src="images/emblem/{NO[u]}.webp" alt="" data-speed=".12">'
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
-        tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">プロフィール</span>') if u in PAGES else ("div","div","")
+        tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">View More</span>') if u in PAGES else ("div","div","")
         return f'''
       <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
         <span class="f-txt"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
@@ -246,11 +246,18 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .hd,.sec,.nr,.ft{padding-inline:24px}
 .hd{position:absolute;inset:0 0 auto;z-index:10;display:flex;justify-content:space-between;align-items:center;padding-block:20px}
 .logo{margin:0;font:500 22px/1 var(--en);letter-spacing:.02em}
+/* ロゴは画像（仮置き。Kさんの指示 2026-11-15）。上の帯では高さ44px、いちばん下では大きめに出す */
+.logo img{display:block;height:44px;width:auto}.ft .logo img{height:96px}
 .hd .gnav{display:none}
 .hd{flex-wrap:wrap;gap:14px}
 /* unit pills: jump straight to a unit from anywhere at the top; the one on screen is filled */
 .upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
 .up{position:relative;display:block;min-width:0}
+/* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
+.uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
+.uf[aria-expanded=true]{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
+@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf+.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
+@media(max-width:359px){body[data-ch] .hd{gap:6px}}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
 .up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
@@ -278,14 +285,12 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .dock button{appearance:none;background:none;border:1px solid var(--bg);color:var(--bg);font:500 12px/1 var(--jp);letter-spacing:.1em;min-height:36px;padding:0 12px;cursor:pointer;white-space:nowrap}
 .has-dock body{padding-bottom:100px}
 .btn:hover,.btn.on{background:var(--ink);color:var(--bg)}
-/* YouTube へのリンク：小さい公式アイコン＋赤い文字（Kさんの決定 2026-11-14。外へ出る印は付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
-.yt-i{display:block;height:24px;width:auto;margin-right:10px;flex:none}
-@media(max-width:389px){.yt span{display:none}.yt-i{margin-right:2px}}
+/* YouTube へのリンク：小さい公式アイコンだけ（Kさんの決定 2026-11-15。文字も、外へ出る印も付けない）。余白はアイコンの中の三角の幅＝高さの約1/3 以上を空ける */
+.yt-i{display:block;height:24px;width:auto;flex:none}
 .yt{color:#E00000;margin-left:auto;font:500 17px/1 var(--en);letter-spacing:.04em;min-height:44px;display:flex;align-items:center;border-bottom:0}
 .sh{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0 -10px;color:inherit;cursor:pointer;width:44px;height:44px;display:grid;place-items:center}.sh svg{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:square}
 .sh-p{position:absolute;z-index:45;width:216px;display:flex;border:1px solid var(--ink);background:var(--bg)}.sh-p .btn{min-height:44px;font-size:16px}.sh-p .btn+.btn{border-left:1px solid var(--ink)}
 @media(max-width:419px){.hd{gap:10px}.hd .logo{font-size:19px}.yt{font-size:15px}}
-@media(max-width:359px){.hd .logo{width:min-content;line-height:1}}
 .burger{position:relative;z-index:31;width:44px;height:44px;margin-right:-10px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
 .burger i{position:absolute;left:10px;right:10px;height:1px;background:currentColor;transition:transform .3s,top .3s}
 .burger i:first-child{top:18px}.burger i:last-child{top:26px}
@@ -541,6 +546,7 @@ document.documentElement.classList.add('js');if(/[?&]flag=1/.test(location.searc
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
+(function(){var f=document.querySelector('.uf');if(f)f.addEventListener('click',function(){f.setAttribute('aria-expanded',document.body.classList.toggle('uo')?'true':'false')})})();
 var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
 if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});
 function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}

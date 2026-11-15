@@ -80,7 +80,7 @@ def unit_page(u):
 <section class="sec" id="release"><p class="ghost" aria-hidden="true" data-speedx="-.35">Release</p>{h2("Release", "楽曲", 3, 3)}<div class="rels solo">{rels}</div>{more}</section>
 <nav class="sec others" aria-label="ほかのユニット"><p class="lbl">Units</p><div class="m-nav">{others}</div></nav>
 </main>
-{T.footer()}'''
+{T.footer(PRE)}'''
     return T.page(f'{m["name"]} | Humming Hearts', esc(d.get("catch") or d["blurb"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
 
 def songs_page():
@@ -91,7 +91,7 @@ def songs_page():
             f'<button class="md" type="button" data-k="{k}" data-v="{esc(v)}" aria-pressed="false">{esc(t)}</button>' for v, t in items)
         # スマホは同じ中身を、押すと下に開く一覧で出す（Kさんの指示 2026-11-14：丸いボタンだと窮屈。端末まかせの選択画面は使わず、ユニットのピルの下に出るメンバー名と同じ見た目にする）
         # PCは丸いボタンのまま。どちらも同じ一覧から作るので手間は増えない
-        sel = (f'<div class="dd" data-k="{k}"><button class="dd-b" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="{aria}">すべて</button><span class="dd-m" role="listbox" aria-label="{aria}">'
+        sel = (f'<div class="dd" data-k="{k}"><button class="dd-b" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="{aria}"><i>{lbl}</i><span>すべて</span></button><span class="dd-m" role="listbox" aria-label="{aria}">'
                + '<button type="button" role="option" data-v="" aria-selected="true">すべて</button>' + "".join(f'<button type="button" role="option" data-v="{esc(v)}" aria-selected="false">{esc(t)}</button>' for v, t in items) + '</span></div>')
         return f'<div class="flt"><p class="lbl">{lbl}</p><div class="moods" role="group" aria-label="{aria}">{ps}</div>{sel}</div>'
     units = [(T.SLUG[u], UNIT[u]["name"]) for u in UNIT if any(r[1] == u for r in T.RELS)]   # 曲があるユニットだけ
@@ -115,7 +115,7 @@ function ok(c,m,u){return(!m||c.dataset.m.split('|').indexOf(m)>=0)&&(!u||c.data
 function draw(){ps.forEach(function(p){var k=p.dataset.k,v=p.dataset.v,on=st[k]===v;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false');
 /* a word that would leave no song with the other row's choice is dimmed and cannot be pressed = never an empty page */
 p.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})});
-ss.forEach(function(s){var k=s.dataset.k;[].forEach.call(s.querySelectorAll('[role=option]'),function(o){var v=o.dataset.v,on=st[k]===v;o.setAttribute('aria-selected',on?'true':'false');if(on)s.querySelector('.dd-b').textContent=o.textContent;o.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})})});
+ss.forEach(function(s){var k=s.dataset.k;[].forEach.call(s.querySelectorAll('[role=option]'),function(o){var v=o.dataset.v,on=st[k]===v;o.setAttribute('aria-selected',on?'true':'false');if(on)s.querySelector('.dd-b span').textContent=o.textContent;o.disabled=!on&&!cs.some(function(c){return k==='m'?ok(c,v,st.u):ok(c,st.m,v)})})});
 /* reorder motion: each jacket slides from where it was to where it goes, so the eye can follow which songs stayed */
 var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!document.body.animate,old=new Map();
 if(mv)cs.forEach(function(c){if(!c.hidden)old.set(c,c.getBoundingClientRect())});
@@ -200,7 +200,7 @@ def char_page(cid):
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
-  <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{tags}{prof}</div>
+  <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
 <section class="sec{" has-b" + tall if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
@@ -208,8 +208,8 @@ def char_page(cid):
 {songs_sec}
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
-{T.footer()}<script>{SWJS}</script><script>{TGV}{RDY}</script>'''
-    return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"', share=f'{c[2]}{c[3]}（{m["name"]}） | Humming Hearts')   # 共有の文面のたたき台（Kさんの確認待ち）
+{T.footer(PRE)}<script>{SWJS}</script><script>{TGV}{RDY}</script>'''
+    return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}" data-ch', share=f'{c[2]}{c[3]}（{m["name"]}） | Humming Hearts')   # 共有の文面のたたき台（Kさんの確認待ち）
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
 SWJS = """(function(){var b=document.querySelector('.ch-sw'),w=document.querySelector('.ch-img');if(!b||!w)return;
@@ -229,7 +229,9 @@ CSS = """
 .dd-m button{appearance:none;display:block;width:100%;margin:0;min-height:44px;padding:9px 20px;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--ink);border-top:0;border-radius:0;font:500 14px/1.4 var(--min);letter-spacing:.06em;cursor:pointer}
 .dd-m button:first-child{border-top:1px solid var(--ink);border-radius:12px 12px 0 0}.dd-m button:last-child{border-radius:0 0 12px 12px}
 .dd-m button[aria-selected="true"]{background:var(--ink);color:var(--bg)}.dd-m button:disabled{color:var(--line);cursor:default}
-@media(max-width:699px){.flts{gap:12px}.flt{grid-template-columns:52px 1fr;align-items:center;gap:8px}.flt .moods{display:none}.dd{display:block}}
+/* 2つを1段に並べる（Kさんの指示 2026-11-15：場所を取らない）。名前（Mood / Unit）は枠の中に小さく入れ、開く一覧は2つ分の幅いっぱいに出す */
+@media(max-width:699px){.flts{position:relative;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.flt{display:block}.flt>.lbl,.flt .moods{display:none}.dd{display:block;position:static}
+ .dd-b{display:flex;align-items:center;gap:8px;padding:0 30px 0 14px;font-size:13px;background-position:right 17px center,right 12px center}.dd-b i{flex:none;font:italic 500 15px/1 var(--en);letter-spacing:.02em;opacity:.6}.dd-b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -303,7 +305,7 @@ CSS = """
 @keyframes pUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pRoll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
 .ch-t{position:relative;padding:30px 24px 0}
-.ch-p,.n-pc,.tags-a{display:none}
+.ch-p,.n-pc{display:none}
 /* motif bird: below the text on phones, beside the text on wide screens; it never sits under the words */
 /* モチーフの鳥: 下から2番目の層（薄い大きな見出し文字のすぐ上、文章の下）に大きく薄く置く。文章と少し重なってよい。段の外へは出さない（切らない） */
 .has-b{padding-bottom:110px;min-height:calc(66vw + 330px)}.has-b .mt-p{position:relative;z-index:1}
@@ -313,40 +315,40 @@ CSS = """
 @media(max-width:699px){.has-b{padding-bottom:32px;min-height:calc(48vw + 262px)}.mt-b{width:72vw;left:14vw}.mt-b.tall{width:46vw;left:27vw}.has-b.tall{min-height:calc(74vw + 262px)}}
 @media(min-width:700px){.mt-b.tall{width:min(26vw,330px);left:auto}.has-b.tall{min-height:calc(min(26vw,330px)*1.6 + 380px)}}
 @media(min-width:700px){.has-b{padding-bottom:150px;min-height:calc(min(62vw,760px)*.68 + 380px)}.mt-b{left:auto;right:max(32px,calc(50% - 540px));top:250px;width:min(62vw,760px)}}
+/* 縦長の鳥（フクロウ、サンコウチョウ）は、PCでは見出しの線より下から始める（段の番号の数字に頭が重ならないように） */
+@media(min-width:700px){.mt-b.tall{top:340px}.has-b.tall{min-height:calc(min(26vw,330px)*1.62 + 470px)}}
 @media(min-width:700px) and (max-width:899px){.ch-art{height:600px}.ch-img img{height:190%}.vq{top:18%}}
-@media(min-width:700px){
- .tags-a{position:absolute;z-index:4;left:0;bottom:52px;margin:0;padding:0;list-style:none;display:grid;gap:8px;justify-items:start}
- .tags-a li{padding:7px 16px 7px 26px;background:var(--cm);color:var(--tc);font:500 15px/1.5 var(--jp);letter-spacing:.06em}
- /* タグの帯の出入り: 絵が画面の真ん中に来たら、左の端から帯が1本ずつ伸び、文字があとから追いつく。離れると下の帯から順に左へ戻る（絵と同じ合図で動かす） */
- .js .tags-a li{clip-path:inset(0 100% 0 0);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
- .js .tags-a li span{display:inline-block;opacity:0;transform:translateX(-18px);transition:opacity .2s ease,transform .3s ease}
- .js .tags-a li:nth-child(2){transition-delay:.07s}.js .tags-a li:nth-child(1){transition-delay:.14s}
- .rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
- .rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
- .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
- .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
- @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
- /* 【お試し】案1：右端をななめに切る */
- .tg1 .tags-a li{padding-right:36px}
- .tg1.js .tags-a li{clip-path:polygon(0 0,0 0,0 100%,0 100%)}
- .tg1.rdy .fv.lit .tags-a li{clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
- /* 【お試し】案2：帯をやめて細い線 */
- .tg2 .tags-a{gap:12px}
- .tg2 .tags-a li{position:relative;background:none;color:#141414;padding:4px 6px 7px 26px}
- .tg2.js .tags-a li,.tg2.rdy .fv.lit .tags-a li{clip-path:none}
- .tg2 .tags-a li::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:#141414;transform-origin:left;transition:transform .45s cubic-bezier(.7,0,.84,0)}
- .tg2.js .tags-a li::after{transform:scaleX(0)}
- .tg2.js .tags-a li:nth-child(2)::after{transition-delay:.07s}.tg2.js .tags-a li:nth-child(1)::after{transition-delay:.14s}
- .tg2.rdy .fv.lit .tags-a li::after{transform:none;transition:transform .75s cubic-bezier(.16,1,.3,1) .45s}
- .tg2.rdy .fv.lit .tags-a li:nth-child(2)::after{transition-delay:.57s}.tg2.rdy .fv.lit .tags-a li:nth-child(3)::after{transition-delay:.69s}
- /* 【お試し】案4：両端を丸くする */
- .tg4 .tags-a{left:26px;gap:10px}
- .tg4 .tags-a li{padding-inline:22px}
- .tg4.js .tags-a li{clip-path:inset(0 100% 0 0 round 99px)}
- .tg4.rdy .fv.lit .tags-a li{clip-path:inset(0 round 99px)}
- @media(prefers-reduced-motion:reduce){.tg1.js .tags-a li{clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}.tg4.js .tags-a li{clip-path:inset(0 round 99px)}.tg2.js .tags-a li::after{transform:none;transition:none}}
- .ch-t .tags{display:none}
-}
+/* タグ：どの幅でも、立ち絵の右下に右寄せの横帯で出す（Kさんの指示 2026-11-15：タブレットもPCもスマホとそろえる。左にはセリフの帯があるので右へ） */
+.tags-a{position:absolute;z-index:4;right:0;bottom:44px;margin:0;padding:0;list-style:none;display:grid;gap:6px;justify-items:end}
+.tags-a li{padding:5px 22px 5px 14px;background:var(--cm);color:var(--tc);font:500 13px/1.5 var(--jp);letter-spacing:.06em}
+/* 帯の出入り: 絵が画面の真ん中に来たら、右の端から帯が1本ずつ伸び、文字があとから追いつく。離れると右へ戻る（絵と同じ合図で動かす） */
+.js .tags-a li{clip-path:inset(0 0 0 100%);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
+.js .tags-a li span{display:inline-block;opacity:0;transform:translateX(18px);transition:opacity .2s ease,transform .3s ease}
+.js .tags-a li:nth-child(2){transition-delay:.07s}.js .tags-a li:nth-child(1){transition-delay:.14s}
+.rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
+.rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
+.rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
+.rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
+@media(min-width:700px){.tags-a{bottom:52px;gap:8px}.tags-a li{font-size:15px;padding:7px 26px 7px 16px}}
+/* 【お試し】案1：左端をななめに切る */
+.tg1 .tags-a li{padding-left:34px}
+.tg1.js .tags-a li{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}
+.tg1.rdy .fv.lit .tags-a li{clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}
+/* 【お試し】案2：帯をやめて細い線 */
+.tg2 .tags-a{gap:10px}
+.tg2 .tags-a li{position:relative;background:none;color:#141414;padding:3px 22px 6px 6px}
+.tg2.js .tags-a li,.tg2.rdy .fv.lit .tags-a li{clip-path:none}
+.tg2 .tags-a li::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:#141414;transform-origin:right;transition:transform .45s cubic-bezier(.7,0,.84,0)}
+.tg2.js .tags-a li::after{transform:scaleX(0)}
+.tg2.js .tags-a li:nth-child(2)::after{transition-delay:.07s}.tg2.js .tags-a li:nth-child(1)::after{transition-delay:.14s}
+.tg2.rdy .fv.lit .tags-a li::after{transform:none;transition:transform .75s cubic-bezier(.16,1,.3,1) .45s}
+.tg2.rdy .fv.lit .tags-a li:nth-child(2)::after{transition-delay:.57s}.tg2.rdy .fv.lit .tags-a li:nth-child(3)::after{transition-delay:.69s}
+/* 【お試し】案4：両端を丸くする */
+.tg4 .tags-a{right:18px;gap:8px}
+.tg4 .tags-a li{padding-inline:18px}
+.tg4.js .tags-a li{clip-path:inset(0 0 0 100% round 99px)}
+.tg4.rdy .fv.lit .tags-a li{clip-path:inset(0 round 99px)}
+@media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}.tg1.js .tags-a li{clip-path:polygon(18px 0,100% 0,100% 100%,0 100%)}.tg4.js .tags-a li{clip-path:inset(0 round 99px)}.tg2.js .tags-a li::after{transform:none;transition:none}}
 .ch-nv{position:absolute;right:24px;top:30px;margin:0;display:flex;gap:10px}
 .ch-nv a{position:relative;width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
 .ch-nv a:hover{background:var(--ink);color:var(--bg)}
@@ -369,19 +371,10 @@ CSS = """
 .pn a:first-child{padding-left:14px}.pn a+a{padding-right:14px}
 .pn small{font:italic 500 16px/1 var(--en);color:var(--sub)}
 .pn a:hover{background:var(--ink);color:var(--bg)}.pn a:hover small{color:inherit}
-/* スマホ：タグは立ち絵の右下に、右寄せの帯で出す（Kさんの指示 2026-11-14。左にはセリフの帯があるので右へ）。出方はPCと同じで、向きだけ左右逆 */
-@media(max-width:699px){
- .tags-a{position:absolute;z-index:4;right:0;bottom:44px;margin:0;padding:0;list-style:none;display:grid;gap:6px;justify-items:end}
- .tags-a li{padding:5px 22px 5px 14px;background:var(--cm);color:var(--tc);font:500 13px/1.5 var(--jp);letter-spacing:.06em}
- .js .tags-a li{clip-path:inset(0 0 0 100%);transition:clip-path .45s cubic-bezier(.7,0,.84,0)}
- .js .tags-a li span{display:inline-block;opacity:0;transform:translateX(18px);transition:opacity .2s ease,transform .3s ease}
- .rdy .fv.lit .tags-a li{clip-path:inset(0);transition:clip-path .75s cubic-bezier(.16,1,.3,1) .45s}
- .rdy .fv.lit .tags-a li:nth-child(2){transition-delay:.57s}.rdy .fv.lit .tags-a li:nth-child(3){transition-delay:.69s}
- .rdy .fv.lit .tags-a li span{opacity:1;transform:none;transition:opacity .5s ease .7s,transform .7s cubic-bezier(.16,1,.3,1) .7s}
- .rdy .fv.lit .tags-a li:nth-child(2) span{transition-delay:.82s}.rdy .fv.lit .tags-a li:nth-child(3) span{transition-delay:.94s}
- @media(prefers-reduced-motion:reduce){.js .tags-a li,.js .tags-a li span{clip-path:none;opacity:1;transform:none;transition:none}}
- .ch-t .tags{display:none}
-}
+/* スマホ：立ち絵の段を画面の高さに合わせて少し低くし、1画面に名前まで入れる（Kさんの指示 2026-11-15）。上のピルはたたんであるので、上の余白も詰める */
+@media(max-width:699px){.ch{padding-top:84px}.ch-art{height:clamp(340px,calc(100svh - 270px),470px)}}
+/* 幅のとても狭いスマホ（360px未満）は、低くするとセリフの帯とタグの帯が重なるので、立ち絵の段の高さは変えない */
+@media(max-width:359px){.ch-art{height:470px}}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
@@ -400,8 +393,7 @@ CSS = """
  .ch-p{display:block;margin-top:26px}.ch-p p{margin:0;font-size:15px;line-height:2}
  .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:9px 0}.ch-p .pf dd{font-size:14px;line-height:2.1}
  @media(max-width:1099px){.ch-t{padding-left:44px}.ch h1{font-size:46px}.ch-p .pf{column-gap:20px}.ch-p .pf div{grid-template-columns:76px 1fr}}
- .tags-a{bottom:76px}.tags-a li{font-size:15px;padding:8px 16px 8px 24px}
- @media(max-width:1279px){.tags-a{display:none}.ch-t .tags{display:flex}}
+ .tags-a{bottom:76px}.tags-a li{font-size:15px;padding:8px 24px 8px 16px}
  #profile,.n-sp{display:none}.n-pc{display:inline}.ch .tags{margin-top:22px;padding-top:18px;font-size:15px}
  .pf div{grid-template-columns:160px 1fr}
  .pn{padding-top:160px}.pn a{font-size:20px;padding:26px 24px}
