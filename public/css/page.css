@@ -85,6 +85,9 @@ html.pop-on{overflow:hidden}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
 .mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
 .mm-i img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+/* キャラページの参加曲：上の空きと見出しを小さくして詰める（2026-11-15） */
+.sl-s{padding-top:80px}.sl-s h2{margin-bottom:20px}.sl-s h2 span{font-size:44px}.sl-s .more{margin-top:20px}
+@media(min-width:900px){.sl-s{padding-top:110px}.sl-s h2{margin-bottom:28px}.sl-s h2 span{font-size:64px}}
 .nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
@@ -100,8 +103,8 @@ html.pop-on{overflow:hidden}
 .rels.solo{grid-template-columns:minmax(0,300px)}
 /* member page songs: one thin row per song (small jacket, title, the three buttons) = stays short as songs are added */
 .sl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-.sl-i{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:72px;height:72px;object-fit:cover}
+.sl-i{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sl-j{grid-row:1/span 3;align-self:start;display:block}.sl-j img{display:block;width:56px;height:56px;object-fit:cover}
 .sl-i h3{margin:0;font:500 17px/1.4 var(--min);letter-spacing:.04em}
 .sl-i .lk{margin:8px 0 0}.sl-i .ep-in{margin:8px 0 0}
 .others{padding-top:96px}.others .lbl{margin-bottom:8px}
@@ -194,8 +197,8 @@ html.pop-on{overflow:hidden}
 .ch h1{margin:0;font:500 40px/1.5 var(--min);letter-spacing:.1em}
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
 .pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
-.pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
-.pf dt{font:500 12px/2.4 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
 .mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
@@ -214,7 +217,7 @@ html.pop-on{overflow:hidden}
  .prose p{font-size:16px}
  .mems.big{grid-template-columns:repeat(3,200px);gap:48px}.mems.big .ph{width:180px;height:180px;margin-bottom:16px}.mems.big .mem{font-size:17px}
  .rels.solo{grid-template-columns:340px}
- .sl-i{grid-template-columns:88px minmax(0,1fr) 252px 150px;column-gap:28px;padding:16px 0}.sl-j{grid-row:auto}.sl-j img{width:88px;height:88px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
+ .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .others{padding-top:160px}.others .m-nav a{font-size:44px}
  .uh{padding-top:190px;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:60px;padding-inline:var(--gx)}
  .uh-em{width:140px;height:140px;margin:0 0 20px -8px}
@@ -226,7 +229,7 @@ html.pop-on{overflow:hidden}
  .vq{left:64px;top:16%;gap:11px}.vq .col{font-size:19px;letter-spacing:.14em;line-height:1.7;padding:18px 10px}.vq .col.low{margin-top:74px}
  .ch-t{box-sizing:border-box;padding:0 32px 0 72px;max-width:684px}.ch h1{font-size:54px}.ch-nv{right:32px;top:10px}.ch-u{font-size:22px;margin-bottom:14px}.ch-u img{width:72px;height:72px;margin-left:-6px}
  .ch-p{display:block;margin-top:26px}.ch-p p{margin:0;font-size:15px;line-height:2}
- .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:9px 0}.ch-p .pf dd{font-size:14px;line-height:2.1}
+ .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:6px 0}.ch-p .pf dd{font-size:14px;line-height:1.9}
  @media(max-width:1099px){.ch-t{padding-left:44px}.ch h1{font-size:46px}.ch-p .pf{column-gap:20px}.ch-p .pf div{grid-template-columns:76px 1fr}}
  .tags-a{bottom:76px}.tags-a li{font-size:15px;padding:8px 18px}
  #profile,.n-sp{display:none}.n-pc{display:inline}.ch .tags{margin-top:22px;padding-top:18px;font-size:15px}
