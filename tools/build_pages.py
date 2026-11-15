@@ -76,7 +76,7 @@ def unit_page(u):
 <main>
 <section class="fv uh">
   <div class="uh-t">{f'<img class="uh-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1><p class="uh-tag">{esc(d["tagline"])}</p>{catch}</div>
-  {f'<div class="uh-pic ph"><img src="{PRE}images/kv/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
+  {f'<div class="uh-pic ph"><img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}" data-speed=".08"></div>' if kv else f'<div class="uh-pic em"><img src="{PRE}images/emblem/{no}.webp" alt="" data-speed=".08"></div>'}
 </section>
 <section class="sec" id="about">{h2("About", "紹介", 1, 3)}<div class="prose">{intro}</div></section>
 <section class="sec" id="members">{h2("Members", "メンバー", 2, 3)}<div class="mems big">{mems}</div></section>
@@ -294,8 +294,8 @@ CSS = """
 .uh h1 small{display:block;margin-top:12px;font:400 12px/1 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-tag{margin:22px 0 0;font:500 13px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .uh-c{margin:6px 0 0;font:500 21px/1.7 var(--min);letter-spacing:.06em}
-.uh-pic{display:block;margin-top:36px;aspect-ratio:4/3;overflow:hidden}
-.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.16}
+.uh-pic{display:block;margin-top:36px;aspect-ratio:1;overflow:hidden}
+.uh-pic img{width:100%;height:100%;object-fit:cover;scale:1.12}   /* ユニットのヒーロー画像（Kさんの正方形の絵。2026-11-15）。少しだけ拡大して、ゆっくり動かしても端が見えないようにする */
 .uh-pic.em{aspect-ratio:1;max-width:420px;margin-inline:auto;padding-inline:24px}.uh-pic.em img{object-fit:contain;scale:1}
 .more{margin:28px auto 0;width:fit-content}.more .btn{min-width:180px}
 /* member first screen, as on the old site: the member's main colour slides in as a panel, a square in the
