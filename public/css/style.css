@@ -30,6 +30,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .btn{flex:1 1 0;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font:500 18px/1 var(--en);letter-spacing:.04em;transition:background .25s,color .25s}
 .btn+.btn{border-left:1px solid var(--ink)}
 button.btn,button.md,.lk button{appearance:none;background:none;border:0;border-radius:0;color:inherit;cursor:pointer;padding:0;margin:0}
+.lk button{font:inherit;letter-spacing:inherit}   /* 2026-11-15: Listen は MV・Spotify と同じ書体（以前はトップだけ端末の標準の書体になっていた） */
 button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 /* mood words: round pills that wrap onto more lines (never a sideways scroll) = pick songs by feeling */
 .moods{margin:0;display:flex;flex-wrap:wrap;gap:8px}
@@ -169,6 +170,7 @@ html.ep-on{overflow:hidden}
 .lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
 .lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
 .lk>*+*,.lk>button{border-left:1px solid var(--ink)}
+@media(max-width:599px){.lk{font-size:14px;letter-spacing:0}}   /* 2026-11-15: スマホの2列では Spotify が枠の線に触れていた */
 @media(max-width:359px){.lk{font-size:13px;letter-spacing:0}}
 .lk>:first-child,.lk>:hover,.lk>.on{background:var(--ink);color:var(--bg)}
 /* restrained decoration, each with a job:

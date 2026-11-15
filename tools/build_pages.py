@@ -39,6 +39,10 @@ UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana,
 CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
+def kana_wrap(s):
+    """ユニットの読みがなを「・」の所でだけ折る（2026-11-15。以前は「ハ／ーモニック」のように言葉の途中で折れていた）"""
+    return "・<wbr>".join(f'<span class="nw">{esc(p)}</span>' for p in s.split("・"))
+
 def ruby_text(s):
     """[[名前|よみ]] をふりがな付きに、[[名前]] をそのままの名前にする"""
     s = esc(s)
@@ -230,7 +234,7 @@ def char_page(cid):
 </section>
 <section class="sec" id="profile"><p class="ghost" aria-hidden="true" data-speedx="-.35">Profile</p>{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
 <section class="sec{" has-b" + tall if bird else ""}" id="motif"><p class="ghost" aria-hidden="true" data-speedx=".35">Motif</p>{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{m["kana"]}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="unit"><p class="ghost" aria-hidden="true" data-speedx="-.35">Unit</p>{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{kana_wrap(m["kana"])}</small></a></p><div class="mems big">{mates}</div></section>
 {songs_sec}
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
@@ -259,6 +263,11 @@ CSS = """
 @media(max-width:699px){.flts{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.flt{display:block}.flt>.lbl,.flt .moods{display:none}.dd{display:block}.dd-m{right:auto;min-width:100%;width:max-content;max-width:calc(100vw - 32px)}.flt+.flt .dd-m{left:auto;right:0}
  .dd-b{display:flex;align-items:center;gap:8px;padding:0 30px 0 14px;font-size:13px;background-position:right 17px center,right 12px center}.dd-b i{flex:none;font:italic 500 15px/1 var(--en);letter-spacing:.02em;opacity:.6}.dd-b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
+/* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
+.sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
+/* 2026-11-15: 見出しの番号（スマホ用・PC用の2つ）が見出しの大きな文字の決まりを受けて大きくなっていたのを、トップと同じ小さな番号にそろえる */
+.idx span{font:inherit;letter-spacing:inherit}
+.nw{white-space:nowrap}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
