@@ -480,9 +480,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .news{list-style:none;margin:0 0 28px;padding:0}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
 /* About。旧サイトのTOPの紹介文（Introduction）をそのまま使う。下の方に小さく置くので、見出しも本文も控えめにする */
-.ab h2 span{font-size:44px}.ab h2{margin-bottom:28px}
 .ab-c{margin:0;font:500 15px/2.1 var(--min);letter-spacing:.04em}
-.ab{padding-top:96px}.ab-n{margin:24px 0 0;font-size:12px;line-height:1.9;color:var(--sub)}
+.ab-n{margin:24px 0 0;font-size:12px;line-height:1.9;color:var(--sub)}
 .news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
@@ -501,7 +500,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .hx{left:max(32px,calc(50% - 540px));top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
- .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}.ab{padding-top:128px}.ab h2 span{font-size:60px}.ab h2{margin-bottom:36px}.ab-c{font-size:17px}.ab-n{font-size:13px}
+ .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}.ab-c{font-size:17px}.ab-n{font-size:13px}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
