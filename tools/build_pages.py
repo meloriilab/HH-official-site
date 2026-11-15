@@ -93,18 +93,18 @@ def unit_page(u):
     pv, nx = order[i - 1], order[(i + 1) % len(order)]
     def pill(cid):
         c = CH[cid]; col = c[6]
-        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}">{c[2]}{c[3]}</a>'
+        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}"><img src="{PRE}images/face/{T.fid(c)}.webp" alt="">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
     pills = "".join(pill(i2.lower()) for i2 in d["members"])
     art = (f'<img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}">' if kv else f'<img class="em" src="{PRE}images/emblem/{no}.webp" alt="">')
     songs = f'<a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a>' if rels_of(u) else ""
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="uv">
-  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms" aria-label="メンバー">{pills}</nav></div>
+  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms" aria-label="メンバー">{pills}</nav><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
   <div class="uv-t">
     <div class="uv-n">{f'<img class="uv-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1></div>
     <p class="uh-tag">{esc(d["tagline"])}</p>{catch}
-    <div class="uv-bar"><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
+    <div class="uv-bar"><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p></div>
   </div>
 </section>
 <dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>
@@ -298,8 +298,10 @@ CSS = """
 .uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
 .uv-ms{position:absolute;left:var(--gx);right:var(--gx);bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
-.uv-m{min-height:30px;padding:0 14px;display:inline-flex;align-items:center;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
+.uv-m{min-height:34px;padding:0 10px 0 3px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
 .uv-m:hover{opacity:.8}
+.uv-m img{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--bg);border:1.5px solid var(--bg)}
+.uv-m i{width:6px;height:6px;margin-left:2px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;rotate:45deg}
 .uv-t{padding:20px var(--gx) 0}
 .uv-n{display:flex;align-items:center;gap:12px}
 .uv-em{flex:none;width:56px;height:56px;object-fit:contain}
@@ -308,23 +310,24 @@ CSS = """
 .uv .uh-tag{margin-top:16px}.uv .uh-c{font-size:19px}
 .uv-bar{display:flex;align-items:center;gap:12px;margin-top:20px}
 .uv-bar .row{flex:1}
-.uv-ar{flex:none;position:relative;width:46px;height:46px;border:1px solid var(--ink);border-radius:50%;transition:background .25s,color .25s}
+/* ユニットの切り替え：絵の左右の端（About・Songs と離して、別の操作だとわかるように） */
+.uv-ar{position:absolute;top:calc(50% - 23px);width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;background:rgba(250,250,248,.88);color:var(--ink);transition:background .25s,color .25s}.uv-ar.pv{left:10px}.uv-ar.nx{right:10px}
 .uv-ar:hover{background:var(--ink);color:var(--bg)}
-.uv-ar::before{content:"";position:absolute;left:14px;top:22px;width:18px;height:1px;background:currentColor}
-.uv-ar::after{content:"";position:absolute;top:19px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
-.uv-ar.nx::after{right:14px;rotate:45deg}.uv-ar.pv::after{left:14px;rotate:-135deg}
+.uv-ar::before{content:"";position:absolute;left:13px;top:21px;width:18px;height:1px;background:currentColor}
+.uv-ar::after{content:"";position:absolute;top:18px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
+.uv-ar.nx::after{right:13px;rotate:45deg}.uv-ar.pv::after{left:13px;rotate:-135deg}
 /* About：重ねて開く画面。スマホは下から、PCは真ん中に */
 html.pop-on{overflow:hidden}
-.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:82svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
+.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:60svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
 .pop::backdrop{background:rgba(20,20,20,.45)}
 .pop[open]{display:flex;flex-direction:column}
-.pop-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px var(--gx);border-bottom:1px solid var(--line)}
-.pop-h b{font:500 24px/1 var(--en);letter-spacing:.02em}
+.pop-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:2px 4px 2px var(--gx);border-bottom:1px solid var(--line)}
+.pop-h b{font:500 19px/1 var(--en);letter-spacing:.02em}
 .pop-x{appearance:none;background:none;border:0;padding:0;cursor:pointer;color:inherit;position:relative;width:44px;height:44px}
 .pop-x::before,.pop-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.pop-x::after{rotate:-45deg}
-.pop-b{overflow-y:auto;overscroll-behavior:contain;padding:18px var(--gx) 32px}
-.pop-b p{margin:0}.pop-b p+p{margin-top:1em}
-@media(min-width:700px){.pop{margin:auto;width:min(640px,calc(100% - 64px));max-height:80svh;border:1px solid var(--ink)}}
+.pop-b{overflow-y:auto;overscroll-behavior:contain;padding:14px var(--gx) 24px}
+.pop-b.prose p{margin:0;font-size:13px;line-height:1.95;letter-spacing:.04em}.pop-b.prose p+p{margin-top:.8em}.pop-b rt{font-size:8px}
+@media(min-width:700px){.pop{margin:auto;width:min(520px,calc(100% - 64px));max-height:70svh;border:1px solid var(--ink)}.pop-h{padding-left:24px}.pop-b{padding:16px 24px 24px}.pop-b.prose p{font-size:14px}}
 /* 縦長のタブレット：スマホと同じ縦の並びのまま、大きくする（横に並べると、上下が大きく空くため） */
 @media(min-width:700px) and (orientation:portrait){.uv{padding-top:150px}.uv-pic{height:min(52svh,100vw)}.uv-t{padding-top:32px}.uv-em{width:80px;height:80px}.uv h1{font-size:52px}.uv .uh-tag{font-size:14px}.uv .uh-c{font-size:24px}.uv-bar{margin-top:28px;max-width:520px}.uv-ms{bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}}
 /* 横長の画面（PC・横持ちのタブレット）：左に絵、右に文字。1画面に収める */
