@@ -99,7 +99,9 @@ import json as _json, os as _os
 EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
 EP_ON = ["001", "002", "003"]
 # スマホの帯で顔が真ん中に来る位置（挿絵ごと。上から何％のところを見せるか）
-EP_FY = {"001": 27, "002": 37, "003": 24}
+EP_FY = {"001": 33, "002": 37, "003": 24}
+# 挿絵に重ねる絵（左・上・幅は、挿絵に対する％。Kさん 2026-11-15：ミコトの吹き出しを煎之介の顔の下あたりに）
+EP_OV = {"001": ("talk/01-01-mikoto.webp", 40, 52, 60)}
 ESLUG = {"001": "usukoubai", "002": "yoi-no-tsubasa", "003": "rule-the-darkness"}   # アドレス用の名前（制作用の記号は使わない）
 def _ch(cid): return next(c for c in CHARS if c[1] == cid)
 def _lum(h): return (0.299 * int(h[1:3], 16) + 0.587 * int(h[3:5], 16) + 0.114 * int(h[5:7], 16)) / 255
@@ -134,7 +136,8 @@ def ep_dialogs(inner, pre=""):
         # 話している人の挿絵（旧サイトの Talk の絵。Kさんの指示 2026-11-15）。無い曲は、題名なしのジャケットで代える
         art = f"talk/{JK[n]}.webp" if _os.path.exists(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "public", "images", "talk", f"{JK[n]}.webp")) else f"jacket/{JK[n]}_notitle.webp"
         out += (f'<dialog class="ep" id="ep-{ESLUG[n]}" aria-label="{t} のエピソード" style="--uc:{uc};--ut:{"#141414" if _lum(uc) > .6 else "#fff"}">'
-                f'<img class="ep-art" src="{pre}images/{art}" alt="" style="--fy:{EP_FY.get(n, 30)}%">'
+                f'<div class="ep-art" style="--fy:{EP_FY.get(n, 30)}%"><img src="{pre}images/{art}" alt="">'
+                + (f'<img class="ep-ov" src="{pre}images/{EP_OV[n][0]}" alt="" style="left:{EP_OV[n][1]}%;top:{EP_OV[n][2]}%;width:{EP_OV[n][3]}%">' if n in EP_OV else "") + '</div>'
                 f'<div class="ep-h"><img src="{pre}images/emblem/{NO[u]}.webp" alt=""><div><b>{EP[n]["room"]}</b><small>{t}</small></div>'
                 f'<button class="ep-sk" type="button">Skip</button><button class="ep-x" type="button" aria-label="閉じる"></button></div>'
                 f'<div class="ep-log" tabindex="0" autofocus>{rows}<p class="ep-end">End</p></div></dialog>')
@@ -415,9 +418,9 @@ html.ep-on{overflow:hidden}
 .ep-r:has(.ep-ph.big){max-width:100%}
 .ep .ep-log:focus-visible{outline:0}
 /* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
-.ep-art{order:1;flex:none;display:block;width:100%;height:24svh;object-fit:cover;object-position:50% var(--fy,30%);pointer-events:none}.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
+.ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{left:auto!important;top:auto!important;right:8px;bottom:8px;width:auto!important;height:54%}}.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
 .ep-h{position:relative;z-index:1;background:var(--bg)}.ep-log{position:relative;z-index:1}
-@media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%;object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
+@media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%}.ep-art>img:first-child{object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
 .ep-ty p{display:flex;align-items:center;gap:6px;padding:17px 17px}.ep-ty i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;animation:epDot 1s ease-in-out infinite}.ep-ty i:nth-child(2){animation-delay:.16s}.ep-ty i:nth-child(3){animation-delay:.32s}
 @keyframes epDot{30%{opacity:1;translate:0 -3px}60%{opacity:.25;translate:0}}
 .ep-end{align-self:center;margin:10px 0 0;font:italic 500 15px/1 var(--en);color:var(--sub);letter-spacing:.08em}
