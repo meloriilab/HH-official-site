@@ -232,7 +232,11 @@ def body():
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
 <section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
 <p class="ab-c">もし、野鳥がアイドルになったら…<br>森での雑談から生まれたソナヴィアンたち<br>歌も、彼ら自身も、元になった野鳥も<br>まるごと楽しもう！</p>
-<p class="ab-n">「ハミングハーツ」は、melorii lab が制作する同人創作企画です。<br>キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しています。</p></section>
+<dl class="ab-l">
+<div><dt>ソナヴィアン</dt><dd>野鳥の魂を宿した存在。人には言えない想いを、<span class="nw">歌にのせる</span></dd></div>
+<div><dt><ruby>奏樹市<rt>そうじゅし</rt></ruby></dt><dd>ソナヴィアンの歌の研究のために発展した学園都市。学園やライブハウス、録音スタジオが集まる</dd></div>
+<div><dt>制作について</dt><dd>melorii lab の同人創作企画。多くの工程で生成AIを使いながら、少人数で<span class="nw">育てている</span></dd></div>
+</dl></section>
 <section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
 {footer()}'''
@@ -481,7 +485,11 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
 /* About。旧サイトのTOPの紹介文（Introduction）をそのまま使う。下の方に小さく置くので、見出しも本文も控えめにする */
 .ab-c{margin:0;font:500 15px/2.1 var(--min);letter-spacing:.04em}
-.ab-n{margin:24px 0 0;font-size:12px;line-height:1.9;color:var(--sub)}
+.nw{white-space:nowrap}
+.ab-l{margin:40px 0 0;border-top:1px solid var(--line)}
+.ab-l div{padding:18px 0;border-bottom:1px solid var(--line)}
+.ab-l dt{font:500 15px/1.6 var(--min);letter-spacing:.04em}.ab-l rt{font:500 9px var(--jp);letter-spacing:.1em;color:var(--sub)}
+.ab-l dd{margin:6px 0 0;font-size:13px;line-height:1.9;color:var(--sub)}
 .news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
@@ -500,7 +508,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:max(32px,calc(50% - 540px));top:150px;font-size:30px}
  .hx{left:max(32px,calc(50% - 540px));top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
- .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}.ab-c{font-size:17px}.ab-n{font-size:13px}
+ .sec{padding-top:200px}h2 span{font-size:110px}h2{margin-bottom:72px}.ab-c{font-size:17px}.ab-l{margin-top:56px}.ab-l div{display:grid;grid-template-columns:220px 1fr;align-items:baseline;padding:24px 0}.ab-l dt{font-size:17px}.ab-l dd{margin:0;font-size:14px}
  .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
