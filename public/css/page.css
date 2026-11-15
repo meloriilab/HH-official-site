@@ -228,5 +228,5 @@ html.pop-on{overflow:hidden}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
 .gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
-@media(min-width:900px){.gl{padding-bottom:140px}.gl-l{margin-bottom:72px;font-size:16px}
+@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
