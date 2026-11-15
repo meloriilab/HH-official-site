@@ -167,10 +167,10 @@ html.ep-on{overflow:hidden}
 .ep-r:has(.ep-ph.big){max-width:100%}
 @media(max-width:699px){.ep-r{max-width:94%}.ep-r p{letter-spacing:.02em}}@media(max-width:374px){.ep-r p{font-size:14px}}   /* スマホでも、台詞の行が途中で折れにくいように（Kさんの改行どおりに見せる。2026-11-15） */
 /* ポラロイド写真（作中で「ポラロイド写真」と呼ばれる1枚。Kさん 2026-11-15）：白い縁、下だけ広い余白に手書きの添え書き、絵は正方形に切る */
-.ep-ph.pol{padding:10px 10px 0;background:#fff;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.18);rotate:-2deg;transition:rotate .45s cubic-bezier(.16,1,.3,1)}
-.ep-ph.pol img{width:min(200px,52vw);aspect-ratio:1;object-fit:cover;border-radius:0}
+.ep-ph.pol{box-sizing:border-box;width:calc(min(200px,52vw) + 20px);padding:10px 10px 0;background:#fff;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.18);rotate:-2deg;transition:rotate .45s cubic-bezier(.16,1,.3,1),width .45s cubic-bezier(.16,1,.3,1)}
+.ep-ph.pol img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:0;transition:none}   /* 縁ごと拡大縮小する（絵だけ動いて縁が先に広がっていた。Kさん 2026-11-15） */
 .ep-ph.pol small{display:block;margin:0!important;padding:10px 4px 14px;color:#2b2b2b;font-size:13px!important;text-align:center}
-.ep-ph.pol.big{rotate:0deg}.ep-ph.pol.big img{width:min(100%,420px)}
+.ep-ph.pol.big{rotate:0deg;width:min(100%,440px)}.ep-ph.pol.big img{width:100%}
 .ep .ep-log:focus-visible{outline:0}
 /* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
 .ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{display:none}}   /* スマホの帯には出さない（Kさん 2026-11-15） */.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
