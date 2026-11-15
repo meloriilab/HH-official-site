@@ -111,6 +111,18 @@ def ep_btn(n, pre=""):
     who = list(dict.fromkeys(l["w"] for l in EP[n]["lines"]))
     faces = "".join(f'<img src="{pre}images/face/{fid(_ch(w))}.webp" alt="">' for w in who)
     return f'<p class="ep-in"><button type="button" data-ep="{ESLUG[n]}"><span class="ep-f">{faces}</span><b>Episode</b></button></p>'
+def ep_wrap(t):
+    """台詞の改行はKさんの改行どおり。1行が吹き出しに収まらないときは、文節の切れ目（「、」の後、助詞の後）でだけ折る（2026-11-15）"""
+    def ph(line):
+        out, cur = [], ""
+        for i, ch in enumerate(line):
+            cur += ch
+            nx = line[i + 1] if i + 1 < len(line) else ""
+            if ch in "、。！？　 " or (ch in "をにとがのはへでも" and nx and not ("\u3041" <= nx <= "\u309f") and nx not in "、。！？…ー～"):
+                out.append(cur); cur = ""
+        if cur: out.append(cur)
+        return "<wbr>".join(f'<span class="nw">{p}</span>' for p in out)
+    return "\n".join(ph(x) for x in t.split("\n"))
 def ep_dialogs(inner, pre=""):
     """そのページにある入口のぶんだけ、重ねて開く画面を用意する"""
     out = ""
@@ -131,7 +143,7 @@ def ep_dialogs(inner, pre=""):
             elif l.get("k") == "lc":   # 作中のお店のカード（実在のリンクではないので、押しても移動しない）
                 bub = f'<span class="ep-mv"><img src="{pre}images/episode/{l["img"]}" alt=""><span>{l["t"]}<i>{l["url"]}</i></span></span>'
             else:
-                bub = f'<p>{l["t"]}</p>'
+                bub = f'<p>{ep_wrap(l["t"])}</p>'
             rows += f'<div class="ep-r{" me" if l["me"] else ""}">{av}<div>{nm}{bub}</div></div>'
         # 話している人の挿絵（旧サイトの Talk の絵。Kさんの指示 2026-11-15）。無い曲は、題名なしのジャケットで代える
         art = f"talk/{JK[n]}.webp" if _os.path.exists(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "public", "images", "talk", f"{JK[n]}.webp")) else f"jacket/{JK[n]}_notitle.webp"
@@ -424,7 +436,7 @@ html.ep-on{overflow:hidden}
 .ep-ph.pol.big{rotate:0deg}.ep-ph.pol.big img{width:min(100%,420px)}
 .ep .ep-log:focus-visible{outline:0}
 /* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
-.ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{left:auto!important;top:auto!important;right:8px;bottom:8px;width:auto!important;height:54%}}.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
+.ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{display:none}}   /* スマホの帯には出さない（Kさん 2026-11-15） */.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
 .ep-h{position:relative;z-index:1;background:var(--bg)}.ep-log{position:relative;z-index:1}
 @media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%}.ep-art>img:first-child{object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
 .ep-ty p{display:flex;align-items:center;gap:6px;padding:17px 17px}.ep-ty i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;animation:epDot 1s ease-in-out infinite}.ep-ty i:nth-child(2){animation-delay:.16s}.ep-ty i:nth-child(3){animation-delay:.32s}
