@@ -72,6 +72,9 @@ def face(cid, speed=".0"):
 
 def rels_of(u): return [r for r in T.RELS if r[1] == u]
 
+# ユニットの絵の中で、各メンバーが立っている位置（左端からの％）。ピルをその人の足もとに置く（Kさんの指示 2026-11-15）
+ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83}
+
 def unit_page(u):
     d, m = UD[u], UNIT[u]
     no = m["no"]
@@ -93,21 +96,24 @@ def unit_page(u):
     pv, nx = order[i - 1], order[(i + 1) % len(order)]
     def pill(cid):
         c = CH[cid]; col = c[6]
-        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}"><img src="{PRE}images/face/{T.fid(c)}.webp" alt="">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
-    pills = "".join(pill(i2.lower()) for i2 in d["members"])
+        x = f";--x:{ART_X[cid]}%" if kv and cid in ART_X else ""
+        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}{x}">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
+    ids = [i2.lower() for i2 in d["members"]]
+    if kv: ids.sort(key=lambda x: ART_X.get(x, 0))   # 絵の左から順に並べる（読み上げの順も、見た目の順と同じにする）
+    pills = "".join(pill(x) for x in ids)
     art = (f'<img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}">' if kv else f'<img class="em" src="{PRE}images/emblem/{no}.webp" alt="">')
     songs = f'<a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a>' if rels_of(u) else ""
+    about = f'<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>'
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="uv">
-  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms" aria-label="メンバー">{pills}</nav><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
+  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms{" at" if kv else ""}" aria-label="メンバー">{pills}</nav><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
   <div class="uv-t">
     <div class="uv-n">{f'<img class="uv-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1></div>
     <p class="uh-tag">{esc(d["tagline"])}</p>{catch}
-    <div class="uv-bar"><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p></div>
+    <div class="uv-bar pop-w"><p class="row"><button class="btn" type="button" data-pop="about">About</button>{songs}</p>{about}</div>
   </div>
 </section>
-<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>
 </main>
 {T.footer(PRE)}'''
     return T.page(f'{m["name"]} | Humming Hearts', esc(d.get("catch") or d["blurb"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}"')
@@ -243,7 +249,14 @@ def char_page(cid):
     nav = (f'<p class="ch-nv"><a class="pv" href="{T.mhref(pv, PRE)}" aria-label="前のメンバー：{pv[2]}{pv[3]}"></a>'
            f'<a class="nx" href="{T.mhref(nx, PRE)}" aria-label="次のメンバー：{nx[2]}{nx[3]}"></a></p>')
     # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
-    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl></div>'
+    # モチーフは重ねて開く小さな画面（背景に鳥の絵、上に文）。同じユニットのメンバーは小さな丸い顔で詰めて並べる（Kさんの指示 2026-11-15）
+    mm = "".join(f'<a class="mm-i" href="{T.mhref(CH[x.lower()], PRE)}"><img src="{PRE}images/face/{T.fid(CH[x.lower()])}.webp" alt=""><span>{T.name(CH[x.lower()])}</span></a>' for x in UD[u]["members"] if x.lower() != cid)
+    bimg = f'<img class="mtp-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="">' if bird else ""
+    motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(d["motif"])}">{bimg}<div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
+             f'<div class="pop-b"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></dialog>')
+    extra = (f'<div class="pop-w ch-x"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{{M}}</div>'
+             f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>')
+    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{extra.replace("{M}", motif)}</div>'
     # そのメンバーが歌っている曲（＝ユニットの曲）。ページのいちばん最後に、小さいジャケットの1行ずつの一覧で出す
     # （Kさんの指示 2026-11-14：キャラのページは縦に長くしない。曲は今後増えるので小さくまとめる。ほかのページのカードの並べ方は使い回さない）
     songs = "".join(f'''
@@ -257,9 +270,7 @@ def char_page(cid):
   <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
   <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
 </section>
-<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 3 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl></section>
-<section class="sec{" has-b" + tall if bird else ""}" id="motif">{h2("Motif", "モチーフ", 2, 3 + k, (1, 2 + k))}{bird}<div class="prose mt-p"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></section>
-<section class="sec" id="unit">{h2("Unit", "ユニット", 3, 3 + k, (2, 2 + k))}<p class="un"><a href="{T.uhref(u, PRE)}">{T.kn(m["name"])}<small>{kana_wrap(m["kana"])}</small></a></p><div class="mems big">{mates}</div></section>
+<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 1 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl>{extra.replace("{M}", motif.replace('id="pop-motif"', 'id="pop-motif-sp"')).replace('data-pop="motif"', 'data-pop="motif-sp"')}</section>
 {songs_sec}
 <nav class="sec pn" aria-label="前後のメンバー"><a href="{T.mhref(pv, PRE)}"><small>Prev</small><span>{T.name(pv)}</span></a><a href="{T.mhref(nx, PRE)}"><small>Next</small><span>{T.name(nx)}</span></a></nav>
 </main>
@@ -298,9 +309,10 @@ CSS = """
 .uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
 .uv-ms{position:absolute;left:var(--gx);right:var(--gx);bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
-.uv-m{min-height:34px;padding:0 10px 0 3px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
+.uv-m{min-height:32px;padding:0 11px 0 14px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
 .uv-m:hover{opacity:.8}
-.uv-m img{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--bg);border:1.5px solid var(--bg)}
+.uv-ms.at{left:0;right:0}.uv-ms.at .uv-m{position:absolute;bottom:0;left:var(--x);translate:-50% 0}
+@media(max-width:359px){.uv-m{font-size:12px;padding:0 9px 0 11px;gap:5px}}
 .uv-m i{width:6px;height:6px;margin-left:2px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;rotate:45deg}
 .uv-t{padding:20px var(--gx) 0}
 .uv-n{display:flex;align-items:center;gap:12px}
@@ -318,7 +330,8 @@ CSS = """
 .uv-ar.nx::after{right:13px;rotate:45deg}.uv-ar.pv::after{left:13px;rotate:-135deg}
 /* About：重ねて開く画面。スマホは下から、PCは真ん中に */
 html.pop-on{overflow:hidden}
-.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:60svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
+.pop-w{position:relative}
+.pop{border:0;padding:0;margin:auto auto 0;width:100%;max-width:none;max-height:36svh;background:var(--bg);color:var(--ink);border-top:1px solid var(--ink)}
 .pop::backdrop{background:rgba(20,20,20,.45)}
 .pop[open]{display:flex;flex-direction:column}
 .pop-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:2px 4px 2px var(--gx);border-bottom:1px solid var(--line)}
@@ -327,7 +340,7 @@ html.pop-on{overflow:hidden}
 .pop-x::before,.pop-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.pop-x::after{rotate:-45deg}
 .pop-b{overflow-y:auto;overscroll-behavior:contain;padding:14px var(--gx) 24px}
 .pop-b.prose p{margin:0;font-size:13px;line-height:1.95;letter-spacing:.04em}.pop-b.prose p+p{margin-top:.8em}.pop-b rt{font-size:8px}
-@media(min-width:700px){.pop{margin:auto;width:min(520px,calc(100% - 64px));max-height:70svh;border:1px solid var(--ink)}.pop-h{padding-left:24px}.pop-b{padding:16px 24px 24px}.pop-b.prose p{font-size:14px}}
+@media(min-width:700px){.pop{position:absolute;z-index:30;inset:auto auto calc(100% + 10px) 0;margin:0;width:min(460px,calc(100vw - 2 * var(--gx)));max-height:min(60svh,420px);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.12)}.pop-h{padding-left:24px}.pop-b{padding:16px 24px 24px}.pop-b.prose p{font-size:14px}}
 /* 縦長のタブレット：スマホと同じ縦の並びのまま、大きくする（横に並べると、上下が大きく空くため） */
 @media(min-width:700px) and (orientation:portrait){.uv{padding-top:150px}.uv-pic{height:min(52svh,100vw)}.uv-t{padding-top:32px}.uv-em{width:80px;height:80px}.uv h1{font-size:52px}.uv .uh-tag{font-size:14px}.uv .uh-c{font-size:24px}.uv-bar{margin-top:28px;max-width:520px}.uv-ms{bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}}
 /* 横長の画面（PC・横持ちのタブレット）：左に絵、右に文字。1画面に収める */
@@ -335,7 +348,7 @@ html.pop-on{overflow:hidden}
  .uv{padding:100px var(--gx) 40px;min-height:100svh;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:clamp(32px,5vw,72px)}
  .uv-pic{height:auto;width:min(44vw,calc(100svh - 160px),640px);aspect-ratio:1}
  .uv-pic.e>img{padding:48px 48px 80px}
- .uv-ms{left:16px;right:16px;bottom:16px;gap:8px}.uv-m{min-height:34px;font-size:14px;padding:0 16px}
+ .uv-ms{left:16px;right:16px;bottom:16px;gap:8px}.uv-ms.at{left:0;right:0}.uv-m{min-height:34px;font-size:14px;padding:0 13px 0 16px}
  .uv-t{padding:0}
  .uv-n{display:block}.uv-em{width:clamp(72px,9vw,120px);height:clamp(72px,9vw,120px);margin:0 0 16px -6px}
  .uv h1{font-size:clamp(36px,5vw,72px)}.uv h1 small{font-size:12px;margin-top:10px}
@@ -343,6 +356,19 @@ html.pop-on{overflow:hidden}
  .uv-bar{margin-top:32px;max-width:420px}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
+/* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
+.mtp{overflow:hidden}
+.mtp-b{position:absolute;z-index:0;right:-2%;bottom:-4%;height:96%;width:auto;max-width:70%;object-fit:contain;pointer-events:none}
+.mtp .pop-h,.mtp .pop-b{position:relative;z-index:1}
+.mtp .pop-h{border-bottom-color:transparent}
+.mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
+.mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
+.mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
+.ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
+.ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
+.mm{display:flex;flex-wrap:wrap;gap:14px 22px}
+.mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
+.mm-i img{width:64px;height:64px;border-radius:50%;object-fit:cover}
 .nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:700px) and (max-width:899px){.uh{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;padding-inline:var(--gx)}.uh .uh-t{padding:0}.uh h1{font-size:5.4vw;word-break:keep-all}.uh .uh-c{font-size:18px}.uh-pic{margin-top:0}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
