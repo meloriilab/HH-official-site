@@ -192,7 +192,7 @@ def body():
         names="".join(f'<li>{name(m)}</li>' for m in members_of(u)) 
         tag,end,go=(f'a href="{uhref(u)}"',"a",'<span class="f-go">View More</span>') if u in PAGES else ("div","div","")
         return f'''
-      <{tag} class="flag" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
+      <{tag} class="flag{" dark" if u in INK else ""}" id="{SLUG[u]}" data-u="{SLUG[u]}" style="--c:{c};--tx:{INK.get(u,"#fff")}">
         <span class="f-txt"><span class="f-hd"><img class="f-mark" src="images/emblem/{NO[u]}.webp" alt=""><span class="f-name">{kn(n)}</span></span>{f'<span class="f-kana">{kana}</span>' if kana else ""}<span class="f-tag">{tg}</span><ul class="f-mem">{names}</ul>{go}</span>
         <span class="f-pic">{art}</span></{end}>'''
     units="".join(unit(i,no,u,n,kana,tg,c) for i,(no,u,code,n,kana,tg,c,cnt) in enumerate(UNITS) if u in PAGES)   # ページができるまで TOP に載せない（Kさんの回答 2026-11-14）
@@ -424,6 +424,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん：紋章は白一色にして、ユニット名の左横に置く（試し） */
 .f-hd{display:flex;align-items:center;gap:14px}
 .f-mark{flex:none;width:48px;height:48px;filter:brightness(0) invert(1)}
+.flag.dark .f-mark{filter:brightness(0)}   /* 文字が黒の旗（NocturnalFizz）は、紋章も黒にそろえる。白い文字は旗の色との差が足りない（約3.2:1） */
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */

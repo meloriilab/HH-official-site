@@ -189,6 +189,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん：紋章は白一色にして、ユニット名の左横に置く（試し） */
 .f-hd{display:flex;align-items:center;gap:14px}
 .f-mark{flex:none;width:48px;height:48px;filter:brightness(0) invert(1)}
+.flag.dark .f-mark{filter:brightness(0)}   /* 文字が黒の旗（NocturnalFizz）は、紋章も黒にそろえる。白い文字は旗の色との差が足りない（約3.2:1） */
 /* jackets are shown whole (no zoom, no inner drift): the pictures have faces and titles right up to the edge */
 .rel .ph{position:relative;display:block;overflow:hidden;aspect-ratio:1}
 /* jacket hover (devices with a cursor only): play mark = "this opens the MV"; credits slide up from the bottom edge */
