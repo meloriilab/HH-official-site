@@ -40,6 +40,18 @@ UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana,
 CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
+
+def phrases(line):
+    """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
+    out, cur = [], ""
+    for i, ch in enumerate(line):
+        cur += ch
+        nxt = line[i + 1] if i + 1 < len(line) else ""
+        if ch == "、" or (ch in "をにとがのはへで" and nxt and not ("\u3041" <= nxt <= "\u309f") and nxt not in "、。！ "):
+            out.append(cur); cur = ""
+    if cur: out.append(cur)
+    return out
+
 def kana_wrap(s):
     """ユニットの読みがなを「・」の所でだけ折る（2026-11-15。以前は「ハ／ーモニック」のように言葉の途中で折れていた）"""
     return "・<wbr>".join(f'<span class="nw">{esc(p)}</span>' for p in s.split("・"))
@@ -65,7 +77,7 @@ def unit_page(u):
     no = m["no"]
     # 紹介文とキャッチコピーが無いユニットは、旧サイトの短い紹介文を出し、キャッチコピーの行は出さない（文は作らない）
     intro = "".join(f"<p>{ruby_text(p)}</p>" for p in d.get("intro") or [d["blurb"]])
-    catch = f'<p class="uh-c">{"<br class=\"br-w\">".join("".join(f'<span class="nw">{esc(x)}</span>' for x in re.split(r"(?<=、)", l) if x) for l in d["catch"].split(chr(10)))}</p>' if d.get("catch") else ""
+    catch = f'<p class="uh-c">{"<br class=\"br-w\">".join("".join(f'<span class="nw">{esc(x)}</span>' for x in phrases(l)) for l in d["catch"].split(chr(10)))}</p>' if d.get("catch") else ""
     kv = u in T.KV   # 集合絵が無いユニットは、絵の場所に紋章を大きく出す
     mems = "".join(face(i.lower(), s) for i, s in zip(d["members"], [".0", "-.1", ".06", "-.04"]))
     more = f'<p class="row more"><a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a></p>' if rels_of(u) else ""
@@ -265,7 +277,7 @@ CSS = """
 .sgs{padding-bottom:0}.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
 .sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
-.nw{white-space:nowrap}@media(max-width:699px){.br-w{display:none}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
+.nw{white-space:nowrap}@media(max-width:899px){.br-w{display:none}}@media(min-width:900px) and (max-width:1199px){.uh h1{font-size:5.4vw!important}}
 /* mood tags on each song: small pills; pressing one picks that mood above */
 .sg-m{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
 .tg{appearance:none;background:none;margin:0;cursor:pointer;min-height:24px;padding:0 10px;border:1px solid var(--line);border-radius:999px;font:500 11px/1 var(--jp);letter-spacing:.06em;color:var(--sub);white-space:nowrap;transition:border-color .25s,color .25s}
