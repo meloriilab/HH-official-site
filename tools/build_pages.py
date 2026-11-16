@@ -75,8 +75,12 @@ def months(b):
     for ls, (ms, note) in rows:
         cells = "".join(f'<i data-m="{m}"{" class=on" if m in ms else ""}></i>' for m in range(1, 13))
         out += f'<div class="mo-r"><span class="mo-l">{lab(ls)}</span><span class="mo-c" role="img" aria-label="{lab(ls)}：{said(ms)}">{cells}</span><span class="mo-n">{esc(note)}</span></div>'
+    # カレンダーだと一目で分かるよう、帯の上に季節と月の数字を置く（Kさんの指示 2026-11-16：春3〜5月・夏6〜8月・秋9〜11月・冬12〜2月）
+    se = "".join(f'<b class="s{k}" style="grid-column:{a}/{z}">{t}</b>' for k, a, z, t in ((1, 1, 3, "冬"), (2, 3, 6, "春"), (3, 6, 9, "夏"), (4, 9, 12, "秋"), (1, 12, 13, "冬")))
     axis = "".join(f'<b data-m="{m}">{m}</b>' for m in range(1, 13))
-    return f'<div class="mo">{out}<div class="mo-r mo-a" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{axis}</span><span class="mo-n">月</span></div></div>'
+    head = (f'<div class="mo-r mo-se" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{se}</span><span class="mo-n"></span></div>'
+            f'<div class="mo-r mo-a" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{axis}</span><span class="mo-n">月</span></div>')
+    return f'<div class="mo">{head}{out}</div>'
 
 
 def phrases(line):
@@ -325,14 +329,14 @@ def char_page(cid):
     note = lambda en, jp, t, cls="": f'<div class="bx{cls}"><p class="bx-k">{en}<small>{jp}</small></p><p>{t}</p></div>' if t else ""
     birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
              f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
-             f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いる場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
-             f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(b["star"], cid)}<p class="bf-l">{LV[b["star"]]}</p></div></div>'
+             f'<dl class="bf"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div><dt>いる場所</dt><dd>{esc(b["place"])}</dd></div>'
+             f'<div class="bf-s"><dt>見つけやすさ</dt><dd>{stars(b["star"], cid)}<span class="bf-l">{LV[b["star"]]}</span></dd></div></dl>'
              f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
              f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
              f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{note("Note", "中の人メモ", br(b["memo"]), " memo")}</div>'
-             f'<p class="row bd-go"><a class="btn" href="{PRE}birds.html">Birds</a></p></div>')
+             f'<p class="row bd-go"><a class="btn" href="{PRE}birds.html">More Birds</a></p></div>')
     # 切り替え（名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
-    tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
+    tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><i class="ch-ind" aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
             '<button type="button" role="tab" aria-selected="false" data-v="b">Motif Bird</button></div>'
             "<script>if(location.hash==='#bird')document.documentElement.classList.add('bird')</script>")
     bart = f'<span class="ch-bd"><img src="{PRE}images/bird/{T.aid(c)}.webp" alt="{esc(bname(cid))}"><span class="vq bq"><span class="col">{esc(bname(cid))}</span></span><span class="ch-ben">{esc(b["en"])}</span></span>'
@@ -360,7 +364,9 @@ def char_page(cid):
 
 # キャラ／鳥の切り替え。#bird で鳥の側を開いた状態にする（Birds ページ・TOP から来たとき）。会える時期の帯に今月の印を付ける
 TABJS = """(function(){var h=document.documentElement,bs=[].slice.call(document.querySelectorAll('.ch-tab button'));
-function set(b){h.classList.toggle('bird',b);bs.forEach(function(x){x.setAttribute('aria-selected',(x.dataset.v==='b')===b?'true':'false')});
+var t=document.querySelector('.ch-tab'),ind=t&&t.querySelector('.ch-ind');
+if(ind)ind.addEventListener('transitionend',function(e){if(e.target===ind)t.classList.remove('mv')});
+function set(b){if(t&&b!==h.classList.contains('bird')&&!matchMedia('(prefers-reduced-motion:reduce)').matches)t.classList.add('mv');h.classList.toggle('bird',b);bs.forEach(function(x){x.setAttribute('aria-selected',(x.dataset.v==='b')===b?'true':'false')});
  history.replaceState(null,'',location.pathname+location.search+(b?'#bird':''))}
 bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.v==='b')})});set(h.classList.contains('bird'));
 var m=new Date().getMonth()+1;[].forEach.call(document.querySelectorAll('[data-m="'+m+'"]'),function(i){i.classList.add('now')});
@@ -447,12 +453,17 @@ html.pop-on{overflow:hidden}
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
 /* キャラ／鳥の切り替え（2026-11-16。名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下。2つとも同じ幅 */
-.ch-tab{display:grid;grid-template-columns:1fr 1fr;margin:0 0 26px;background:var(--faint);border-radius:99px}
-.ch-tab button{appearance:none;position:relative;border:0;margin:0;background:none;color:var(--sub);height:46px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:background .25s,color .25s}
+.ch-tab{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:0 0 26px;background:var(--faint);border-radius:99px}
+.ch-tab button{appearance:none;position:relative;z-index:1;border:0;margin:0;background:none;color:var(--sub);height:46px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:color .3s}
 .ch-tab button:hover{color:var(--ink)}
 /* 選んでいる側：黒い札と、下向きの小さな三角（この下の中身が切り替わったことを示す。Kさんの参考画像 2026-11-16） */
-.ch-tab button[aria-selected=true]{background:var(--ink);color:var(--bg)}
-.ch-tab button[aria-selected=true]::after{content:"";position:absolute;left:50%;bottom:-7px;translate:-50% 0;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink)}
+/* 黒い札は1枚だけで、押した側へ滑って移る。止まってから三角が下に出る（Kさんの指示 2026-11-16） */
+.ch-tab button[aria-selected=true]{color:var(--bg)}
+.ch-ind{position:absolute;left:0;top:0;width:50%;height:100%;border-radius:99px;background:var(--ink);transition:translate .38s cubic-bezier(.65,0,.35,1)}
+html.bird .ch-ind{translate:100% 0}
+.ch-ind::after{content:"";position:absolute;left:50%;bottom:-7px;translate:-50% 0;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink);transition:opacity .2s,translate .2s}
+.ch-tab.mv .ch-ind::after{opacity:0;translate:-50% -6px;transition:none}
+@media(prefers-reduced-motion:reduce){.ch-ind,.ch-tab button{transition:none}}
 /* PC は名前の下（切り替わるのはそこから下なので。Kさんの指示 2026-11-16）。スマホは絵のすぐ下のまま */
 @media(min-width:900px){.ch-t{display:flex;flex-direction:column}.ch-in{order:1}.ch-tab{order:2;margin:26px 0 0}.ch-p{order:3}}
 .ch-in{position:relative}.ch-in .ch-nv{right:0;top:0}
@@ -468,17 +479,20 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .ch-ben{position:absolute;left:26px;bottom:52px;font:italic 500 18px/1 var(--en);letter-spacing:.02em;color:color-mix(in oklab,var(--cm) 60%,#141414)}
 /* 鳥の紹介：キャラが話す吹き出し → データ → 会える時期 → 見分け方の吹き出し → 豆知識・中の人メモ（声と分ける） */
 .cp-b{max-width:640px}
-.cp-b .bv{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start}
+.cp-b .bv{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:start}
 .cp-b .bv+*{margin-top:20px}.cp-b *+.bv{margin-top:24px}
-.bv-f{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--cm)}
+/* 顔：四角い絵を丸く切り抜く。枠は付けない（Kさんの指示 2026-11-16：枠がうるさく、キャラが見えにくい） */
+.bv-f{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--faint)}
 .cp-b .bv-b{padding:13px 18px 14px;background:color-mix(in oklab,var(--cm) 11%,var(--bg));border-radius:4px 18px 18px 18px}
 .cp-b .bv-b p{margin:0;font:400 14px/1.9 var(--jp);letter-spacing:.04em}
 .cp-b .bv-b .bv-k{margin:0 0 2px;font-size:11px;line-height:1.6;color:var(--sub)}
-.cp-b .bf{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
-.bf-g{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}.bf-g .w{grid-column:1/-1}
-.bf-g dt,.cp-b .bf-k,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.bf-g dd{margin:2px 0 0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
-.bf-s{min-width:100px;text-align:center}.bf-s .st{display:block;margin:2px 0 4px;font-size:24px;line-height:1;letter-spacing:4px}.cp-b .bf-l{margin:0;font:500 11px/1.4 var(--jp)}
+/* データ：項目名｜中身 の1行ずつ（Kさんの指示 2026-11-16：段組みを分かりやすく）。項目名の幅をそろえ、行の間に細い線 */
+.cp-b .bf{margin:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
+.cp-b .bf>div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:center;min-height:42px;padding:6px 0}
+.cp-b .bf>div+div{border-top:1px solid var(--line)}
+.cp-b .bf dt,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.cp-b .bf dd{margin:0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
+.cp-b .bf-s dd{display:flex;align-items:center;gap:12px}.bf-s .st{font-size:20px;line-height:1;letter-spacing:3px}.cp-b .bf-l{font:500 12px/1.4 var(--jp)}
 .cp-b .bm{margin-top:16px}.cp-b .bm-h{margin-bottom:8px;display:flex;justify-content:space-between}
 .bm-now{display:none;color:color-mix(in oklab,var(--cm) 60%,#141414);font-weight:500}.bm-now::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:1px}
 .bm.now .bm-now{display:inline}
@@ -487,10 +501,11 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .mo-r{display:grid;grid-template-columns:62px minmax(0,1fr) 56px;align-items:center;column-gap:8px}
 .mo-l{font:500 11px/1.3 var(--jp);letter-spacing:.02em}
 .mo-c{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
-.mo-c i{height:14px;background:var(--faint);border-radius:99px}.mo-c i.on{background:var(--cm)}.cp-b.lt .mo-c i.on{box-shadow:inset 0 0 0 1px rgba(20,20,20,.4)}
+.mo-c i{height:16px;background:var(--faint);border-radius:3px}.mo-c i.on{background:var(--cm)}.cp-b.lt .mo-c i.on{box-shadow:inset 0 0 0 1px rgba(20,20,20,.4)}
 .mo-c i.now{outline:1.5px solid var(--ink);outline-offset:1px}
 .mo-n{font:400 10px/1.3 var(--jp);color:var(--sub)}
-.mo-a .mo-c b{font:500 10px/1 var(--en);text-align:center;color:var(--sub)}.mo-a .mo-c b.now{color:var(--ink);font-weight:700}.mo-a .mo-n{font-size:9px}
+.mo-se .mo-c b{padding-bottom:3px;border-bottom:1px solid var(--line);font:500 11px/1.2 var(--jp);text-align:center;color:var(--sub)}
+.mo-a{margin-bottom:1px}.mo-a .mo-c b{font:500 14px/1 var(--en);font-variant-numeric:lining-nums;text-align:center;color:var(--sub)}.mo-a .mo-c b.now{color:var(--ink);font-weight:700}.mo-a .mo-n{font-size:10px}
 .cp-b .bxs{margin-top:28px;display:grid;gap:18px}
 .cp-b .bx{padding-top:14px;border-top:1px solid var(--line)}.cp-b .bx.memo{padding:14px 16px 16px;border:0;background:var(--faint)}
 .cp-b .bx p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
@@ -498,7 +513,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:39px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
-@media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:56px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:56px}.cp-b .bd-go{margin-left:56px}.cp-b .bv-b p{font-size:15px}}
+@media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
 /* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
 .st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#E2E2DE}.st.lt b{-webkit-text-stroke:.9px rgba(20,20,20,.6)}
 /* Birds ページ：マナー → 見つけやすさで選ぶ → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
