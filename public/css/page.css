@@ -107,13 +107,15 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bv-b{padding:13px 18px 14px;background:color-mix(in oklab,var(--cm) 11%,var(--bg));border-radius:4px 18px 18px 18px}
 .cp-b .bv-b p{margin:0;font:400 14px/1.9 var(--jp);letter-spacing:.04em}
 .cp-b .bv-b .bv-k{margin:0 0 2px;font-size:11px;line-height:1.6;color:var(--sub)}
-/* データ：項目名｜中身 の1行ずつ（Kさんの指示 2026-11-16：段組みを分かりやすく）。項目名の幅をそろえ、行の間に細い線 */
-.cp-b .bf{margin:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
-.cp-b .bf>div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:center;min-height:42px;padding:6px 0}
-.cp-b .bf>div+div{border-top:1px solid var(--line)}
-.cp-b .bf dt,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.cp-b .bf dd{margin:0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
-.cp-b .bf-s dd{display:flex;align-items:center;gap:12px}.bf-s .st{font-size:20px;line-height:1;letter-spacing:3px}.cp-b .bf-l{font:500 12px/1.4 var(--jp)}
+/* データ：左に 区分・地域（上段2マス）といる場所（下段）、右に見つけやすさ。マスの境に細い線を引いて、どこからどこまでが1項目か分かるように（Kさんの指示 2026-11-16） */
+.cp-b .bf{display:grid;grid-template-columns:minmax(0,1fr) 104px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.bf-g{margin:0;display:grid;grid-template-columns:1fr 1fr;border-right:1px solid var(--line)}
+.bf-g>div{padding:11px 12px 12px 0}.bf-g>div:nth-child(2){padding-left:14px;border-left:1px solid var(--line)}
+.bf-g .w{grid-column:1/-1;border-top:1px solid var(--line)}
+.cp-b .bf-g dt,.cp-b .bf-k,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.cp-b .bf-g dd{margin:3px 0 0;font:500 16px/1.5 var(--jp);letter-spacing:.04em}
+.bf-s{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 0 12px 8px;text-align:center}
+.bf-s .st{display:block;font-size:24px;line-height:1;letter-spacing:4px}.cp-b .bf-l{margin:0;font:500 12px/1.4 var(--jp)}
 .cp-b .bm{margin-top:16px}.cp-b .bm-h{margin-bottom:8px;display:flex;justify-content:space-between}
 .bm-now{display:none;color:color-mix(in oklab,var(--cm) 60%,#141414);font-weight:500}.bm-now::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:1px}
 .bm.now .bm-now{display:inline}
@@ -127,10 +129,19 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .mo-n{font:400 10px/1.3 var(--jp);color:var(--sub)}
 .mo-se .mo-c b{padding-bottom:3px;border-bottom:1px solid var(--line);font:500 11px/1.2 var(--jp);text-align:center;color:var(--sub)}
 .mo-a{margin-bottom:1px}.mo-a .mo-c b{font:500 14px/1 var(--en);font-variant-numeric:lining-nums;text-align:center;color:var(--sub)}.mo-a .mo-c b.now{color:var(--ink);font-weight:700}.mo-a .mo-n{font-size:10px}
-.cp-b .bxs{margin-top:28px;display:grid;gap:18px}
-.cp-b .bx{padding-top:14px;border-top:1px solid var(--line)}.cp-b .bx.memo{padding:14px 16px 16px;border:0;background:var(--faint)}
-.cp-b .bx p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
-.cp-b .bx .bx-k{margin:0 0 6px;font:italic 500 17px/1 var(--en)}.bx-k small{margin-left:8px;font:400 11px var(--jp);font-style:normal;color:var(--sub)}
+/* 押すと開く欄：見出しの行だけ並べ、右の＋が開くと−になる。中の人メモだけ灰色の面で、キャラの声と分ける */
+.cp-b .bxs{margin-top:28px;border-bottom:1px solid var(--line)}
+.cp-b .bx{border-top:1px solid var(--line)}
+.cp-b .bx summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;cursor:pointer}
+.cp-b .bx summary::-webkit-details-marker{display:none}
+.cp-b .bx summary::after{content:"";flex:none;width:12px;height:12px;background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 12px no-repeat;transition:rotate .25s}
+.cp-b .bx[open] summary::after{background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat;rotate:180deg}
+.cp-b .bx summary:hover .bx-k{color:var(--sub)}
+.cp-b .bx-k{font:italic 500 18px/1 var(--en)}.bx-k small{margin-left:10px;font:400 11px var(--jp);font-style:normal;color:var(--sub)}
+.cp-b .bx-in{padding:0 0 18px;animation:pFade .3s ease both}
+.cp-b .bx-in>p{margin:0;font:400 14px/1.95 var(--jp);letter-spacing:.04em}
+.cp-b .bx.memo .bx-in{margin-bottom:16px;padding:14px 16px 16px;background:var(--faint)}
+@media(prefers-reduced-motion:reduce){.cp-b .bx-in{animation:none}.cp-b .bx summary::after{transition:none}}
 .cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:39px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
