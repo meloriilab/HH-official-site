@@ -84,10 +84,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&(!wide.matches||d2.classList.contains('mtp'))||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
-[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on');
- if(location.hash==='#motif')history.replaceState(null,'',location.pathname+location.search)})});
-/* Birds ページから来たとき（#motif）：見えているほうの Motif ボタンで小窓を開く */
-if(location.hash==='#motif'){var bs=document.querySelectorAll('[data-pop^="motif"]');for(var i=0;i<bs.length;i++)if(bs[i].offsetParent){bs[i].click();break}}})();
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});
+})();
 
 /* TOP の Birds：開くたびに鳥を並べ替える（先頭の4羽だけ見える） */
 (function(){var g=document.querySelector('.bd-g');if(!g)return;var a=[].slice.call(g.children);

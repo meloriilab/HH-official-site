@@ -225,7 +225,7 @@ def body():
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
     mem="".join(face(c) for c in CHARS)
     # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
-    birds="".join(f'<a class="bd-i" href="{mhref(c)}#motif"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{BIRDNAME[c[1]]}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
+    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{BIRDNAME[c[1]]}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
@@ -669,10 +669,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&(!wide.matches||d2.classList.contains('mtp'))||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
-[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on');
- if(location.hash==='#motif')history.replaceState(null,'',location.pathname+location.search)})});
-/* Birds ページから来たとき（#motif）：見えているほうの Motif ボタンで小窓を開く */
-if(location.hash==='#motif'){var bs=document.querySelectorAll('[data-pop^="motif"]');for(var i=0;i<bs.length;i++)if(bs[i].offsetParent){bs[i].click();break}}})();
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});
+})();
 
 /* TOP の Birds：開くたびに鳥を並べ替える（先頭の4羽だけ見える） */
 (function(){var g=document.querySelector('.bd-g');if(!g)return;var a=[].slice.call(g.children);
