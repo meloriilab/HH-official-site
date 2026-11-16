@@ -98,7 +98,7 @@ def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG
 import json as _json, os as _os
 _PD = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pages_data.json"), encoding="utf-8"))
 BIRDNAME = {c["id"].lower(): c["motif"] for c in _PD["chars"]}
-REAL_BIRD = ("01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3")   # 本物の絵がある鳥（仮の絵は TOP に出さない）
+REAL_BIRD = ("01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3", "05-1", "05-2", "05-3", "05-4")   # 本物の絵がある鳥（仮の絵は TOP に出さない）
 EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
 EP_ON = ["001", "002", "003"]
 # スマホの帯で顔が真ん中に来る位置（挿絵ごと。上から何％のところを見せるか）

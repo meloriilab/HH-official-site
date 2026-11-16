@@ -43,9 +43,14 @@ esc = html.escape
 B = json.load(open(os.path.join(HERE, "birds.json"), encoding="utf-8"))
 BNAME = {}   # 和名はスタッフツールのモチーフ欄から取り込む（tools/sync_birds.py。2026-11-16 Kさんが「ハシボソガラス」に直した）
 REG = (("hk", "北海道"), ("hs", "本州・四国"), ("ky", "九州"))
-REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
+REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3", "05-1", "05-2", "05-3", "05-4"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
 def bname(cid): return BNAME.get(cid, CD[cid]["motif"])
-LV = {3: "近所で会える", 2: "ちょっと探す", 1: "狙って行く"}   # ★の段階の名前（仮。未確定）
+LV = {3: "よく見る", 2: "ちょい探す", 1: "珍しい"}   # ★の段階の名前（Kさんが決定 2026-11-16）
+# 決まった地域でしか会えない鳥は、地域しだいで見つけやすさが変わるので★2にそろえ、名前も分ける（Kさんの指示 2026-11-16）
+REGIONAL = {"blc02", "prs02"}   # カササギ・ワカケホンセイインコ
+REG_LV = "地域限定"   # 言葉は仮（未確定）
+def star(cid): return 2 if cid in REGIONAL else B[cid]["star"]
+def lv(cid): return REG_LV if cid in REGIONAL else LV[star(cid)]
 def lum(h):
     f = lambda v: v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
     r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
@@ -84,10 +89,11 @@ def months(b):
 
 
 # More Birds ボタンに止まる鳥：絵の番号 → (下げる量％, 右へずらすpx)。Kさんが鳥ごとに指定（2026-11-16。枝・足・翼・尾羽が枠線に重なる位置）
-# ORYBIA（05-x）は鳥の絵がまだ仮なので出さない
+# ORYBIA（05-x）は本物の絵が届いた（2026-11-16）
 PERCH = {"02-2": (27, 0), "02-1": (25, 0), "01-1": (16, 0), "01-3": (14, 0), "03-1": (30, 16), "03-2": (15, 0),
-         "04-2": (20, 12), "01-2": (25, 0), "04-1": (14, 0), "04-3": (8, 0)}
-TALL = {"02-2", "03-1"}   # 縦長の絵（フクロウ・サンコウチョウ）は少し大きく
+         "04-2": (20, 12), "01-2": (25, 0), "04-1": (14, 0), "04-3": (8, 0),
+         "05-1": (4, 0), "05-2": (18, 0), "05-3": (20, 0), "05-4": (18, 0)}   # 05-x と新しいカワセミ(01-1)の位置は仮（Kさんの確認待ち）
+TALL = {"02-2", "03-1", "05-1"}   # 縦長の絵（フクロウ・サンコウチョウ）は少し大きく
 
 def phrases(line):
     """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
@@ -258,11 +264,11 @@ def birds_page():
     紹介の1行・マナーの文・★の段階の名前は、たたき台（未確定。Kさんの確認待ち）"""
     lead = "メンバーのモチーフになった野鳥たち。会える季節と場所を、メンバーが案内します"
     manners = ["近づきすぎない。追いかけない", "巣やヒナには近づかない。撮影もひかえる", "えさをあげない", "田畑や私有地に入らない。めずらしい鳥の場所はSNSに書かない"]
-    rows = "".join(f'<li data-s="{B[cid]["star"]}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(B[cid]["star"], cid)}<small>{LV[B[cid]["star"]]}</small></span></a></li>' for cid in ORDER)
+    rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
     # 絞り込み：すべて＋3段階。札は4つとも同じ幅（Moodの札と同じ形）。星は黒（どのメンバーの色でもないため）
     chips = '<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>' + "".join(
         f'<button class="md" type="button" data-v="{n}" aria-pressed="false" aria-label="{t}"><span class="st">{"✦" * n}</span></button>' for n, t in sorted(LV.items(), reverse=True))
-    legend = "".join(f'<span><b class="st">{"✦" * n}</b>{t}</span>' for n, t in sorted(LV.items(), reverse=True))
+    legend = "".join(f'<span><b class="st">{"✦" * n}</b>{t}</span>' for n, t in sorted(LV.items(), reverse=True)) + f'<span><b class="st">✦✦</b>{REG_LV}</span>'
     inner = f'''{T.header("", top=False)}
 <main>
 <section class="sec bp" id="birds"><h2><span>Birds</span><small>野鳥</small></h2>
@@ -344,7 +350,7 @@ def char_page(cid):
     birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
              f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
              f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いそうな場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
-             f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(b["star"], cid)}<p class="bf-l">{LV[b["star"]]}</p></div></div>'
+             f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(star(cid), cid)}<p class="bf-l">{lv(cid)}</p></div></div>'
              f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
              f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
              f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{memo}</div>'
