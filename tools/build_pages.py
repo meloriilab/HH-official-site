@@ -83,6 +83,12 @@ def months(b):
     return f'<div class="mo">{head}{out}</div>'
 
 
+# More Birds ボタンに止まる鳥：絵の番号 → (下げる量％, 右へずらすpx)。Kさんが鳥ごとに指定（2026-11-16。枝・足・翼・尾羽が枠線に重なる位置）
+# ORYBIA（05-x）は鳥の絵がまだ仮なので出さない
+PERCH = {"02-2": (27, 0), "02-1": (25, 0), "01-1": (16, 0), "01-3": (14, 0), "03-1": (30, 16), "03-2": (15, 0),
+         "04-2": (20, 12), "01-2": (25, 0), "04-1": (14, 0), "04-3": (8, 0)}
+TALL = {"02-2", "03-1"}   # 縦長の絵（フクロウ・サンコウチョウ）は少し大きく
+
 def phrases(line):
     """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
     out, cur = [], ""
@@ -325,6 +331,9 @@ def char_page(cid):
     mm = "".join(f'<a class="mm-i" href="{T.mhref(CH[x.lower()], PRE)}"><img src="{PRE}images/face/{T.fid(CH[x.lower()])}.webp" alt=""><span>{T.name(CH[x.lower()])}</span></a>' for x in UD[u]["members"] if x.lower() != cid)
     # 鳥の側（Kさんの指示 2026-11-16：小窓をやめ、「Character／Motif Bird」の切り替えでページの中身ごと入れ替える。
     # キャラがその鳥を紹介する形。データは吹き出しの間に置き、豆知識・中の人メモはキャラの声と分けて下にまとめる）
+    # More Birds のボタンの上に、その人の鳥を止まらせる（Kさんの指示 2026-11-16。もとは Motif ボタン用の案B）
+    pk = PERCH.get(T.aid(c))
+    perch = f'<img class="mf-b{" tall" if T.aid(c) in TALL else ""}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" style="--d:{pk[0]}%;--x:{pk[1]}px">' if pk else ""
     b = B[cid]; fc = f'<img class="bv-f" src="{PRE}images/face/{T.fid(c)}.webp" alt="">'
     # 紹介とデータ・会える時期は出したまま、その先は押すと開く（Kさんの指示 2026-11-16：情報を垂れ流さない。Note は見たい人だけ）
     # 中の人メモだけ押すと開く（Kさんの指示 2026-11-16：見たい人だけ見ればいい。ほかは出したまま）
@@ -337,7 +346,7 @@ def char_page(cid):
              f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
              f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
              f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{memo}</div>'
-             f'<p class="row bd-go"><a class="btn" href="{PRE}birds.html">More Birds</a></p></div>')
+             f'<div class="bd-go{" mf" if perch else ""}"><p class="row"><a class="btn" href="{PRE}birds.html">More Birds</a></p>{perch}</div></div>')
     # 切り替え（名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
     tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><i class="ch-ind" aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
             '<button type="button" role="tab" aria-selected="false" data-v="b">Motif Bird</button></div>'
@@ -530,7 +539,10 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bx-in>p{margin:0;font:400 14px/1.95 var(--jp);letter-spacing:.04em}
 .cp-b .bx.memo .bx-in{margin-bottom:16px;padding:14px 16px 16px;background:var(--faint)}
 @media(prefers-reduced-motion:reduce){.cp-b .bx-in{animation:none}.cp-b .bx summary::after{transition:none}}
-.cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
+.cp-b .bd-go{position:relative;margin-top:32px;width:fit-content}.bd-go .row{margin:0}.bd-go .btn{min-width:180px}
+.bd-go.mf{padding-top:40px}.bd-go.mf:has(.tall){padding-top:60px}
+.mf-b{position:absolute;right:14px;top:40px;height:52px;width:auto;max-width:84px;object-fit:contain;pointer-events:none;transform:translate(var(--x),calc(var(--d) - 100%));z-index:1}
+.mf-b.tall{height:70px;top:60px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}

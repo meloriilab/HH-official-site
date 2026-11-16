@@ -146,7 +146,10 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bx-in>p{margin:0;font:400 14px/1.95 var(--jp);letter-spacing:.04em}
 .cp-b .bx.memo .bx-in{margin-bottom:16px;padding:14px 16px 16px;background:var(--faint)}
 @media(prefers-reduced-motion:reduce){.cp-b .bx-in{animation:none}.cp-b .bx summary::after{transition:none}}
-.cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
+.cp-b .bd-go{position:relative;margin-top:32px;width:fit-content}.bd-go .row{margin:0}.bd-go .btn{min-width:180px}
+.bd-go.mf{padding-top:40px}.bd-go.mf:has(.tall){padding-top:60px}
+.mf-b{position:absolute;right:14px;top:40px;height:52px;width:auto;max-width:84px;object-fit:contain;pointer-events:none;transform:translate(var(--x),calc(var(--d) - 100%));z-index:1}
+.mf-b.tall{height:70px;top:60px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
