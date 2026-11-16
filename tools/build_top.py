@@ -68,7 +68,7 @@ SPT = {"004":"https://open.spotify.com/intl-ja/track/09G3RQDDX4gFqODCdNUIdB","00
 YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/hq720.jpg"   # 横長（16:9）で、上下の黒い帯が無い絵
 YT_THUMB2 = "https://i.ytimg.com/vi/IlpEetoUMso/mqdefault.jpg"   # 上が読めないときの小さい絵
 # 旗に大きな絵を出すユニット（絵がそろっているものだけ。ほかは紋章を出す）
-KV = {"trt","nct","blc"}
+KV = {"trt","nct","blc","prs"}
 FONT = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Shippori+Mincho+B1:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap"
 DESC = "鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲とユニット、メンバーを紹介しています。"
 
@@ -562,13 +562,17 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
  .hint{display:block;left:auto;right:var(--gx)}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
- .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
+ .flag{grid-template-rows:none;grid-template-columns:minmax(0,4fr) minmax(0,6fr)}
+ /* 2026-11-16 Kさん（案C）：絵の欄を6割に広げ、絵は切らずに丸ごと見せる（顔が欄の外へはみ出さない）。スクロールでずらす動きは、絵が欄から欠けるので止める */
+ .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-txt{padding:120px 60px 60px var(--gx);align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
 }
 /* narrow PC and tablets held sideways (900 to 1139px): same layout, with the menu button instead of the word links */
+/* 文字の欄が4割になるので、幅の狭いPC・横向きタブレットではユニット名を少し小さく */
+@media(min-width:900px) and (max-width:1279px){.f-name{font-size:46px}}
 @media(min-width:900px) and (max-width:1139px){
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
  .trio{left:0;margin-left:0;width:88%}
