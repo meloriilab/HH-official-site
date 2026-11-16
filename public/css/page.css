@@ -80,7 +80,11 @@ html.pop-on{overflow:hidden}
 .mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
 .mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
 .mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
-.ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
+.ch-x{margin-top:24px}.ch-x .row{width:fit-content}
+.mf{width:fit-content;padding-top:40px}
+.mf-b{position:absolute;right:14px;top:40px;height:52px;width:auto;max-width:84px;object-fit:contain;pointer-events:none;transform:translate(var(--x),calc(var(--d) - 100%));z-index:1}
+.mf-b.tall{height:70px;top:60px}
+.mf:has(.mf-b.tall){padding-top:60px}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
 .mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
@@ -201,7 +205,7 @@ html.pop-on{overflow:hidden}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .rels.solo{grid-template-columns:340px}
- .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
+ .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 240px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}

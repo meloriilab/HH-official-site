@@ -40,6 +40,10 @@ CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
 
+# Motif ボタンに止まる鳥：絵の番号 → (下げる量％, 右へずらすpx)。Kさんの指定 2026-11-16
+PERCH = {"02-2": (27, 0), "02-1": (25, 0), "01-1": (16, 0), "01-3": (14, 0), "03-1": (30, 16), "03-2": (15, 0),
+         "04-2": (20, 12), "01-2": (25, 0), "04-1": (14, 0), "04-3": (8, 0)}
+
 def phrases(line):
     """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
     out, cur = [], ""
@@ -253,7 +257,12 @@ def char_page(cid):
     bimg = f'<img class="mtp-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="">' if bird else ""
     motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(d["motif"])}">{bimg}<div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
              f'<div class="pop-b"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></dialog>')
-    extra = (f'<div class="pop-w ch-x"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{{M}}</div>'
+    # Motif ボタンの上に、その人の鳥を止まらせる（Kさん 2026-11-16 案B。押したくなるように）。
+    # 下げる量（絵の高さに対する％）と右へずらす量は、Kさんが鳥ごとに指定した位置（枝・足・翼・尾羽が枠線に重なる）。
+    # ここに無い人（ORYBIA は鳥の絵がまだ仮）は、これまでどおりボタンだけ
+    pk = PERCH.get(T.aid(c))
+    perch = (f'<img class="mf-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" style="--d:{pk[0]}%;--x:{pk[1]}px">' if bird and pk else "")
+    extra = (f'<div class="pop-w ch-x{" mf" if perch else ""}"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{perch}{{M}}</div>'
              f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>')
     prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{extra.replace("{M}", motif)}</div>'
     # そのメンバーが歌っている曲（＝ユニットの曲）。ページのいちばん最後に、小さいジャケットの1行ずつの一覧で出す
@@ -363,7 +372,11 @@ html.pop-on{overflow:hidden}
 .mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
 .mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
 .mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
-.ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
+.ch-x{margin-top:24px}.ch-x .row{width:fit-content}
+.mf{width:fit-content;padding-top:40px}
+.mf-b{position:absolute;right:14px;top:40px;height:52px;width:auto;max-width:84px;object-fit:contain;pointer-events:none;transform:translate(var(--x),calc(var(--d) - 100%));z-index:1}
+.mf-b.tall{height:70px;top:60px}
+.mf:has(.mf-b.tall){padding-top:60px}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
 .mm-i{display:flex;flex-direction:column;align-items:center;gap:6px;font:500 12px/1.5 var(--min);letter-spacing:.04em;text-align:center;transition:opacity .25s}.mm-i:hover{opacity:.7}
@@ -484,7 +497,7 @@ html.pop-on{overflow:hidden}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .rels.solo{grid-template-columns:340px}
- .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
+ .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 240px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}
