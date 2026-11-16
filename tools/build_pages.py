@@ -41,7 +41,7 @@ esc = html.escape
 
 # モチーフの野鳥の中身（2026-11-16。Kさんの監修で決定）。キャラの一言とオスメスはキャラの口調、中の人メモは K さんの文
 B = json.load(open(os.path.join(HERE, "birds.json"), encoding="utf-8"))
-BNAME = {"blc01": "ハシボソガラス"}   # 種名をはっきりさせる（Kさんの回答 2026-11-16：カラス＝ハシボソガラス）
+BNAME = {}   # 和名はスタッフツールのモチーフ欄から取り込む（tools/sync_birds.py。2026-11-16 Kさんが「ハシボソガラス」に直した）
 REG = (("hk", "北海道"), ("hs", "本州・四国"), ("ky", "九州"))
 REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
 def bname(cid): return BNAME.get(cid, CD[cid]["motif"])

@@ -19,4 +19,15 @@ for c in cat.get("characters", []):
     if B[key] != sb: changed.append(key)
     B[key] = sb
 json.dump(B, open(P, "w"), ensure_ascii=False, indent=1)
+# 鳥の和名（スタッフツールの「モチーフ」= characters[].bird）も pages_data.json に取り込む
+PD = os.path.join(HERE, "pages_data.json"); D = json.load(open(PD))
+names = {}
+for c in cat.get("characters", []):
+    m = re.fullmatch(r"([A-Z]+)-(\d+)", str(c.get("id", "")))
+    if m and c.get("bird"): names[f'{UNIT.get(m[1], m[1].lower())}{int(m[2]):02d}'] = c["bird"]
+for c in D["chars"]:
+    k = c["id"].lower()
+    if k in names and c["motif"] != names[k]:
+        changed.append(f'{k}の和名 {c["motif"]}→{names[k]}'); c["motif"] = names[k]
+json.dump(D, open(PD, "w"), ensure_ascii=False, indent=1)
 print("updated:", ", ".join(changed) or "なし")
