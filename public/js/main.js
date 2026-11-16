@@ -21,7 +21,6 @@ mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
 function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
 cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
-w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
@@ -80,7 +79,7 @@ var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 function shut(){[].forEach.call(document.querySelectorAll('dialog.pop[open]'),function(d){d.close()})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
  if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(!d||!d.showModal)return;if(d.open){d.close();return}shut();
-  if(wide.matches)d.show();else{d.showModal();document.documentElement.classList.add('pop-on')}return}
+  if(wide.matches){/* 2026-11-16 ボタンの上の空き（上の帯の下まで）に収まる高さにする。収まらない分は中でスクロール */var h=document.querySelector('.hd'),top=h?h.getBoundingClientRect().bottom:0;d.style.maxHeight=Math.max(180,Math.min(420,b.getBoundingClientRect().top-top-20))+'px';d.show()}else{d.showModal();document.documentElement.classList.add('pop-on')}return}
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});

@@ -252,7 +252,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">All Songs</a></p></section>
+<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">All Songs</a></p></section>
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
@@ -292,8 +292,8 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 /* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
 .uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
 .uf[aria-expanded=true]{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
-@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf~.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
-@media(max-width:359px){body[data-ch] .hd{gap:6px}}
+@media(max-width:699px){body[data-u] .uf{display:block}body[data-u] .uf~.yt{margin-left:0}body[data-u] .upills{display:none}body[data-u].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
+@media(max-width:359px){body[data-u] .hd{gap:6px}}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
 .up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
@@ -309,13 +309,13 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
 /* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
 .mood-s{padding-bottom:0}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
-/* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
-.mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
+/* 2026-11-16 Kさん：ムードのジャケットは、Episodeの吹き出しがあっても無くても全部同じ大きさ。ずらし（段差）も付けない */
+.rels.mds{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.mds .rel{margin-top:0!important}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
 /* 2026-11-15 Kさんの指示：タグは開くたびに混ぜて、2行に収まる分だけ出す（「すべて」は先頭に固定）。幅は5文字の言葉に合わせてそろえる。スマホは3列 */
 .mood-s .md{min-height:44px;padding:0 10px;justify-content:center;font-size:13px}.mood-s .moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mood-s .md[hidden]{display:none}
 @media(min-width:700px){.mood-s .moods{display:flex}.mood-s .md{min-width:8.6em;padding:0 16px;font-size:14px}}
-@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;min-width:9em;padding:0 20px;font-size:16px}.mood-s .moods{gap:14px}}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.rels.mds{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:56px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;min-width:9em;padding:0 20px;font-size:16px}.mood-s .moods{gap:14px}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -604,7 +604,6 @@ mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
 function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
 cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
-w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
@@ -663,7 +662,7 @@ var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 function shut(){[].forEach.call(document.querySelectorAll('dialog.pop[open]'),function(d){d.close()})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
  if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(!d||!d.showModal)return;if(d.open){d.close();return}shut();
-  if(wide.matches)d.show();else{d.showModal();document.documentElement.classList.add('pop-on')}return}
+  if(wide.matches){/* 2026-11-16 ボタンの上の空き（上の帯の下まで）に収まる高さにする。収まらない分は中でスクロール */var h=document.querySelector('.hd'),top=h?h.getBoundingClientRect().bottom:0;d.style.maxHeight=Math.max(180,Math.min(420,b.getBoundingClientRect().top-top-20))+'px';d.show()}else{d.showModal();document.documentElement.classList.add('pop-on')}return}
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
