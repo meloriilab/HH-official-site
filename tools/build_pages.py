@@ -370,7 +370,9 @@ TABJS = """(function(){var h=document.documentElement,bs=[].slice.call(document.
 var t=document.querySelector('.ch-tab'),ind=t&&t.querySelector('.ch-ind');
 if(ind)ind.addEventListener('transitionend',function(e){if(e.target===ind)t.classList.remove('mv')});
 function set(b){if(t&&b!==h.classList.contains('bird')&&!matchMedia('(prefers-reduced-motion:reduce)').matches)t.classList.add('mv');h.classList.toggle('bird',b);bs.forEach(function(x){x.setAttribute('aria-selected',(x.dataset.v==='b')===b?'true':'false')});
- history.replaceState(null,'',location.pathname+location.search+(b?'#bird':''))}
+ history.replaceState(null,'',location.pathname+location.search+(b?'#bird':''));
+ /* 鳥の側を見ているときは、前後のメンバーへの矢印も鳥の側を開く（鳥を続けて見比べられるように） */
+ [].forEach.call(document.querySelectorAll('.ch-nv a'),function(a){a.href=a.href.split('#')[0]+(b?'#bird':'')})}
 bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.v==='b')})});set(h.classList.contains('bird'));
 var m=new Date().getMonth()+1;[].forEach.call(document.querySelectorAll('[data-m="'+m+'"]'),function(i){i.classList.add('now')});
 [].forEach.call(document.querySelectorAll('.bm'),function(b){if(b.querySelector('i.on.now'))b.classList.add('now')})})();"""
@@ -530,7 +532,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 @media(prefers-reduced-motion:reduce){.cp-b .bx-in{animation:none}.cp-b .bx summary::after{transition:none}}
 .cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
-@media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:39px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
+@media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
 /* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
 .st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#E2E2DE}.st.lt b{-webkit-text-stroke:.9px rgba(20,20,20,.6)}
