@@ -498,7 +498,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .bf-g>div{padding:11px 12px 12px 0}.bf-g>div:nth-child(2){position:relative;padding-left:14px}.bf-g>div:nth-child(2)::before{left:0}
 .bf-g .w{grid-column:1/-1;border-top:1px solid var(--line)}
 .cp-b .bf-g dt,.cp-b .bf-k,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.cp-b .bf-g dd{margin:3px 0 0;font:500 16px/1.5 var(--jp);letter-spacing:.04em}
+.cp-b .bf-g dd{margin:3px 0 0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
 .bf-s{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 0 12px 8px;text-align:center}
 .bf-s .st{display:block;font-size:24px;line-height:1;letter-spacing:4px}.cp-b .bf-l{margin:0;font:500 12px/1.4 var(--jp)}
 .cp-b .bm{margin-top:16px}.cp-b .bm-h{margin-bottom:8px;display:flex;justify-content:space-between}
