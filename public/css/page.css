@@ -201,7 +201,7 @@ html.pop-on{overflow:hidden}
 @media(min-width:900px){
  .prose p{font-size:16px}
  .rels.solo{grid-template-columns:340px}
- .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 150px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
+ .sl-i{grid-template-columns:64px minmax(0,1fr) 252px 240px;column-gap:24px;padding:10px 0}.sl-j{grid-row:auto}.sl-j img{width:64px;height:64px}.sl-i h3{font-size:20px}.sl-i .lk{margin:0;width:252px}.sl-i .ep-in{margin:0}
  .ch{padding-top:96px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding-inline:max(0px,calc(50% - 640px))}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}

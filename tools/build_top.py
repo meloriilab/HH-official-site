@@ -106,11 +106,17 @@ ESLUG = {"001": "usukoubai", "002": "yoi-no-tsubasa", "003": "rule-the-darkness"
 def _ch(cid): return next(c for c in CHARS if c[1] == cid)
 def _lum(h): return (0.299 * int(h[1:3], 16) + 0.587 * int(h[3:5], 16) + 0.114 * int(h[5:7], 16)) / 255
 def ep_btn(n, pre=""):
-    """曲の下に出す入口：話しているメンバーの丸い顔と Episode の文字（だれの話かが開く前にわかる）"""
+    """曲の下に出す入口：トークの最初のセリフを、ユニット色の吹き出しで見せる（Kさん 2026-11-16 案A-3）。
+    話した人の丸い顔・小さな「Episode」・最初のセリフ（2行まで）・右下の「›」。下線は付けない"""
     if n not in EP_ON: return ""
-    who = list(dict.fromkeys(l["w"] for l in EP[n]["lines"]))
-    faces = "".join(f'<img src="{pre}images/face/{fid(_ch(w))}.webp" alt="">' for w in who)
-    return f'<p class="ep-in"><button type="button" data-ep="{ESLUG[n]}"><span class="ep-f">{faces}</span><b>Episode</b></button></p>'
+    first = next(l for l in EP[n]["lines"] if l.get("t"))
+    c = _ch(first["w"])
+    _, uu, t, k, un = next(r for r in RELS if r[0] == n)
+    uc = next(x[6] for x in UNITS if x[1] == uu)
+    ut = "#141414" if _lum(uc) > .6 else "#fff"
+    line = first["t"].replace("\n", " ")
+    return (f'<p class="ep-in" style="--uc:{uc};--ut:{ut}"><button type="button" data-ep="{ESLUG[n]}" aria-label="{t} のエピソードを開く">'
+            f'<img src="{pre}images/face/{fid(c)}.webp" alt=""><span class="ep-l">Episode</span><span class="ep-t">{ep_wrap(line)}</span><span class="ep-a" aria-hidden="true">›</span></button></p>')
 def ep_wrap(t):
     """台詞の改行はKさんの改行どおり。1行が吹き出しに収まらないときは、文節の切れ目（「、」の後、助詞の後）でだけ折る（2026-11-15）"""
     def ph(line):
@@ -401,9 +407,14 @@ h2 span{font:500 44px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px v
 /* song links: a small joined row of boxes, same language as the big buttons; the first one (MV) is filled = the thing to press first */
 /* episode: entry under a song (round faces of the members who talk + label) */
 .ep-in{margin:10px 0 0}
-.ep-in button{appearance:none;background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;cursor:pointer;min-height:40px;display:inline-flex;align-items:center;gap:10px;font:italic 500 17px/1 var(--en);letter-spacing:.03em}
-.ep-f{display:flex}.ep-f img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--bg);margin-left:-9px}.ep-f img:first-child{margin-left:-2px}
-.ep-in b{font-weight:500;padding-bottom:3px;border-bottom:1px solid var(--ink);transition:opacity .25s}.ep-in button:hover b{opacity:.55}
+.ep-in button{appearance:none;position:relative;display:block;box-sizing:border-box;width:100%;max-width:340px;margin:0;padding:10px 34px 10px 46px;border:1px solid var(--uc);border-radius:16px 16px 16px 4px;background:var(--uc);color:var(--ut);cursor:pointer;text-align:left;font:400 13px/1.6 var(--jp);letter-spacing:.02em;transition:background .25s}
+.ep-in img{position:absolute;left:10px;top:10px;width:26px;height:26px;border-radius:50%;object-fit:cover}
+.ep-l{display:block;margin-bottom:2px;font:italic 500 14px/1.2 var(--en);letter-spacing:.06em;opacity:.82}
+.ep-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ep-a{position:absolute;right:13px;bottom:9px;font:400 17px/1 var(--jp);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.ep-in button:hover,.ep-in button:active{background:color-mix(in srgb,var(--uc) 82%,#000)}.ep-in button:hover .ep-a,.ep-in button:active .ep-a{transform:translateX(4px)}
+.ep-in button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.ep-in button,.ep-a{transition:none}}
 /* episode: the chat opens over the page. phone = whole screen, wider = a tall sheet in the middle */
 html.ep-on{overflow:hidden}
 .ep{border:0;padding:0;margin:0;inset:0;width:100%;height:100%;max-width:none;max-height:none;background:var(--bg);color:var(--ink);flex-direction:column;overflow:hidden}
