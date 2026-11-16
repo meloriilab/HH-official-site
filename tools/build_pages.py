@@ -332,7 +332,7 @@ def char_page(cid):
     memo = f'<details class="bx memo"><summary><span class="bx-k">Note<small>中の人メモ</small></span></summary><div class="bx-in"><p>{br(b["memo"])}</p></div></details>' if b["memo"] else ""
     birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
              f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
-             f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いる場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
+             f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いそうな場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
              f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(b["star"], cid)}<p class="bf-l">{LV[b["star"]]}</p></div></div>'
              f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
              f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
