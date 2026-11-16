@@ -447,9 +447,14 @@ html.pop-on{overflow:hidden}
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
 /* キャラ／鳥の切り替え（2026-11-16。名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下。2つとも同じ幅 */
-.ch-tab{display:grid;grid-template-columns:1fr 1fr;padding:3px;margin:0 0 22px;border:1px solid var(--ink);border-radius:99px}
-.ch-tab button{appearance:none;border:0;margin:0;background:none;color:var(--ink);height:40px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:background .25s,color .25s}
+.ch-tab{display:grid;grid-template-columns:1fr 1fr;margin:0 0 26px;background:var(--faint);border-radius:99px}
+.ch-tab button{appearance:none;position:relative;border:0;margin:0;background:none;color:var(--sub);height:46px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:background .25s,color .25s}
+.ch-tab button:hover{color:var(--ink)}
+/* 選んでいる側：黒い札と、下向きの小さな三角（この下の中身が切り替わったことを示す。Kさんの参考画像 2026-11-16） */
 .ch-tab button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.ch-tab button[aria-selected=true]::after{content:"";position:absolute;left:50%;bottom:-7px;translate:-50% 0;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink)}
+/* PC は名前の下（切り替わるのはそこから下なので。Kさんの指示 2026-11-16）。スマホは絵のすぐ下のまま */
+@media(min-width:900px){.ch-t{display:flex;flex-direction:column}.ch-in{order:1}.ch-tab{order:2;margin:26px 0 0}.ch-p{order:3}}
 .ch-in{position:relative}.ch-in .ch-nv{right:0;top:0}
 .cp-b,.cp-bw,.ch-bd{display:none}
 html.bird .cp-c{display:none}html.bird .cp-b,html.bird .cp-bw{display:block}
@@ -492,7 +497,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bx .bx-k{margin:0 0 6px;font:italic 500 17px/1 var(--en)}.bx-k small{margin-left:8px;font:400 11px var(--jp);font-style:normal;color:var(--sub)}
 .cp-b .bd-go{margin-top:32px;width:fit-content}.bd-go .btn{min-width:180px}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
-@media(min-width:900px){html.bird .ch{align-items:start}html.bird .ch-t{padding-top:40px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
+@media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:39px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:56px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:56px}.cp-b .bd-go{margin-left:56px}.cp-b .bv-b p{font-size:15px}}
 /* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
 .st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#E2E2DE}.st.lt b{-webkit-text-stroke:.9px rgba(20,20,20,.6)}
