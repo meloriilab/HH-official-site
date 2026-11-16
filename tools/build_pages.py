@@ -72,7 +72,7 @@ def face(cid, speed=".0"):
 def rels_of(u): return [r for r in T.RELS if r[1] == u]
 
 # ユニットの絵の中で、各メンバーが立っている位置（左端からの％）。ピルをその人の足もとに置く（Kさんの指示 2026-11-15）
-ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83}
+ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83, "prs01": 29, "prs02": 71}
 
 def unit_page(u):
     d, m = UD[u], UNIT[u]
