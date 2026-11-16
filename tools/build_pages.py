@@ -327,13 +327,16 @@ def char_page(cid):
     # キャラがその鳥を紹介する形。データは吹き出しの間に置き、豆知識・中の人メモはキャラの声と分けて下にまとめる）
     b = B[cid]; fc = f'<img class="bv-f" src="{PRE}images/face/{T.fid(c)}.webp" alt="">'
     # 紹介とデータ・会える時期は出したまま、その先は押すと開く（Kさんの指示 2026-11-16：情報を垂れ流さない。Note は見たい人だけ）
-    note = lambda en, jp, t, cls="": f'<details class="bx{cls}"><summary><span class="bx-k">{en}<small>{jp}</small></span></summary><div class="bx-in"><p>{t}</p></div></details>' if t else ""
+    # 中の人メモだけ押すと開く（Kさんの指示 2026-11-16：見たい人だけ見ればいい。ほかは出したまま）
+    note = lambda en, jp, t: f'<div class="bx"><p class="bx-k">{en}<small>{jp}</small></p><div class="bx-in"><p>{t}</p></div></div>' if t else ""
+    memo = f'<details class="bx memo"><summary><span class="bx-k">Note<small>中の人メモ</small></span></summary><div class="bx-in"><p>{br(b["memo"])}</p></div></details>' if b["memo"] else ""
     birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
              f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
              f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いる場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
              f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(b["star"], cid)}<p class="bf-l">{LV[b["star"]]}</p></div></div>'
              f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
-             f'<div class="bxs"><details class="bx"><summary><span class="bx-k">Male / Female<small>オスとメスの見分け方</small></span></summary><div class="bx-in"><div class="bv">{fc}<div class="bv-b"><p>{br(b["sex"])}</p></div></div></div></details>{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{note("Note", "中の人メモ", br(b["memo"]), " memo")}</div>'
+             f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
+             f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{memo}</div>'
              f'<p class="row bd-go"><a class="btn" href="{PRE}birds.html">More Birds</a></p></div>')
     # 切り替え（名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
     tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><i class="ch-ind" aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
@@ -514,6 +517,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 /* 押すと開く欄：見出しの行だけ並べ、右の＋が開くと−になる。中の人メモだけ灰色の面で、キャラの声と分ける */
 .cp-b .bxs{margin-top:28px;border-bottom:1px solid var(--line)}
 .cp-b .bx{border-top:1px solid var(--line)}
+.cp-b div.bx .bx-k{display:block;margin:16px 0 8px}
 .cp-b .bx summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;cursor:pointer}
 .cp-b .bx summary::-webkit-details-marker{display:none}
 .cp-b .bx summary::after{content:"";flex:none;width:12px;height:12px;background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 12px no-repeat;transition:rotate .25s}

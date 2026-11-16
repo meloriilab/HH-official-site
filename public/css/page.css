@@ -135,6 +135,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 /* 押すと開く欄：見出しの行だけ並べ、右の＋が開くと−になる。中の人メモだけ灰色の面で、キャラの声と分ける */
 .cp-b .bxs{margin-top:28px;border-bottom:1px solid var(--line)}
 .cp-b .bx{border-top:1px solid var(--line)}
+.cp-b div.bx .bx-k{display:block;margin:16px 0 8px}
 .cp-b .bx summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;cursor:pointer}
 .cp-b .bx summary::-webkit-details-marker{display:none}
 .cp-b .bx summary::after{content:"";flex:none;width:12px;height:12px;background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 12px no-repeat;transition:rotate .25s}
