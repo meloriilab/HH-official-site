@@ -68,7 +68,7 @@ SPT = {"004":"https://open.spotify.com/intl-ja/track/09G3RQDDX4gFqODCdNUIdB","00
 YT_THUMB = "https://i.ytimg.com/vi/IlpEetoUMso/hq720.jpg"   # 横長（16:9）で、上下の黒い帯が無い絵
 YT_THUMB2 = "https://i.ytimg.com/vi/IlpEetoUMso/mqdefault.jpg"   # 上が読めないときの小さい絵
 # 旗に大きな絵を出すユニット（絵がそろっているものだけ。ほかは紋章を出す）
-KV = {"trt","nct","blc"}
+KV = {"trt","nct","blc","prs"}
 FONT = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Shippori+Mincho+B1:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap"
 DESC = "鳥のアイドル事務所 Humming Hearts の公式サイト。楽曲とユニット、メンバーを紹介しています。"
 
@@ -258,7 +258,7 @@ def body():
   <a class="pu-fr" href="{PMV}"><span class="pu-w"><span class="pu-c ph"><img src="{YT_THUMB}" onerror="this.onerror=null;this.src='{YT_THUMB2}'" alt="{PT} のミュージックビデオ"></span><i class="dr dl" aria-hidden="true"><b class="d-a">Pick Up</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PUN}</b></i><i class="dr drr" aria-hidden="true"><b class="d-a">MV</b><img src="images/emblem/{PN}.webp" alt=""><b class="d-b">{PD}</b></i></span><span class="pu-t">{rb(PT,PK)}<small>{PUN}</small></span></a>
   <div class="pu-s"><p class="lbl">New Release</p><p class="row"><a class="btn on" href="{PMV}">MV</a><button class="btn" type="button" data-try="{tid("004")}">{TRY}</button></p></div>
 </div></section>
-<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels lead mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">All Songs</a></p></section>
+<section class="sec mood-s" id="mood"><h2><span>Mood</span><small>気分で選ぶ</small></h2><div class="moods" role="group" aria-label="気分で選ぶ">{mpills}</div><div class="rels mds">{mcards}</div><p class="row more"><a class="btn" href="songs.html">All Songs</a></p></section>
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
@@ -299,8 +299,8 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 /* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
 .uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
 .uf[aria-expanded=true]{background-color:var(--ink);color:var(--bg);background-image:linear-gradient(45deg,transparent 50%,var(--bg) 50%),linear-gradient(135deg,var(--bg) 50%,transparent 50%)}
-@media(max-width:699px){body[data-ch] .uf{display:block}body[data-ch] .uf~.yt{margin-left:0}body[data-ch] .upills{display:none}body[data-ch].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
-@media(max-width:359px){body[data-ch] .hd{gap:6px}}
+@media(max-width:699px){body[data-u] .uf{display:block}body[data-u] .uf~.yt{margin-left:0}body[data-u] .upills{display:none}body[data-u].uo .upills{display:grid}.menu-open .uf{visibility:hidden}}
+@media(max-width:359px){body[data-u] .hd{gap:6px}}
 .up-a{min-height:24px;padding-inline:9px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--ink);border-radius:999px;font:500 11px/1 var(--en);letter-spacing:.02em;white-space:nowrap;background:rgba(250,250,248,.8);transition:background .25s,color .25s}
 .up-a .kn{font-family:var(--jp);font-size:.92em;letter-spacing:.04em}
 .up-a:hover,.up-a.on,.up:hover .up-a{background:var(--ink);color:var(--bg)}
@@ -316,13 +316,13 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .md:hover,.md.on{background:var(--ink);color:var(--bg)}
 /* Mood … Pick Up の次の、独立した段（気分から曲を選ぶ入口。TOP の Release は外した。Kさんの回答 2026-11-14） */
 .mood-s{padding-bottom:0}.mood-s .moods{margin-bottom:36px}.mds{padding-bottom:0!important}.mds .rel[hidden]{display:none}
-/* an even number of jackets on a phone = plain pairs (no single wide one with a gap beside the last) */
-.mds.ev .rel:first-child{grid-column:auto;margin-bottom:0}.mds.ev .rel:first-child h3{font-size:17px}.mds.ev .rel{margin-top:0!important}
+/* 2026-11-16 Kさん：ムードのジャケットは、Episodeの吹き出しがあっても無くても全部同じ大きさ。ずらし（段差）も付けない */
+.rels.mds{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.mds .rel{margin-top:0!important}
 .mood-s .more{margin:40px auto 0;width:fit-content}.mood-s .more .btn{min-width:180px}
 /* 2026-11-15 Kさんの指示：タグは開くたびに混ぜて、2行に収まる分だけ出す（「すべて」は先頭に固定）。幅は5文字の言葉に合わせてそろえる。スマホは3列 */
 .mood-s .md{min-height:44px;padding:0 10px;justify-content:center;font-size:13px}.mood-s .moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mood-s .md[hidden]{display:none}
 @media(min-width:700px){.mood-s .moods{display:flex}.mood-s .md{min-width:8.6em;padding:0 16px;font-size:14px}}
-@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.mds.ev .rel:first-child{grid-column:span 2}.mds.ev .rel:first-child h3{font-size:34px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;min-width:9em;padding:0 20px;font-size:16px}.mood-s .moods{gap:14px}}
+@media(min-width:900px){.mood-s .moods{margin-bottom:56px}.rels.mds{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:56px}.mood-s .more{margin-top:72px}.mood-s .md{min-height:52px;min-width:9em;padding:0 20px;font-size:16px}.mood-s .moods{gap:14px}}
 /* listening bar: appears at the bottom only after 試聴 is pressed, so the page stays light and you can keep browsing while it plays */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--ink);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:center}
 .dock-p{flex:1 1 auto;max-width:640px;min-width:0;height:80px;border-radius:12px;background:#222;overflow:hidden}.dock iframe{display:block;width:100%;height:80px;border:0}
@@ -578,7 +578,9 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
  .hint{display:block;left:auto;right:var(--gx)}
  .prog{width:2px;height:100%;left:auto;right:0}.prog i{width:100%;transform-origin:top;transform:scaleY(var(--p,0))}
- .flag{grid-template-rows:none;grid-template-columns:1fr 1fr}
+ .flag{grid-template-rows:none;grid-template-columns:minmax(0,4fr) minmax(0,6fr)}
+ /* 2026-11-16 Kさん（案C）：絵の欄を6割に広げ、絵は切らずに丸ごと見せる（顔が欄の外へはみ出さない）。スクロールでずらす動きは、絵が欄から欠けるので止める */
+ .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-txt{padding:120px 60px 60px var(--gx);align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
@@ -586,6 +588,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
 }
 /* narrow PC and tablets held sideways (900 to 1139px): same layout, with the menu button instead of the word links */
+/* 文字の欄が4割になるので、幅の狭いPC・横向きタブレットではユニット名を少し小さく */
+@media(min-width:900px) and (max-width:1279px){.f-name{font-size:46px}}
 @media(min-width:900px) and (max-width:1139px){
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
  .trio{left:0;margin-left:0;width:88%}
@@ -594,7 +598,32 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.ph img,.trio img{filter:none}}
 """
-JS="""/* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
+JS="""/* ユニットのページの切り替え（2026-11-16 Kさん 案C＋少し凝る）：押した向きから次のユニットの色の面が絵を覆い（0.28秒）、
+   次のページでは面が反対側へ抜けながら、絵・名前の札・文字が同じ向きから順に入る（全体で約0.9秒）。動きを減らす設定では何もしない */
+(function(){var uv=document.querySelector('.uv[data-uc]');if(!uv)return;var H=document.documentElement,pic=uv.querySelector('.uv-pic'),wipe=uv.querySelector('.uv-wipe');
+var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!uv.animate&&!!wipe,E='cubic-bezier(.7,0,.3,1)',O='cubic-bezier(.2,.7,.2,1)',cols={};
+try{cols=JSON.parse(uv.dataset.uc)}catch(e){}
+var d=0;try{d=+sessionStorage.uvd||0;sessionStorage.removeItem('uvd')}catch(e){}
+H.classList.remove('uvin');
+if(d&&mv){var img=pic.querySelector(':scope>img'),ms=[].slice.call(uv.querySelectorAll('.uv-m')),tx=[].slice.call(uv.querySelectorAll('.uv-t>*'));
+ wipe.style.transformOrigin=d>0?'0 50%':'100% 50%';wipe.animate([{transform:'none'},{transform:'scaleX(0)'}],{duration:540,delay:60,easing:E,fill:'backwards'});
+ if(img)img.animate([{transform:'translateX('+8*d+'%) scale(1.04)'},{transform:'none'}],{duration:760,easing:O,fill:'backwards'});
+ ms.forEach(function(m,i){m.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:420,delay:420+i*70,easing:O,fill:'backwards'})});
+ tx.forEach(function(t,i){t.animate([{opacity:0,transform:'translateX('+40*d+'px)'},{opacity:1,transform:'none'}],{duration:560,delay:160+i*70,easing:O,fill:'backwards'})})}
+var live=[];
+function go(a,dir,slug,e){if(!mv||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();
+ try{sessionStorage.uvd=dir}catch(x){}
+ wipe.style.setProperty('--wc',cols[slug]||'');wipe.style.transformOrigin=dir>0?'100% 50%':'0 50%';
+ live=[wipe.animate([{transform:'scaleX(0)'},{transform:'none'}],{duration:280,easing:E,fill:'forwards'})];
+ [].forEach.call(uv.querySelectorAll('.uv-t>*'),function(t){live.push(t.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateX('+(-24*dir)+'px)'}],{duration:220,easing:'ease-in',fill:'forwards'}))});
+ live[0].onfinish=function(){location.href=a.href}}
+var cur=document.body.dataset.u,ord=[].map.call(document.querySelectorAll('.upills .up-a[data-u]'),function(x){return x.dataset.u});
+document.addEventListener('click',function(e){var a=e.target.closest('a');if(!a)return;
+ if(a.classList.contains('uv-ar')){go(a,a.classList.contains('nx')?1:-1,(a.pathname.split('/').pop()||'').replace('.html',''),e);return}
+ if(a.matches('.upills .up-a[data-u]')&&a.dataset.u!==cur&&a.getAttribute('href').indexOf('units/')>=0){var i=ord.indexOf(cur),j=ord.indexOf(a.dataset.u);if(i>=0&&j>=0)go(a,j>i?1:-1,a.dataset.u,e)}});
+/* 「戻る」でこのページに戻ったとき（ページが保存されていた場合）、覆ったままにしない */
+addEventListener('pageshow',function(e){if(e.persisted){live.forEach(function(x){x.cancel()});live=[];try{sessionStorage.removeItem('uvd')}catch(x){}}})})();
+/* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
 (function(){var d,ctl,api,wait;
 function mark(b){[].forEach.call(document.querySelectorAll('[data-try]'),function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')})}
 function shut(){if(d){try{ctl&&ctl.destroy()}catch(e){}ctl=null;d.parentNode.removeChild(d);d=null;document.documentElement.classList.remove('has-dock');mark(null)}}
@@ -617,7 +646,6 @@ mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
 function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
 cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
-w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
@@ -676,8 +704,8 @@ var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 function shut(){[].forEach.call(document.querySelectorAll('dialog.pop[open]'),function(d){d.close()})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
  if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(!d||!d.showModal)return;if(d.open){d.close();return}shut();
-  if(wide.matches&&!d.classList.contains('mtp'))d.show();else{d.showModal();document.documentElement.classList.add('pop-on')}return}
- var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&(!wide.matches||d2.classList.contains('mtp'))||e.target.closest('.pop-x'))d2.close();return}
+  if(wide.matches){/* 2026-11-16 ボタンの上の空き（上の帯の下まで）に収まる高さにする。収まらない分は中でスクロール */var h=document.querySelector('.hd'),top=h?h.getBoundingClientRect().bottom:0;d.style.maxHeight=Math.max(180,Math.min(420,b.getBoundingClientRect().top-top-20))+'px';d.show()}else{d.showModal();document.documentElement.classList.add('pop-on')}return}
+ var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
 [].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});

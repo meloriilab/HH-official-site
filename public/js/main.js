@@ -1,3 +1,28 @@
+/* ユニットのページの切り替え（2026-11-16 Kさん 案C＋少し凝る）：押した向きから次のユニットの色の面が絵を覆い（0.28秒）、
+   次のページでは面が反対側へ抜けながら、絵・名前の札・文字が同じ向きから順に入る（全体で約0.9秒）。動きを減らす設定では何もしない */
+(function(){var uv=document.querySelector('.uv[data-uc]');if(!uv)return;var H=document.documentElement,pic=uv.querySelector('.uv-pic'),wipe=uv.querySelector('.uv-wipe');
+var mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!uv.animate&&!!wipe,E='cubic-bezier(.7,0,.3,1)',O='cubic-bezier(.2,.7,.2,1)',cols={};
+try{cols=JSON.parse(uv.dataset.uc)}catch(e){}
+var d=0;try{d=+sessionStorage.uvd||0;sessionStorage.removeItem('uvd')}catch(e){}
+H.classList.remove('uvin');
+if(d&&mv){var img=pic.querySelector(':scope>img'),ms=[].slice.call(uv.querySelectorAll('.uv-m')),tx=[].slice.call(uv.querySelectorAll('.uv-t>*'));
+ wipe.style.transformOrigin=d>0?'0 50%':'100% 50%';wipe.animate([{transform:'none'},{transform:'scaleX(0)'}],{duration:540,delay:60,easing:E,fill:'backwards'});
+ if(img)img.animate([{transform:'translateX('+8*d+'%) scale(1.04)'},{transform:'none'}],{duration:760,easing:O,fill:'backwards'});
+ ms.forEach(function(m,i){m.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:420,delay:420+i*70,easing:O,fill:'backwards'})});
+ tx.forEach(function(t,i){t.animate([{opacity:0,transform:'translateX('+40*d+'px)'},{opacity:1,transform:'none'}],{duration:560,delay:160+i*70,easing:O,fill:'backwards'})})}
+var live=[];
+function go(a,dir,slug,e){if(!mv||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();
+ try{sessionStorage.uvd=dir}catch(x){}
+ wipe.style.setProperty('--wc',cols[slug]||'');wipe.style.transformOrigin=dir>0?'100% 50%':'0 50%';
+ live=[wipe.animate([{transform:'scaleX(0)'},{transform:'none'}],{duration:280,easing:E,fill:'forwards'})];
+ [].forEach.call(uv.querySelectorAll('.uv-t>*'),function(t){live.push(t.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateX('+(-24*dir)+'px)'}],{duration:220,easing:'ease-in',fill:'forwards'}))});
+ live[0].onfinish=function(){location.href=a.href}}
+var cur=document.body.dataset.u,ord=[].map.call(document.querySelectorAll('.upills .up-a[data-u]'),function(x){return x.dataset.u});
+document.addEventListener('click',function(e){var a=e.target.closest('a');if(!a)return;
+ if(a.classList.contains('uv-ar')){go(a,a.classList.contains('nx')?1:-1,(a.pathname.split('/').pop()||'').replace('.html',''),e);return}
+ if(a.matches('.upills .up-a[data-u]')&&a.dataset.u!==cur&&a.getAttribute('href').indexOf('units/')>=0){var i=ord.indexOf(cur),j=ord.indexOf(a.dataset.u);if(i>=0&&j>=0)go(a,j>i?1:-1,a.dataset.u,e)}});
+/* 「戻る」でこのページに戻ったとき（ページが保存されていた場合）、覆ったままにしない */
+addEventListener('pageshow',function(e){if(e.persisted){live.forEach(function(x){x.cancel()});live=[];try{sessionStorage.removeItem('uvd')}catch(x){}}})})();
 /* Listen: one press opens the bar at the bottom and starts the song (Spotify's own player API). If that API cannot be loaded, the plain player is shown and the visitor presses play there. */
 (function(){var d,ctl,api,wait;
 function mark(b){[].forEach.call(document.querySelectorAll('[data-try]'),function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')})}
@@ -21,7 +46,6 @@ mv=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!!w.animate;
 function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function draw(m,an){var pk=sh(cs.filter(function(c){return!m||c.dataset.m.split('|').indexOf(m)>=0})).slice(0,5);
 cs.forEach(function(c){c.hidden=pk.indexOf(c)<0});for(var i=pk.length-1;i>=0;i--)w.insertBefore(pk[i],w.firstChild);
-w.classList.toggle('ev',pk.length%2===0);
 ps.forEach(function(p){var on=p.dataset.v===m;p.classList.toggle('on',on);p.setAttribute('aria-pressed',on?'true':'false')});
 if(more)more.href='songs.html'+(m?'?m='+encodeURIComponent(m):'');
 if(an&&mv)pk.forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:420,delay:i*60,easing:'ease-out',fill:'backwards'})})}
@@ -80,8 +104,8 @@ var m=location.hash.match(/^#episode-([a-z-]+)$/);if(m)open(m[1])})();
 function shut(){[].forEach.call(document.querySelectorAll('dialog.pop[open]'),function(d){d.close()})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]');
  if(b){var d=document.getElementById('pop-'+b.dataset.pop);if(!d||!d.showModal)return;if(d.open){d.close();return}shut();
-  if(wide.matches&&!d.classList.contains('mtp'))d.show();else{d.showModal();document.documentElement.classList.add('pop-on')}return}
- var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&(!wide.matches||d2.classList.contains('mtp'))||e.target.closest('.pop-x'))d2.close();return}
+  if(wide.matches){/* 2026-11-16 ボタンの上の空き（上の帯の下まで）に収まる高さにする。収まらない分は中でスクロール */var h=document.querySelector('.hd'),top=h?h.getBoundingClientRect().bottom:0;d.style.maxHeight=Math.max(180,Math.min(420,b.getBoundingClientRect().top-top-20))+'px';d.show()}else{d.showModal();document.documentElement.classList.add('pop-on')}return}
+ var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
 [].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});

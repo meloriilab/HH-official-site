@@ -121,7 +121,9 @@ def face(cid, speed=".0"):
 def rels_of(u): return [r for r in T.RELS if r[1] == u]
 
 # ユニットの絵の中で、各メンバーが立っている位置（左端からの％）。ピルをその人の足もとに置く（Kさんの指示 2026-11-15）
-ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83}
+ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83, "prs01": 29, "prs02": 71}
+
+UCOLS = "{" + ",".join(f'"{T.SLUG[x]}":"{UNIT[x]["c"]}"' for x in UNIT) + "}"   # ユニットの色（切り替えのとき、次のユニットの色の面を出す）
 
 def unit_page(u):
     d, m = UD[u], UNIT[u]
@@ -153,8 +155,8 @@ def unit_page(u):
     about = f'<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>'
     inner = f'''{T.header(PRE, top=False)}
 <main>
-<section class="uv">
-  <div class="uv-pic{" e" if not kv else ""}">{art}<nav class="uv-ms{" at" if kv else ""}" aria-label="メンバー">{pills}</nav><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
+<section class="uv" data-uc='{UCOLS}'><script>try{{if(sessionStorage.uvd)document.documentElement.classList.add('uvin')}}catch(e){{}}</script>
+  <div class="uv-pic{" e" if not kv else ""}" style="--uc:{m["c"]}">{art}<nav class="uv-ms{" at" if kv else ""}" aria-label="メンバー">{pills}</nav><i class="uv-wipe" aria-hidden="true"></i><a class="uv-ar pv" href="{T.uhref(pv, PRE)}" aria-label="前のユニット：{UNIT[pv]["name"]}"></a><a class="uv-ar nx" href="{T.uhref(nx, PRE)}" aria-label="次のユニット：{UNIT[nx]["name"]}"></a></div>
   <div class="uv-t">
     <div class="uv-n">{f'<img class="uv-em" src="{PRE}images/emblem/{no}.webp" alt="">' if kv else ""}<h1>{T.kn(m["name"])}{f"<small>{m[chr(107)+chr(97)+chr(110)+chr(97)]}</small>" if m["kana"] else ""}</h1></div>
     <p class="uh-tag">{esc(d["tagline"])}</p>{catch}
@@ -414,6 +416,8 @@ CSS = """
 /* ユニットページ（1画面。2026-11-15）
    スマホ：上に絵（少し小さく）、下半分に紋章・名前・キャッチ・ボタン。左右のユニット切り替えは、親指の届く一番下の列に About・Songs と並べる */
 .uv{padding:147px 0 28px;display:flex;flex-direction:column}
+/* 2026-11-16 Kさん：スマホでは、キャラのページと同じく上のユニットの札を「Units」ボタンにたたむ。そのぶん上の空きを詰める */
+@media(max-width:699px){.uv{padding-top:84px}}
 .uv-pic{position:relative;height:clamp(230px,38svh,380px);overflow:hidden}
 .uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
@@ -434,6 +438,10 @@ CSS = """
 /* ユニットの切り替え：絵の左右の端（About・Songs と離して、別の操作だとわかるように） */
 .uv-ar{position:absolute;top:calc(50% - 23px);width:44px;height:44px;border:1px solid var(--ink);border-radius:50%;background:rgba(250,250,248,.88);color:var(--ink);transition:background .25s,color .25s}.uv-ar.pv{left:10px}.uv-ar.nx{right:10px}
 .uv-ar:hover{background:var(--ink);color:var(--bg)}
+/* 2026-11-16 Kさん（案C＋少し凝る）：ユニットを切り替えるとき、絵の上を次のユニットの色の面が押した向きから覆い、次のページで反対側へ抜けながら、絵・名前の札・文字が同じ向きから順に入る */
+.uv-wipe{position:absolute;inset:0;background:var(--wc,var(--uc));transform:scaleX(0);pointer-events:none}
+html.uvin .uv-wipe{transform:none;background:var(--uc)}
+html.uvin .uv-t>*{opacity:0}
 .uv-ar::before{content:"";position:absolute;left:13px;top:21px;width:18px;height:1px;background:currentColor}
 .uv-ar::after{content:"";position:absolute;top:18px;width:6px;height:6px;border-top:1px solid currentColor;border-right:1px solid currentColor}
 .uv-ar.nx::after{right:13px;rotate:45deg}.uv-ar.pv::after{left:13px;rotate:-135deg}
@@ -463,6 +471,8 @@ html.pop-on{overflow:hidden}
  .uv h1{font-size:clamp(36px,5vw,72px)}.uv h1 small{font-size:12px;margin-top:10px}
  .uv .uh-tag{margin-top:24px;font-size:14px}.uv .uh-c{font-size:clamp(18px,2.1vw,26px)}
  .uv-bar{margin-top:32px;max-width:420px}
+ /* 2026-11-16 Kさん：タブレットで About が画面の右へ切れていた。ボタンの列と同じ幅にして、文字の欄からはみ出さない */
+ .uv-bar .pop{width:100%}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
