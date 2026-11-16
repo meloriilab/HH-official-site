@@ -39,6 +39,35 @@ UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana,
 CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
+# モチーフの野鳥の中身（2026-11-16。Kさんの監修で決定）。キャラの一言とオスメスはキャラの口調、中の人メモは K さんの文
+B = json.load(open(os.path.join(HERE, "birds.json"), encoding="utf-8"))
+BNAME = {"blc01": "ハシボソガラス"}   # 種名をはっきりさせる（Kさんの回答 2026-11-16：カラス＝ハシボソガラス）
+REG = (("hk", "北海道"), ("hs", "本州・四国"), ("ky", "九州"))
+REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
+def bname(cid): return BNAME.get(cid, CD[cid]["motif"])
+def stars(n):
+    """見つけやすさ：★が多いほど見つけやすい（Kさんの決定 2026-11-16）。3つ並べ、足りない分は薄くする"""
+    return f'<span class="st" role="img" aria-label="見つけやすさ 3段階中{n}">{"★" * n}<i>{"★" * (3 - n)}</i></span>'
+def br(t): return "<br>".join(esc(x) for x in t.split("\n"))
+def months(b):
+    """会える時期：地方ごとに12か月の帯。中身が同じ地方は1行にまとめる（Kさんの回答 v2q2）。地方の補足は帯の右端に置く"""
+    rows = []
+    for k, l in REG:
+        v = (tuple(b[k]["m"]), b[k]["note"])
+        if rows and rows[-1][1] == v: rows[-1][0].append(l)
+        else: rows.append(([l], v))
+    lab = lambda ls: {3: "全国"}.get(len(ls)) or ("本州〜九州" if ls == ["本州・四国", "九州"] else "〜".join([ls[0], ls[-1]]) if len(ls) > 1 else ls[0])
+    def said(ms):
+        if not ms: return "いない"
+        if len(ms) == 12: return "1年中"
+        return "・".join(map(str, ms)) + "月"
+    out = ""
+    for ls, (ms, note) in rows:
+        cells = "".join(f'<i{" class=on" if m in ms else ""}></i>' for m in range(1, 13))
+        out += f'<div class="mo-r"><span class="mo-l">{lab(ls)}</span><span class="mo-c" role="img" aria-label="{lab(ls)}：{said(ms)}">{cells}</span><span class="mo-n">{esc(note)}</span></div>'
+    axis = "".join(f"<b>{m}</b>" for m in range(1, 13))
+    return f'<div class="mo">{out}<div class="mo-r mo-a" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{axis}</span><span class="mo-n">月</span></div></div>'
+
 
 def phrases(line):
     """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
@@ -202,6 +231,25 @@ def guideline_page():
 {T.footer()}'''
     return T.page("ガイドライン | Humming Hearts", "Humming Hearts の二次創作についてのお願いをまとめています。", "", inner, css=("page.css",))
 
+def birds_page():
+    """Birds：鳥が目当てで来た人の入口。マナー → ★の見方 → 14羽の一覧。行を押すと、そのメンバーのページで Motif の小窓が開く（Kさんの了承 2026-11-16）
+    紹介の1行・マナーの文・★の段階の名前は、たたき台（未確定。Kさんの確認待ち）"""
+    lead = "メンバーのモチーフになった野鳥たち。会える季節と場所を、メンバーが案内します"
+    manners = ["近づきすぎない。追いかけない", "巣やヒナには近づかない。撮影もひかえる", "えさをあげない", "田畑や私有地に入らない。めずらしい鳥の場所はSNSに書かない"]
+    levels = [(3, "近所で会える"), (2, "ちょっと探す"), (1, "狙って行く")]
+    rows = "".join(f'<li><a class="bl-i" href="{T.mhref(CH[cid])}#motif"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span>{stars(B[cid]["star"])}</a></li>' for cid in ORDER)
+    inner = f'''{T.header("", top=False)}
+<main>
+<section class="sec bp" id="birds"><h2><span>Birds</span><small>野鳥</small></h2>
+  <p class="bp-l">{lead}</p>
+  <div class="bp-m"><p class="mt-k">観察のマナー</p><ul>{"".join(f"<li>{esc(x)}</li>" for x in manners)}</ul></div>
+  <dl class="bp-k"><dt>見つけやすさ</dt>{"".join(f"<dd>{stars(n)}<span>{t}</span></dd>" for n, t in levels)}</dl>
+  <ul class="bl">{rows}</ul>
+</section>
+</main>
+{T.footer()}'''
+    return T.page("Birds | Humming Hearts", "Humming Hearts のメンバーのモチーフになった野鳥の、会える季節・場所・見つけやすさ。", "", inner, css=("page.css",))
+
 def char_page(cid):
     d, c = CD[cid], CH[cid]
     u = cid[:3]; m = UNIT[u]
@@ -251,8 +299,17 @@ def char_page(cid):
     # モチーフは重ねて開く小さな画面（背景に鳥の絵、上に文）。同じユニットのメンバーは小さな丸い顔で詰めて並べる（Kさんの指示 2026-11-15）
     mm = "".join(f'<a class="mm-i" href="{T.mhref(CH[x.lower()], PRE)}"><img src="{PRE}images/face/{T.fid(CH[x.lower()])}.webp" alt=""><span>{T.name(CH[x.lower()])}</span></a>' for x in UD[u]["members"] if x.lower() != cid)
     bimg = f'<img class="mtp-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="">' if bird else ""
-    motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(d["motif"])}">{bimg}<div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
-             f'<div class="pop-b"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></dialog>')
+    b = B[cid]
+    sec = lambda k, t: f'<div class="mt-s"><p class="mt-k">{k}</p><p>{t}</p></div>' if t else ""
+    motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(bname(cid))}"><div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
+             f'<div class="pop-b"><div class="mt-hd">{bimg}<h3 class="mt">{esc(bname(cid))}<small>{esc(b["en"])}</small></h3>'
+             f'<dl class="mt-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div>'
+             f'<div><dt>場所</dt><dd>{esc(b["place"])}</dd></div><div><dt>見つけやすさ</dt><dd>{stars(b["star"])}</dd></div></dl></div>'
+             f'<p class="mt-k">会える時期</p>{months(b)}'
+             f'<div class="mt-v"><img src="{PRE}images/face/{T.fid(c)}.webp" alt=""><div><p class="mt-w">{T.name(c)}</p><p>{br(b["line"])}</p></div></div>'
+             f'{sec("オスとメス", br(b["sex"]))}{sec("Tips", br(b["tips"]))}{sec("豆知識", br(b["trivia"]))}'
+             f'{f"""<div class="mt-s mt-memo"><p class="mt-k">中の人メモ</p><p>{br(b["memo"])}</p></div>""" if b["memo"] else ""}'
+             f'<p class="row mt-go"><a class="btn" href="{PRE}birds.html">Birds</a></p></div></dialog>')
     extra = (f'<div class="pop-w ch-x"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{{M}}</div>'
              f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>')
     prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{extra.replace("{M}", motif)}</div>'
@@ -356,13 +413,51 @@ html.pop-on{overflow:hidden}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
-.mtp{overflow:hidden}
-.mtp-b{position:absolute;z-index:0;right:-2%;bottom:-4%;height:96%;width:auto;max-width:70%;object-fit:contain;opacity:.42;pointer-events:none}
-.mtp .pop-h,.mtp .pop-b{position:relative;z-index:1}
-.mtp .pop-h{border-bottom-color:transparent}
-.mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
-.mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
-.mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
+.mtp{overflow:hidden;max-height:82svh}
+.mtp .pop-h{border-bottom-color:var(--line)}
+.mtp .pop-b{padding-bottom:28px}
+.mt-hd{position:relative;min-height:128px}
+.mtp-b{position:absolute;z-index:0;right:-8px;top:-6px;height:132px;width:auto;max-width:62%;object-fit:contain;opacity:.42;pointer-events:none}
+.mt-hd .mt,.mt-g{position:relative;z-index:1}
+.mtp .mt{margin:0 0 12px;font-size:22px;gap:10px}.mtp .mt small{font-size:13px}
+.mtp .mt,.mt-g dd{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg)}
+/* 短い項目どうしを横に2つ並べて、縦を詰める（Kさんの了承 2026-11-16） */
+.mt-g{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;border-top:1px solid var(--ink);padding-top:12px}
+.mt-g div{min-width:0}.mt-g dt{font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}.mt-g dd{margin:2px 0 0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
+.st{letter-spacing:.12em;white-space:nowrap}.st i{font-style:normal;color:var(--line)}
+.mtp .mt-k,.bp .mt-k{margin:22px 0 8px;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}
+/* 会える時期：地方ごとに12か月の帯。いる月だけ塗る。補足は右端 */
+.mo{display:grid;gap:5px}
+.mo-r{display:grid;grid-template-columns:62px minmax(0,1fr) 56px;align-items:center;column-gap:8px}
+.mo-l{font:500 11px/1.3 var(--jp);letter-spacing:.02em}
+.mo-c{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.mo-c i{height:14px;background:var(--faint);border-radius:2px}.mo-c i.on{background:var(--ink)}
+.mo-n{font:400 10px/1.3 var(--jp);color:var(--sub)}
+.mo-a .mo-c b{font:500 9px/1 var(--en);text-align:center;color:var(--sub)}.mo-a .mo-n{font-size:9px}
+/* キャラの一言：丸い顔＋本人の口調 */
+.mt-v{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.mt-v img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.mtp .mt-v p{margin:0;font:400 14px/1.9 var(--jp);letter-spacing:.04em}.mtp .mt-v .mt-w{font:500 12px/1.6 var(--min);color:var(--sub)}.mt-w rt{font-size:7px}
+.mtp .mt-s p:not(.mt-k){margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
+/* 中の人メモ：キャラの声とまざらないように、薄い面で分ける */
+.mt-memo{margin-top:22px;padding:2px 14px 12px;background:var(--faint)}.mtp .mt-memo .mt-k{margin-top:10px}
+.mt-go{margin-top:24px}.mt-go .btn{min-width:168px}
+/* 小窓が長くなったので、どの幅でも画面の真ん中に重ねて開く（2026-11-16） */
+@media(min-width:700px){.mtp{position:fixed;inset:0;margin:auto;width:min(520px,calc(100vw - 48px));height:fit-content;max-height:min(86svh,780px)}.mt-hd{min-height:150px}.mtp-b{height:156px}.mo-r{grid-template-columns:72px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:16px}.mo-n{font-size:11px}.mtp .mt-s p:not(.mt-k){font-size:14px}}
+/* Birds ページ：マナー → ★の見方 → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
+.bp{padding-bottom:32px}
+.bp-l{margin:0 0 32px;max-width:40em;font-size:15px;line-height:2.1}
+.bp-m{max-width:40em;padding:4px 20px 18px;border:1px solid var(--ink)}.bp .bp-m .mt-k{margin:14px 0 6px}
+.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
+.bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
+.bp-k{margin:28px 0 20px;display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 28px;font-size:13px}
+.bp-k dt{grid-column:1/-1;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}.bp-k dd{margin:0;display:flex;flex-direction:column;gap:2px}.bp-k .st{font-size:15px}
+.bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
+.bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.bl-t b{display:block;font:500 17px/1.4 var(--min);letter-spacing:.06em}.bl-t small{display:block;margin-top:2px;font:400 12px/1.5 var(--jp);color:var(--sub)}.bl-t rt{font-size:7px}
+.bl .st{font-size:15px}
+@media(min-width:900px){.bp-l{font-size:16px}.bl{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.bl-i{grid-template-columns:56px minmax(0,1fr) auto}.bl-i img{width:56px;height:56px}}
 .ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
@@ -520,6 +615,7 @@ def main():
     out += [(f"members/{T.MSLUG[c]}.html", char_page(c)) for c in ORDER]
     out.append(("songs.html", songs_page()))
     out.append(("guideline.html", guideline_page()))
+    out.append(("birds.html", birds_page()))
     out.append(("css/page.css", CSS.lstrip("\n")))
     for path, text in out:
         full = os.path.join(T.ROOT, path)

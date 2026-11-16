@@ -73,13 +73,51 @@ html.pop-on{overflow:hidden}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
-.mtp{overflow:hidden}
-.mtp-b{position:absolute;z-index:0;right:-2%;bottom:-4%;height:96%;width:auto;max-width:70%;object-fit:contain;opacity:.42;pointer-events:none}
-.mtp .pop-h,.mtp .pop-b{position:relative;z-index:1}
-.mtp .pop-h{border-bottom-color:transparent}
-.mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
-.mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
-.mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
+.mtp{overflow:hidden;max-height:82svh}
+.mtp .pop-h{border-bottom-color:var(--line)}
+.mtp .pop-b{padding-bottom:28px}
+.mt-hd{position:relative;min-height:128px}
+.mtp-b{position:absolute;z-index:0;right:-8px;top:-6px;height:132px;width:auto;max-width:62%;object-fit:contain;opacity:.42;pointer-events:none}
+.mt-hd .mt,.mt-g{position:relative;z-index:1}
+.mtp .mt{margin:0 0 12px;font-size:22px;gap:10px}.mtp .mt small{font-size:13px}
+.mtp .mt,.mt-g dd{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg)}
+/* 短い項目どうしを横に2つ並べて、縦を詰める（Kさんの了承 2026-11-16） */
+.mt-g{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;border-top:1px solid var(--ink);padding-top:12px}
+.mt-g div{min-width:0}.mt-g dt{font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}.mt-g dd{margin:2px 0 0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
+.st{letter-spacing:.12em;white-space:nowrap}.st i{font-style:normal;color:var(--line)}
+.mtp .mt-k,.bp .mt-k{margin:22px 0 8px;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}
+/* 会える時期：地方ごとに12か月の帯。いる月だけ塗る。補足は右端 */
+.mo{display:grid;gap:5px}
+.mo-r{display:grid;grid-template-columns:62px minmax(0,1fr) 56px;align-items:center;column-gap:8px}
+.mo-l{font:500 11px/1.3 var(--jp);letter-spacing:.02em}
+.mo-c{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.mo-c i{height:14px;background:var(--faint);border-radius:2px}.mo-c i.on{background:var(--ink)}
+.mo-n{font:400 10px/1.3 var(--jp);color:var(--sub)}
+.mo-a .mo-c b{font:500 9px/1 var(--en);text-align:center;color:var(--sub)}.mo-a .mo-n{font-size:9px}
+/* キャラの一言：丸い顔＋本人の口調 */
+.mt-v{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.mt-v img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.mtp .mt-v p{margin:0;font:400 14px/1.9 var(--jp);letter-spacing:.04em}.mtp .mt-v .mt-w{font:500 12px/1.6 var(--min);color:var(--sub)}.mt-w rt{font-size:7px}
+.mtp .mt-s p:not(.mt-k){margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
+/* 中の人メモ：キャラの声とまざらないように、薄い面で分ける */
+.mt-memo{margin-top:22px;padding:2px 14px 12px;background:var(--faint)}.mtp .mt-memo .mt-k{margin-top:10px}
+.mt-go{margin-top:24px}.mt-go .btn{min-width:168px}
+/* 小窓が長くなったので、どの幅でも画面の真ん中に重ねて開く（2026-11-16） */
+@media(min-width:700px){.mtp{position:fixed;inset:0;margin:auto;width:min(520px,calc(100vw - 48px));height:fit-content;max-height:min(86svh,780px)}.mt-hd{min-height:150px}.mtp-b{height:156px}.mo-r{grid-template-columns:72px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:16px}.mo-n{font-size:11px}.mtp .mt-s p:not(.mt-k){font-size:14px}}
+/* Birds ページ：マナー → ★の見方 → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
+.bp{padding-bottom:32px}
+.bp-l{margin:0 0 32px;max-width:40em;font-size:15px;line-height:2.1}
+.bp-m{max-width:40em;padding:4px 20px 18px;border:1px solid var(--ink)}.bp .bp-m .mt-k{margin:14px 0 6px}
+.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
+.bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
+.bp-k{margin:28px 0 20px;display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 28px;font-size:13px}
+.bp-k dt{grid-column:1/-1;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}.bp-k dd{margin:0;display:flex;flex-direction:column;gap:2px}.bp-k .st{font-size:15px}
+.bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
+.bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.bl-t b{display:block;font:500 17px/1.4 var(--min);letter-spacing:.06em}.bl-t small{display:block;margin-top:2px;font:400 12px/1.5 var(--jp);color:var(--sub)}.bl-t rt{font-size:7px}
+.bl .st{font-size:15px}
+@media(min-width:900px){.bp-l{font-size:16px}.bl{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.bl-i{grid-template-columns:56px minmax(0,1fr) auto}.bl-i img{width:56px;height:56px}}
 .ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
