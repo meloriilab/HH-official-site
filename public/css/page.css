@@ -21,6 +21,8 @@
 /* ユニットページ（1画面。2026-11-15）
    スマホ：上に絵（少し小さく）、下半分に紋章・名前・キャッチ・ボタン。左右のユニット切り替えは、親指の届く一番下の列に About・Songs と並べる */
 .uv{padding:147px 0 28px;display:flex;flex-direction:column}
+/* 2026-11-16 Kさん：スマホでは、キャラのページと同じく上のユニットの札を「Units」ボタンにたたむ。そのぶん上の空きを詰める */
+@media(max-width:699px){.uv{padding-top:84px}}
 .uv-pic{position:relative;height:clamp(230px,38svh,380px);overflow:hidden}
 .uv-pic>img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
 .uv-pic.e{background:var(--faint)}.uv-pic.e>img{object-fit:contain;padding:28px 0 64px}
@@ -70,6 +72,8 @@ html.pop-on{overflow:hidden}
  .uv h1{font-size:clamp(36px,5vw,72px)}.uv h1 small{font-size:12px;margin-top:10px}
  .uv .uh-tag{margin-top:24px;font-size:14px}.uv .uh-c{font-size:clamp(18px,2.1vw,26px)}
  .uv-bar{margin-top:32px;max-width:420px}
+ /* 2026-11-16 Kさん：タブレットで About が画面の右へ切れていた。ボタンの列と同じ幅にして、文字の欄からはみ出さない */
+ .uv-bar .pop{width:100%}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
