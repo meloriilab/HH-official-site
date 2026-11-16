@@ -488,8 +488,11 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .cp-b .bv-b .bv-k{margin:0 0 2px;font-size:11px;line-height:1.6;color:var(--sub)}
 /* データ：左に 区分・地域（上段2マス）といる場所（下段）、右に見つけやすさ。マスの境に細い線を引いて、どこからどこまでが1項目か分かるように（Kさんの指示 2026-11-16） */
 .cp-b .bf{display:grid;grid-template-columns:minmax(0,1fr) 104px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
-.bf-g{margin:0;display:grid;grid-template-columns:1fr 1fr;border-right:1px solid var(--line)}
-.bf-g>div{padding:11px 12px 12px 0}.bf-g>div:nth-child(2){padding-left:14px;border-left:1px solid var(--line)}
+/* 縦の線は上下の線に付けず、少し離す（Kさんの指示 2026-11-16） */
+.bf-g{position:relative;margin:0;display:grid;grid-template-columns:1fr 1fr}
+.bf-g::after,.bf-g>div:nth-child(2)::before{content:"";position:absolute;top:10px;bottom:10px;width:1px;background:var(--line)}
+.bf-g::after{right:0}
+.bf-g>div{padding:11px 12px 12px 0}.bf-g>div:nth-child(2){position:relative;padding-left:14px}.bf-g>div:nth-child(2)::before{left:0}
 .bf-g .w{grid-column:1/-1;border-top:1px solid var(--line)}
 .cp-b .bf-g dt,.cp-b .bf-k,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
 .cp-b .bf-g dd{margin:3px 0 0;font:500 16px/1.5 var(--jp);letter-spacing:.04em}
