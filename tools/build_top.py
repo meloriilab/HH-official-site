@@ -96,6 +96,9 @@ def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG
 # ───────── エピソード（曲ごとのメンバーのチャット。文と写真は旧サイトのものをそのまま使う） ─────────
 # 中身は tools/episodes.json。ここに番号を足した曲だけ、曲の下に入口「Episode」が出る
 import json as _json, os as _os
+_PD = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pages_data.json"), encoding="utf-8"))
+BIRDNAME = {c["id"].lower(): c["motif"] for c in _PD["chars"]}
+REAL_BIRD = ("01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3")   # 本物の絵がある鳥（仮の絵は TOP に出さない）
 EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
 EP_ON = ["001", "002", "003"]
 # スマホの帯で顔が真ん中に来る位置（挿絵ごと。上から何％のところを見せるか）
@@ -175,10 +178,10 @@ def header(pre="", top=True):
     upills="".join(pill(u,n) for no,u,code,n,*_ in UNITS if u in PAGES)   # ページがあるユニットだけ（Kさんの回答 2026-11-14）
     return f'''
 <div class="prog" aria-hidden="true"><i></i></div>
-<header class="hd"><a class="logo" href="{home}"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939"></a><nav class="upills" id="upills" aria-label="ユニット">{upills}</nav><button class="uf" type="button" aria-expanded="false" aria-controls="upills">Units</button><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
-<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
+<header class="hd"><a class="logo" href="{home}"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939"></a><nav class="upills" id="upills" aria-label="ユニット">{upills}</nav><button class="uf" type="button" aria-expanded="false" aria-controls="upills">Units</button><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{pre}birds.html">Birds</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
+<div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{pre}birds.html">Birds<small>野鳥</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer(pre=""):
-    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="ft-l"><a href="{pre}guideline.html">Guideline</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="ft-l"><a href="{pre}birds.html">Birds</a><a href="{pre}guideline.html">Guideline</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
 # 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
 import hashlib as _hl, glob as _gl
 VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]
@@ -206,6 +209,7 @@ def spot(cls, url=None):
     url = SPOT if url is None else url
     return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
+BIRD_COPY = "メンバーそれぞれに、モチーフの野鳥がいます"   # たたき台（未確定。Kさんの確認待ち）
 def body():
     # Mood：ジャケットを5曲ならべ、気分の言葉で選び直せる（Kさんの指示 2026-11-14「リリースとmoodが合体した感じ」）。5曲の選び方と並び順は、開くたびに画面側で変える
     mcards="".join(f'''
@@ -226,6 +230,8 @@ def body():
         tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
     mem="".join(face(c) for c in CHARS)
+    # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
+    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{BIRDNAME[c[1]]}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
@@ -256,6 +262,7 @@ def body():
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
+<section class="sec bd-s" id="birds"><h2><span>Birds</span><small>野鳥</small></h2><p class="bd-c">{BIRD_COPY}</p><div class="bd-g">{birds}</div><p class="row more"><a class="btn" href="birds.html">View More</a></p></section>
 <section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
 <p class="ab-c">もし、野鳥がアイドルになったら…<br>森での雑談から生まれたソナヴィアンたち<br>歌も、彼ら自身も、元になった野鳥も<br>まるごと楽しもう！</p>
 <dl class="ab-l">
@@ -527,6 +534,15 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
 @media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
 .mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}
+/* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
+.bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
+.bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.bd-i:nth-child(n+5){display:none}
+.bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
+.bd-p{display:block;width:100%;aspect-ratio:1}.bd-p img{width:100%;height:100%;object-fit:contain}
+.bd-n{margin-top:6px;font:500 11px/1.4 var(--min);letter-spacing:.02em;word-break:break-all}
+.ft-l a+a{margin-left:28px}
+.bd-s .more{margin-top:28px}
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:64px;height:64px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
@@ -566,6 +582,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  /* 2026-11-16 Kさん（案C）：絵の欄を6割に広げ、絵は切らずに丸ごと見せる（顔が欄の外へはみ出さない）。スクロールでずらす動きは、絵が欄から欠けるので止める */
  .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-txt{padding:120px 60px 60px var(--gx);align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
@@ -691,7 +708,12 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
-[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})})})();
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});
+})();
+
+/* TOP の Birds：開くたびに鳥を並べ替える（先頭の4羽だけ見える） */
+(function(){var g=document.querySelector('.bd-g');if(!g)return;var a=[].slice.call(g.children);
+for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}a.forEach(function(x){g.appendChild(x)})})();
 
 /* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
 (function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;

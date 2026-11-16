@@ -39,6 +39,55 @@ UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana,
 CH = {c[1]: c for c in T.CHARS}
 esc = html.escape
 
+# モチーフの野鳥の中身（2026-11-16。Kさんの監修で決定）。キャラの一言とオスメスはキャラの口調、中の人メモは K さんの文
+B = json.load(open(os.path.join(HERE, "birds.json"), encoding="utf-8"))
+BNAME = {}   # 和名はスタッフツールのモチーフ欄から取り込む（tools/sync_birds.py。2026-11-16 Kさんが「ハシボソガラス」に直した）
+REG = (("hk", "北海道"), ("hs", "本州・四国"), ("ky", "九州"))
+REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
+def bname(cid): return BNAME.get(cid, CD[cid]["motif"])
+LV = {3: "近所で会える", 2: "ちょっと探す", 1: "狙って行く"}   # ★の段階の名前（仮。未確定）
+def lum(h):
+    f = lambda v: v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    return .2126 * f(r) + .7152 * f(g) + .0722 * f(b)
+def scol(cid):
+    """★の色：キャラのメインカラー（Kさんの指示 2026-11-16）。白地で見えにくい明るい色には、細いふちを付ける"""
+    h = CD[cid]["colors"]["main"]
+    return h, (" lt" if 1.05 / (lum(h) + .05) < 2.5 else "")
+def stars(n, cid):
+    """見つけやすさ：四つ角の星（Kさんが選択 2026-11-16）が多いほど見つけやすい。足りない分は薄い灰色"""
+    h, lt = scol(cid)
+    return f'<span class="st{lt}" style="--sc:{h}" role="img" aria-label="見つけやすさ 3段階中{n}"><b>{"✦" * n}</b><i>{"✦" * (3 - n)}</i></span>'
+def br(t): return "<br>".join(esc(x) for x in t.split("\n"))
+def months(b):
+    """会える時期：地方ごとに12か月の帯。中身が同じ地方は1行にまとめる（Kさんの回答 v2q2）。地方の補足は帯の右端に置く"""
+    rows = []
+    for k, l in REG:
+        v = (tuple(b[k]["m"]), b[k]["note"])
+        if rows and rows[-1][1] == v: rows[-1][0].append(l)
+        else: rows.append(([l], v))
+    lab = lambda ls: {3: "全国"}.get(len(ls)) or ("本州〜九州" if ls == ["本州・四国", "九州"] else "〜".join([ls[0], ls[-1]]) if len(ls) > 1 else ls[0])
+    def said(ms):
+        if not ms: return "いない"
+        if len(ms) == 12: return "1年中"
+        return "・".join(map(str, ms)) + "月"
+    out = ""
+    for ls, (ms, note) in rows:
+        cells = "".join(f'<i data-m="{m}"{" class=on" if m in ms else ""}></i>' for m in range(1, 13))
+        out += f'<div class="mo-r"><span class="mo-l">{lab(ls)}</span><span class="mo-c" role="img" aria-label="{lab(ls)}：{said(ms)}">{cells}</span><span class="mo-n">{esc(note)}</span></div>'
+    # カレンダーだと一目で分かるよう、帯の上に季節と月の数字を置く（Kさんの指示 2026-11-16：春3〜5月・夏6〜8月・秋9〜11月・冬12〜2月）
+    se = "".join(f'<b class="s{k}" style="grid-column:{a}/{z}">{t}</b>' for k, a, z, t in ((1, 1, 3, "冬"), (2, 3, 6, "春"), (3, 6, 9, "夏"), (4, 9, 12, "秋"), (1, 12, 13, "冬")))
+    axis = "".join(f'<b data-m="{m}">{m}</b>' for m in range(1, 13))
+    head = (f'<div class="mo-r mo-se" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{se}</span><span class="mo-n"></span></div>'
+            f'<div class="mo-r mo-a" aria-hidden="true"><span class="mo-l"></span><span class="mo-c">{axis}</span><span class="mo-n">月</span></div>')
+    return f'<div class="mo">{head}{out}</div>'
+
+
+# More Birds ボタンに止まる鳥：絵の番号 → (下げる量％, 右へずらすpx)。Kさんが鳥ごとに指定（2026-11-16。枝・足・翼・尾羽が枠線に重なる位置）
+# ORYBIA（05-x）は鳥の絵がまだ仮なので出さない
+PERCH = {"02-2": (27, 0), "02-1": (25, 0), "01-1": (16, 0), "01-3": (14, 0), "03-1": (30, 16), "03-2": (15, 0),
+         "04-2": (20, 12), "01-2": (25, 0), "04-1": (14, 0), "04-3": (8, 0)}
+TALL = {"02-2", "03-1"}   # 縦長の絵（フクロウ・サンコウチョウ）は少し大きく
 
 def phrases(line):
     """キャッチコピーを文節で区切る。スマホではKさんの改行を使わず、区切り目（「、」の後と、助詞の後ろに漢字・カタカナが続くところ）でだけ折り返す。2026-11-15"""
@@ -204,6 +253,36 @@ def guideline_page():
 {T.footer()}'''
     return T.page("ガイドライン | Humming Hearts", "Humming Hearts の二次創作についてのお願いをまとめています。", "", inner, css=("page.css",))
 
+def birds_page():
+    """Birds：鳥が目当てで来た人の入口。マナー → 見つけやすさで絞り込み → 14羽の一覧。行を押すと、そのメンバーのページが鳥の側で開く（Kさんの了承 2026-11-16）
+    紹介の1行・マナーの文・★の段階の名前は、たたき台（未確定。Kさんの確認待ち）"""
+    lead = "メンバーのモチーフになった野鳥たち。会える季節と場所を、メンバーが案内します"
+    manners = ["近づきすぎない。追いかけない", "巣やヒナには近づかない。撮影もひかえる", "えさをあげない", "田畑や私有地に入らない。めずらしい鳥の場所はSNSに書かない"]
+    rows = "".join(f'<li data-s="{B[cid]["star"]}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(B[cid]["star"], cid)}<small>{LV[B[cid]["star"]]}</small></span></a></li>' for cid in ORDER)
+    # 絞り込み：すべて＋3段階。札は4つとも同じ幅（Moodの札と同じ形）。星は黒（どのメンバーの色でもないため）
+    chips = '<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>' + "".join(
+        f'<button class="md" type="button" data-v="{n}" aria-pressed="false" aria-label="{t}"><span class="st">{"✦" * n}</span></button>' for n, t in sorted(LV.items(), reverse=True))
+    legend = "".join(f'<span><b class="st">{"✦" * n}</b>{t}</span>' for n, t in sorted(LV.items(), reverse=True))
+    inner = f'''{T.header("", top=False)}
+<main>
+<section class="sec bp" id="birds"><h2><span>Birds</span><small>野鳥</small></h2>
+  <p class="bp-l">{lead}</p>
+  <div class="bp-m"><p class="bp-k">観察のマナー</p><ul>{"".join(f"<li>{esc(x)}</li>" for x in manners)}</ul></div>
+  <p class="bp-k bp-kk">見つけやすさで選ぶ</p>
+  <div class="bp-f" role="group" aria-label="見つけやすさで選ぶ">{chips}</div>
+  <p class="bp-lg">{legend}</p>
+  <ul class="bl">{rows}</ul>
+</section>
+</main>
+{T.footer()}<script>{BFJS}</script>'''
+    return T.page("Birds | Humming Hearts", "Humming Hearts のメンバーのモチーフになった野鳥の、会える季節・場所・見つけやすさ。", "", inner, css=("page.css",))
+
+# Birds の絞り込み：押した段階の鳥だけ残す。もう一度押すか「すべて」で全部に戻る
+BFJS = """(function(){var bs=[].slice.call(document.querySelectorAll('.bp-f .md')),li=[].slice.call(document.querySelectorAll('.bl li'));
+bs.forEach(function(b){b.addEventListener('click',function(){var v=b.classList.contains('on')&&b.dataset.v?'':b.dataset.v;
+ bs.forEach(function(x){var on=x.dataset.v===v;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on?'true':'false')});
+ li.forEach(function(l){l.hidden=!!v&&l.dataset.s!==v})})})})();"""
+
 def char_page(cid):
     d, c = CD[cid], CH[cid]
     u = cid[:3]; m = UNIT[u]
@@ -252,12 +331,31 @@ def char_page(cid):
     # PC では、プロフィールを最初の画面の右側にまとめて出す（スマホは下の Profile の段のまま）
     # モチーフは重ねて開く小さな画面（背景に鳥の絵、上に文）。同じユニットのメンバーは小さな丸い顔で詰めて並べる（Kさんの指示 2026-11-15）
     mm = "".join(f'<a class="mm-i" href="{T.mhref(CH[x.lower()], PRE)}"><img src="{PRE}images/face/{T.fid(CH[x.lower()])}.webp" alt=""><span>{T.name(CH[x.lower()])}</span></a>' for x in UD[u]["members"] if x.lower() != cid)
-    bimg = f'<img class="mtp-b{tall}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="">' if bird else ""
-    motif = (f'<dialog class="pop mtp" id="pop-motif" aria-label="モチーフ：{esc(d["motif"])}">{bimg}<div class="pop-h"><b>Motif</b><button class="pop-x" type="button" aria-label="閉じる"></button></div>'
-             f'<div class="pop-b"><h3 class="mt">{esc(d["motif"])}<small>{esc(d["motifEn"])}</small></h3><p>{esc(d["trivia"])}</p></div></dialog>')
-    extra = (f'<div class="pop-w ch-x"><p class="row"><button class="btn" type="button" data-pop="motif">Motif</button></p>{{M}}</div>'
-             f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>')
-    prof = f'<div class="ch-p"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{extra.replace("{M}", motif)}</div>'
+    # 鳥の側（Kさんの指示 2026-11-16：小窓をやめ、「Character／Motif Bird」の切り替えでページの中身ごと入れ替える。
+    # キャラがその鳥を紹介する形。データは吹き出しの間に置き、豆知識・中の人メモはキャラの声と分けて下にまとめる）
+    # More Birds のボタンの上に、その人の鳥を止まらせる（Kさんの指示 2026-11-16。もとは Motif ボタン用の案B）
+    pk = PERCH.get(T.aid(c))
+    perch = f'<img class="mf-b{" tall" if T.aid(c) in TALL else ""}" src="{PRE}images/bird/{T.aid(c)}.webp" alt="" style="--d:{pk[0]}%;--x:{pk[1]}px">' if pk else ""
+    b = B[cid]; fc = f'<img class="bv-f" src="{PRE}images/face/{T.fid(c)}.webp" alt="">'
+    # 紹介とデータ・会える時期は出したまま、その先は押すと開く（Kさんの指示 2026-11-16：情報を垂れ流さない。Note は見たい人だけ）
+    # 中の人メモだけ押すと開く（Kさんの指示 2026-11-16：見たい人だけ見ればいい。ほかは出したまま）
+    note = lambda en, jp, t: f'<div class="bx"><p class="bx-k">{en}<small>{jp}</small></p><div class="bx-in"><p>{t}</p></div></div>' if t else ""
+    memo = f'<details class="bx memo"><summary><span class="bx-k">Note<small>中の人メモ</small></span></summary><div class="bx-in"><p>{br(b["memo"])}</p></div></details>' if b["memo"] else ""
+    birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
+             f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
+             f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いそうな場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
+             f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(b["star"], cid)}<p class="bf-l">{LV[b["star"]]}</p></div></div>'
+             f'<div class="bm"><p class="bm-h"><span>会える時期</span><span class="bm-now">今月も会える</span></p>{months(b)}</div>'
+             f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
+             f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{memo}</div>'
+             f'<div class="bd-go{" mf" if perch else ""}"><p class="row"><a class="btn" href="{PRE}birds.html">More Birds</a></p>{perch}</div></div>')
+    # 切り替え（名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
+    tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><i class="ch-ind" aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
+            '<button type="button" role="tab" aria-selected="false" data-v="b">Motif Bird</button></div>'
+            "<script>if(location.hash==='#bird')document.documentElement.classList.add('bird')</script>")
+    bart = f'<span class="ch-bd"><img src="{PRE}images/bird/{T.aid(c)}.webp" alt="{esc(bname(cid))}"><span class="vq bq"><span class="col">{esc(bname(cid))}</span></span><span class="ch-ben">{esc(b["en"])}</span></span>'
+    mmx = f'<div class="ch-mm"><p class="lbl">Member</p><div class="mm">{mm}</div></div>'
+    prof = f'<div class="ch-p"><div class="cp-c"><p>{esc(d["bio"])}</p><dl class="pf">{dl}</dl>{mmx}</div>{birdx}</div>'
     # そのメンバーが歌っている曲（＝ユニットの曲）。ページのいちばん最後に、小さいジャケットの1行ずつの一覧で出す
     # （Kさんの指示 2026-11-14：キャラのページは縦に長くしない。曲は今後増えるので小さくまとめる。ほかのページのカードの並べ方は使い回さない）
     songs = "".join(f'''
@@ -268,15 +366,27 @@ def char_page(cid):
     inner = f'''{T.header(PRE, top=False)}
 <main>
 <section class="fv ch" style="--cm:{col["main"]};--cs:{col["sub"]};--ca:{col["accent"]}">
-  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}<i class="bg-deco"></i></div>
-  <div class="ch-t">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p>{prof}</div>
+  <div class="ch-art"><i class="bg-main"></i><i class="bg-dia"></i><i class="bg-line"></i><button class="ch-sw" type="button" aria-label="立ち絵の見え方を切り替える（アップ・全身）" aria-pressed="false"><i></i><i></i></button><p class="vq" aria-label="{esc(" ".join(d["tagline"].split()))}">{quote}</p><span class="ch-img"><img src="{PRE}images/chara/{T.aid(c)}.webp" alt="{c[2]}{c[3]}" data-speed=".05"></span>{tags_a}{bart}<i class="bg-deco"></i></div>
+  <div class="ch-t">{tabs}<div class="ch-in">{nav}<p class="ch-u"><a href="{T.uhref(u, PRE)}"><img src="{PRE}images/emblem/{m["no"]}.webp" alt="">{T.kn(m["name"])}</a></p><h1>{T.name(c)}</h1><p class="ch-r">{esc(d["roma"].title())}</p></div>{prof}</div>
   <p class="hint ch-hint" aria-hidden="true">Scroll</p>
 </section>
-<section class="sec" id="profile">{h2("Profile", "プロフィール", 1, 1 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl>{extra.replace("{M}", motif.replace('id="pop-motif"', 'id="pop-motif-sp"')).replace('data-pop="motif"', 'data-pop="motif-sp"')}</section>
+<section class="sec" id="profile"><div class="cp-c">{h2("Profile", "プロフィール", 1, 1 + k)}<div class="prose"><p>{esc(d["bio"])}</p></div><dl class="pf">{dl}</dl>{mmx}</div><div class="cp-bw">{h2("Motif Bird", esc(bname(cid)), 1, 1)}{birdx}</div></section>
 {songs_sec}
 </main>
-{T.footer(PRE)}<script>{SWJS}</script><script>{RDY}</script>'''
+{T.footer(PRE)}<script>{SWJS}</script><script>{TABJS}</script><script>{RDY}</script>'''
     return T.page(f'{c[2]}{c[3]} | Humming Hearts', esc(d["bio"]), PRE, inner, css=("page.css",), attrs=f' data-u="{T.SLUG[u]}" data-ch', share=f'{c[2]}{c[3]}（{m["name"]}） | Humming Hearts')   # 共有の文面のたたき台（Kさんの確認待ち）
+
+# キャラ／鳥の切り替え。#bird で鳥の側を開いた状態にする（Birds ページ・TOP から来たとき）。会える時期の帯に今月の印を付ける
+TABJS = """(function(){var h=document.documentElement,bs=[].slice.call(document.querySelectorAll('.ch-tab button'));
+var t=document.querySelector('.ch-tab'),ind=t&&t.querySelector('.ch-ind');
+if(ind)ind.addEventListener('transitionend',function(e){if(e.target===ind)t.classList.remove('mv')});
+function set(b){if(t&&b!==h.classList.contains('bird')&&!matchMedia('(prefers-reduced-motion:reduce)').matches)t.classList.add('mv');h.classList.toggle('bird',b);bs.forEach(function(x){x.setAttribute('aria-selected',(x.dataset.v==='b')===b?'true':'false')});
+ history.replaceState(null,'',location.pathname+location.search+(b?'#bird':''));
+ /* 鳥の側を見ているときは、前後のメンバーへの矢印も鳥の側を開く（鳥を続けて見比べられるように） */
+ [].forEach.call(document.querySelectorAll('.ch-nv a'),function(a){a.href=a.href.split('#')[0]+(b?'#bird':'')})}
+bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.v==='b')})});set(h.classList.contains('bird'));
+var m=new Date().getMonth()+1;[].forEach.call(document.querySelectorAll('[data-m="'+m+'"]'),function(i){i.classList.add('now')});
+[].forEach.call(document.querySelectorAll('.bm'),function(b){if(b.querySelector('i.on.now'))b.classList.add('now')})})();"""
 
 # 立ち絵の切り替え（アップ ⇄ 全身）。いったん左へ消えて、右から入り直す
 SWJS = """(function(){var b=document.querySelector('.ch-sw'),w=document.querySelector('.ch-img');if(!b||!w)return;
@@ -366,13 +476,103 @@ html.pop-on{overflow:hidden}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
-.mtp{overflow:hidden}
-.mtp-b{position:absolute;z-index:0;right:-2%;bottom:-4%;height:96%;width:auto;max-width:70%;object-fit:contain;opacity:.42;pointer-events:none}
-.mtp .pop-h,.mtp .pop-b{position:relative;z-index:1}
-.mtp .pop-h{border-bottom-color:transparent}
-.mtp .mt{margin:0 0 8px;font-size:20px;gap:10px}.mtp .mt small{font-size:12px}
-.mtp .pop-b p{margin:0;font:400 13px/1.95 var(--jp);letter-spacing:.04em}
-.mtp .mt,.mtp .pop-b p,.mtp .pop-h b{text-shadow:0 0 3px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),0 0 14px var(--bg)}
+/* キャラ／鳥の切り替え（2026-11-16。名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下。2つとも同じ幅 */
+.ch-tab{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:0 0 26px;background:var(--faint);border-radius:99px}
+.ch-tab button{appearance:none;position:relative;z-index:1;border:0;margin:0;background:none;color:var(--sub);height:46px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:color .3s}
+.ch-tab button:hover{color:var(--ink)}
+/* 選んでいる側：黒い札と、下向きの小さな三角（この下の中身が切り替わったことを示す。Kさんの参考画像 2026-11-16） */
+/* 黒い札は1枚だけで、押した側へ滑って移る。止まってから三角が下に出る（Kさんの指示 2026-11-16） */
+.ch-tab button[aria-selected=true]{color:var(--bg)}
+.ch-ind{position:absolute;left:0;top:0;width:50%;height:100%;border-radius:99px;background:var(--ink);transition:translate .38s cubic-bezier(.65,0,.35,1)}
+html.bird .ch-ind{translate:100% 0}
+.ch-ind::after{content:"";position:absolute;left:50%;bottom:-7px;translate:-50% 0;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink);transition:opacity .2s,translate .2s}
+.ch-tab.mv .ch-ind::after{opacity:0;translate:-50% -6px;transition:none}
+@media(prefers-reduced-motion:reduce){.ch-ind,.ch-tab button{transition:none}}
+/* PC は名前の下（切り替わるのはそこから下なので。Kさんの指示 2026-11-16）。スマホは絵のすぐ下のまま */
+@media(min-width:900px){.ch-t{display:flex;flex-direction:column}.ch-in{order:1}.ch-tab{order:2;margin:26px 0 0}.ch-p{order:3}}
+.ch-in{position:relative}.ch-in .ch-nv{right:0;top:0}
+.cp-b,.cp-bw,.ch-bd{display:none}
+html.bird .cp-c{display:none}html.bird .cp-b,html.bird .cp-bw{display:block}
+/* 鳥の側の絵：立ち絵の代わりに鳥。メンバーの色を薄く敷き、鳥の足もとに丸い面を置いて浮いて見えないようにする。鳥の名前はセリフと同じ縦の帯で */
+html.bird .ch-img,html.bird .ch-art>.vq,html.bird .tags-a,html.bird .ch-sw{display:none}
+html.bird .bg-main,html.bird .bg-dia{opacity:0}html.bird .bg-line{z-index:3}
+.ch-bd{position:absolute;inset:0;z-index:2;background:color-mix(in oklab,var(--cm) 14%,var(--bg))}
+html.bird .ch-bd{display:block;animation:pFade .35s ease both}
+.ch-bd::before{content:"";position:absolute;left:52%;top:52%;width:min(82%,540px);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:var(--cm);opacity:.16}
+.ch-bd>img{position:absolute;left:10%;top:18%;width:84%;height:64%;object-fit:contain}
+.ch-ben{position:absolute;left:26px;bottom:52px;font:italic 500 18px/1 var(--en);letter-spacing:.02em;color:color-mix(in oklab,var(--cm) 60%,#141414)}
+/* 鳥の紹介：キャラが話す吹き出し → データ → 会える時期 → 見分け方の吹き出し → 豆知識・中の人メモ（声と分ける） */
+.cp-b{max-width:640px}
+.cp-b .bv{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:start}
+.cp-b .bv+*{margin-top:20px}.cp-b *+.bv{margin-top:24px}
+/* 顔：四角い絵を丸く切り抜く。枠は付けない（Kさんの指示 2026-11-16：枠がうるさく、キャラが見えにくい） */
+.bv-f{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--faint)}
+.cp-b .bv-b{padding:13px 18px 14px;background:color-mix(in oklab,var(--cm) 11%,var(--bg));border-radius:4px 18px 18px 18px}
+.cp-b .bv-b p{margin:0;font:400 14px/1.9 var(--jp);letter-spacing:.04em}
+.cp-b .bv-b .bv-k{margin:0 0 2px;font-size:11px;line-height:1.6;color:var(--sub)}
+/* データ：左に 区分・地域（上段2マス）といる場所（下段）、右に見つけやすさ。マスの境に細い線を引いて、どこからどこまでが1項目か分かるように（Kさんの指示 2026-11-16） */
+.cp-b .bf{display:grid;grid-template-columns:minmax(0,1fr) 104px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+/* 縦の線は上下の線に付けず、少し離す（Kさんの指示 2026-11-16） */
+.bf-g{position:relative;margin:0;display:grid;grid-template-columns:1fr 1fr}
+.bf-g::after,.bf-g>div:nth-child(2)::before{content:"";position:absolute;top:10px;bottom:10px;width:1px;background:var(--line)}
+.bf-g::after{right:0}
+.bf-g>div{padding:11px 12px 12px 0}.bf-g>div:nth-child(2){position:relative;padding-left:14px}.bf-g>div:nth-child(2)::before{left:0}
+.bf-g .w{grid-column:1/-1;border-top:1px solid var(--line)}
+.cp-b .bf-g dt,.cp-b .bf-k,.cp-b .bm-h{margin:0;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.cp-b .bf-g dd{margin:3px 0 0;font:500 14px/1.6 var(--jp);letter-spacing:.04em}
+.bf-s{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 0 12px 8px;text-align:center}
+.bf-s .st{display:block;font-size:24px;line-height:1;letter-spacing:4px}.cp-b .bf-l{margin:0;font:500 12px/1.4 var(--jp)}
+.cp-b .bm{margin-top:16px}.cp-b .bm-h{margin-bottom:8px;display:flex;justify-content:space-between}
+.bm-now{display:none;color:color-mix(in oklab,var(--cm) 60%,#141414);font-weight:500}.bm-now::before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:1px}
+.bm.now .bm-now{display:inline}
+/* 会える時期：地方ごとに12か月の帯。いる月をメンバーの色で塗り、今月に印。補足は右端 */
+.mo{display:grid;gap:5px}
+.mo-r{display:grid;grid-template-columns:62px minmax(0,1fr) 56px;align-items:center;column-gap:8px}
+.mo-l{font:500 11px/1.3 var(--jp);letter-spacing:.02em}
+.mo-c{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.mo-c i{height:16px;background:var(--faint);border-radius:3px}.mo-c i.on{background:var(--cm)}.cp-b.lt .mo-c i.on{box-shadow:inset 0 0 0 1px rgba(20,20,20,.4)}
+.mo-c i.now{outline:1.5px solid var(--ink);outline-offset:1px}
+.mo-n{font:400 10px/1.3 var(--jp);color:var(--sub)}
+.mo-se .mo-c b{padding-bottom:3px;border-bottom:1px solid var(--line);font:500 11px/1.2 var(--jp);text-align:center;color:var(--sub)}
+.mo-a{margin-bottom:1px}.mo-a .mo-c b{font:500 14px/1 var(--en);font-variant-numeric:lining-nums;text-align:center;color:var(--sub)}.mo-a .mo-c b.now{color:var(--ink);font-weight:700}.mo-a .mo-n{font-size:10px}
+/* 押すと開く欄：見出しの行だけ並べ、右の＋が開くと−になる。中の人メモだけ灰色の面で、キャラの声と分ける */
+.cp-b .bxs{margin-top:28px;border-bottom:1px solid var(--line)}
+.cp-b .bx{border-top:1px solid var(--line)}
+.cp-b div.bx .bx-k{display:block;margin:16px 0 8px}
+.cp-b .bx summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;cursor:pointer}
+.cp-b .bx summary::-webkit-details-marker{display:none}
+.cp-b .bx summary::after{content:"";flex:none;width:12px;height:12px;background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 12px no-repeat;transition:rotate .25s}
+.cp-b .bx[open] summary::after{background:linear-gradient(var(--ink),var(--ink)) center/12px 1.5px no-repeat;rotate:180deg}
+.cp-b .bx summary:hover .bx-k{color:var(--sub)}
+.cp-b .bx-k{font:italic 500 18px/1 var(--en)}.bx-k small{margin-left:10px;font:400 11px var(--jp);font-style:normal;color:var(--sub)}
+.cp-b .bx-in{padding:0 0 18px;animation:pFade .3s ease both}
+.cp-b .bx-in>p{margin:0;font:400 14px/1.95 var(--jp);letter-spacing:.04em}
+.cp-b .bx.memo .bx-in{margin-bottom:16px;padding:14px 16px 16px;background:var(--faint)}
+@media(prefers-reduced-motion:reduce){.cp-b .bx-in{animation:none}.cp-b .bx summary::after{transition:none}}
+.cp-b .bd-go{position:relative;margin-top:32px;width:fit-content}.bd-go .row{margin:0}.bd-go .btn{min-width:180px}
+.bd-go.mf{padding-top:40px}.bd-go.mf:has(.tall){padding-top:60px}
+.mf-b{position:absolute;right:14px;top:40px;height:52px;width:auto;max-width:84px;object-fit:contain;pointer-events:none;transform:translate(var(--x),calc(var(--d) - 100%));z-index:1}
+.mf-b.tall{height:70px;top:60px}
+/* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
+@media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
+@media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
+/* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
+.st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#E2E2DE}.st.lt b{-webkit-text-stroke:.9px rgba(20,20,20,.6)}
+/* Birds ページ：マナー → 見つけやすさで選ぶ → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
+.bp{padding-bottom:32px}
+.bp-l{margin:0 0 32px;max-width:40em;font-size:15px;line-height:2.1}
+.bp-m{max-width:40em;padding:4px 20px 18px;border:1px solid var(--ink)}
+.bp .bp-k{margin:14px 0 6px;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}.bp .bp-kk{margin:32px 0 10px}
+.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
+.bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
+.bp-f{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:520px}.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
+.bp-lg{margin:12px 0 20px;display:flex;flex-wrap:wrap;gap:4px 20px;font-size:12px;color:var(--sub)}.bp-lg b{margin-right:8px;font-weight:400;color:var(--ink)}
+.bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
+.bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
+.bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.bl-t b{display:block;font:500 17px/1.4 var(--min);letter-spacing:.06em}.bl-t small{display:block;margin-top:2px;font:400 12px/1.5 var(--jp);color:var(--sub)}.bl-t rt{font-size:7px}
+.bl-s{display:flex;flex-direction:column;align-items:flex-end;gap:2px}.bl-s .st{font-size:17px}.bl-s small{font-size:10px;color:var(--sub)}
+@media(min-width:900px){.bp-l{font-size:16px}.bl{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.bl-i{grid-template-columns:56px minmax(0,1fr) auto}.bl-i img{width:56px;height:56px}}
 .ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}
@@ -499,7 +699,7 @@ html.pop-on{overflow:hidden}
  .ch-art{height:760px}.bg-dia{width:580px;top:-40px;right:-238px}.bg-line{width:24px}.bg-deco{height:42px}
  .ch-img img{height:165%;margin:40px 0 0 8%}.ch-em{left:14px;top:14px;width:84px;height:84px}.ch-sw{right:40px;top:16px}.ch-img.full img{margin:0 0 42px}.tags{font-size:16px;margin-top:32px;padding-top:26px}
  .vq{left:64px;top:16%;gap:11px}.vq .col{font-size:19px;letter-spacing:.14em;line-height:1.7;padding:18px 10px}.vq .col.low{margin-top:74px}
- .ch-t{box-sizing:border-box;padding:0 32px 0 72px;max-width:684px}.ch h1{font-size:54px}.ch-nv{right:32px;top:10px}.ch-u{font-size:22px;margin-bottom:14px}.ch-u img{width:72px;height:72px;margin-left:-6px}
+ .ch-t{box-sizing:border-box;padding:0 32px 0 72px;max-width:684px}.ch-in .ch-nv{top:10px}.ch h1{font-size:54px}.ch-nv{right:32px;top:10px}.ch-u{font-size:22px;margin-bottom:14px}.ch-u img{width:72px;height:72px;margin-left:-6px}
  .ch-p{display:block;margin-top:26px}.ch-p p{margin:0;font-size:15px;line-height:2}
  .ch-p .pf{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;column-gap:32px}.ch-p .pf div{grid-template-columns:84px 1fr;gap:8px;padding:6px 0}.ch-p .pf dd{font-size:14px;line-height:1.9}
  @media(max-width:1099px){.ch-t{padding-left:44px}.ch h1{font-size:46px}.ch-p .pf{column-gap:20px}.ch-p .pf div{grid-template-columns:76px 1fr}}
@@ -530,6 +730,7 @@ def main():
     out += [(f"members/{T.MSLUG[c]}.html", char_page(c)) for c in ORDER]
     out.append(("songs.html", songs_page()))
     out.append(("guideline.html", guideline_page()))
+    out.append(("birds.html", birds_page()))
     out.append(("css/page.css", CSS.lstrip("\n")))
     for path, text in out:
         full = os.path.join(T.ROOT, path)

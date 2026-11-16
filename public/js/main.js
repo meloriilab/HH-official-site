@@ -108,7 +108,12 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-pop]
  var d2=e.target.closest('dialog.pop');if(d2){if(e.target===d2&&!wide.matches||e.target.closest('.pop-x'))d2.close();return}
  shut()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')shut()});
-[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})})})();
+[].forEach.call(document.querySelectorAll('dialog.pop'),function(d){d.addEventListener('close',function(){document.documentElement.classList.remove('pop-on')})});
+})();
+
+/* TOP の Birds：開くたびに鳥を並べ替える（先頭の4羽だけ見える） */
+(function(){var g=document.querySelector('.bd-g');if(!g)return;var a=[].slice.call(g.children);
+for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}a.forEach(function(x){g.appendChild(x)})})();
 
 /* Share: 上の帯の Share。スマホは端末の共有の画面を開く。使えない端末（PCなど）では、すぐ下に X と Copy を出す。送る一言は各ページの <meta name="share"> */
 (function(){var b=document.querySelector('.sh');if(!b)return;var pop=null;
