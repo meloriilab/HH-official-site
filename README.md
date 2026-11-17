@@ -6,7 +6,8 @@
 - `tools/build_top.py` … トップページを組み立てる道具。曲・ユニット・メンバー・お知らせ・リンクは、このファイルの「中身」の欄を書きかえて `python3 tools/build_top.py` を実行する
 - `tools/build_pages.py` … ユニットとメンバーの個別ページ（`public/units/`・`public/members/`）を組み立てる道具。文章は `tools/pages_data.json`（旧サイトの文章そのまま）。`build_top.py` の中身を変えたときは、こちらも実行する（上の帯や並びが共通のため）。個別ページを出すユニットは `build_top.py` の `PAGES`、メンバーは `MSLUG` に書く
 - `public/images/` … 画像。`chara`（立ち絵）・`face`（丸い顔）・`emblem`（ユニットの紋章）・`kv`（ユニットの絵）・`jacket`（ジャケット）。ファイル名はユニット番号で付け、制作用の記号（TRT など）は使わない
-- `public/data/content.json` … 以前のトップページが使っていた中身。いまのトップページでは使っていない（ユニット・キャラクターのページを作るときに整理する）
+- `tools/sync_staff.py` … スタッフツールから、野鳥のテキスト・鳥の和名・年齢・身長・誕生日・趣味・好きなもの・苦手なもの・#タグを取り込む（`tools/birds.json`・`tools/pages_data.json` を書きかえる）。Kさんがスタッフツールで直したら、これを実行してから上の2つを実行する。食い違ったときはスタッフツールが正しい（2026-11-17 Kさん）。色は取り込まない
+- 外のサイトへのリンクは、組み立ての道具が自動で新しいタブで開く形にする（2026-11-17 Kさん）
 - `public/rule-the-darkness.html` … ミニゲーム
 - `wrangler.jsonc` … Cloudflare に置くための設定（`main` に入れると自動で公開）
 

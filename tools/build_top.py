@@ -119,7 +119,7 @@ def ep_btn(n, pre=""):
     ut = "#141414" if _lum(uc) > .6 else "#fff"
     line = first["t"].replace("\n", " ")
     return (f'<p class="ep-in" style="--uc:{uc};--ut:{ut}"><button type="button" data-ep="{ESLUG[n]}" aria-label="{t} のエピソードを開く">'
-            f'<img src="{pre}images/face/{fid(c)}.webp" alt=""><span class="ep-l">Episode</span><span class="ep-t">{ep_wrap(line)}</span><span class="ep-a" aria-hidden="true">›</span></button></p>')
+            f'<img src="{pre}images/face/{fid(c)}.webp" alt=""><span class="ep-l">Episode</span><span class="ep-t">{line}</span><span class="ep-a" aria-hidden="true">›</span></button></p>')
 def ep_wrap(t):
     """台詞の改行はKさんの改行どおり。1行が吹き出しに収まらないときは、文節の切れ目（「、」の後、助詞の後）でだけ折る（2026-11-15）"""
     def ph(line):
@@ -405,7 +405,7 @@ h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:
 .sec{position:relative;padding-top:88px;overflow:clip}   /* 2026-11-15 ユニット・キャラのページに合わせて、区切りの空きと見出しを小さく */
 h2{margin:0 0 24px;display:flex;align-items:baseline;gap:14px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:14px}
 h2 span{font:500 44px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px var(--min);letter-spacing:.06em;color:var(--sub)}
-.rels{display:grid;grid-template-columns:1fr 1fr;gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
+.rels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 18px;padding-bottom:96px}   /* room below: the cards drift on scroll and the section clips */
 .rel:nth-child(even){margin-top:64px}
 /* top page: the newest song is shown large, the other four small = what is new reads first */
 .rels.lead{padding-bottom:72px}.rels.lead .rel:first-child{grid-column:1/-1;margin-bottom:16px}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:64px}.rels.lead .rel:first-child h3{font-size:24px}
@@ -413,12 +413,12 @@ h2 span{font:500 44px/1 var(--en);letter-spacing:-.01em}h2 small{font:500 12px v
 .rel h3{margin:12px 0 0;font:500 17px/1.4 var(--min);letter-spacing:.04em}.by{margin:0;font:italic 500 15px var(--en);color:var(--sub)}
 /* song links: a small joined row of boxes, same language as the big buttons; the first one (MV) is filled = the thing to press first */
 /* episode: entry under a song (round faces of the members who talk + label) */
-.ep-in{margin:10px 0 0}
-.ep-in button{appearance:none;position:relative;display:block;box-sizing:border-box;width:100%;max-width:340px;margin:0;padding:10px 34px 10px 46px;border:1px solid var(--uc);border-radius:16px 16px 16px 4px;background:var(--uc);color:var(--ut);cursor:pointer;text-align:left;font:400 13px/1.6 var(--jp);letter-spacing:.02em;transition:background .25s}
-.ep-in img{position:absolute;left:10px;top:10px;width:26px;height:26px;border-radius:50%;object-fit:cover}
-.ep-l{display:block;margin-bottom:2px;font:italic 500 14px/1.2 var(--en);letter-spacing:.06em;opacity:.82}
-.ep-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ep-a{position:absolute;right:13px;bottom:9px;font:400 17px/1 var(--jp);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.ep-in{margin:10px 0 0;min-width:0}   /* 1行のせりふの長さで、曲の欄が広がらないように（2026-11-17 A-1） */
+.ep-in button{appearance:none;position:relative;display:block;box-sizing:border-box;width:100%;max-width:340px;margin:0;padding:9px 14px 10px;border:1px solid var(--uc);border-radius:16px 16px 16px 4px;background:var(--uc);color:var(--ut);cursor:pointer;text-align:left;font:400 13px/1.6 var(--jp);letter-spacing:.02em;transition:background .25s}
+.ep-in img{position:absolute;left:12px;top:9px;width:22px;height:22px;border-radius:50%;object-fit:cover}
+.ep-l{display:block;margin-bottom:3px;padding:0 20px 0 30px;font:italic 500 14px/22px var(--en);letter-spacing:.06em;opacity:.82}
+.ep-t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* 2026-11-17 Kさん（A-3）：入口のせりふは折り返さず、収まらない分は「…」にする。せりふに幅を残すため、顔・Episode・「›」を1段目にまとめ、せりふは2段目に幅いっぱい */
+.ep-a{position:absolute;right:13px;top:12px;font:400 17px/1 var(--jp);transition:transform .25s cubic-bezier(.16,1,.3,1)}
 .ep-in button:hover,.ep-in button:active{background:color-mix(in srgb,var(--uc) 82%,#000)}.ep-in button:hover .ep-a,.ep-in button:active .ep-a{transform:translateX(4px)}
 .ep-in button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.ep-in button,.ep-a{transition:none}}
@@ -533,6 +533,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .f-em{position:absolute;height:80%;left:50%;top:10%;margin-left:-40%;width:80%;object-fit:contain}
 /* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
 @media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
+@media(max-width:359px){.f-name{font-size:38px}}   /* 2026-11-17 幅320pxでは「NocturnalFizz」が1語で画面からはみ出していた */
 .mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}
 /* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
 .bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
@@ -573,7 +574,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hx{left:var(--gx);top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-c{font-size:17px}.ab-l{margin-top:56px}.ab-l div{display:grid;grid-template-columns:220px 1fr;align-items:baseline;padding:24px 0}.ab-l dt{font-size:17px}.ab-l dd{margin:0;font-size:14px;max-width:40em}
- .rels{grid-template-columns:repeat(4,1fr);gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
+ .rels{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
  .hint{display:block;left:auto;right:var(--gx)}
@@ -581,7 +582,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .flag{grid-template-rows:none;grid-template-columns:minmax(0,4fr) minmax(0,6fr)}
  /* 2026-11-16 Kさん（案C）：絵の欄を6割に広げ、絵は切らずに丸ごと見せる（顔が欄の外へはみ出さない）。スクロールでずらす動きは、絵が欄から欠けるので止める */
  .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
- .f-txt{padding:120px 60px 60px var(--gx);align-self:center}.f-name{font-size:60px}.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
+ .f-txt{padding:120px 48px 60px min(var(--gx),8vw);align-self:center}.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
@@ -589,7 +591,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 }
 /* narrow PC and tablets held sideways (900 to 1139px): same layout, with the menu button instead of the word links */
 /* 文字の欄が4割になるので、幅の狭いPC・横向きタブレットではユニット名を少し小さく */
-@media(min-width:900px) and (max-width:1279px){.f-name{font-size:46px}}
+@media(min-width:900px) and (max-width:1279px){.f-name{font-size:clamp(34px,3.6vw,46px)}.f-mark{width:48px;height:48px}.f-hd{gap:14px}}
 @media(min-width:900px) and (max-width:1139px){
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
  .trio{left:0;margin-left:0;width:88%}
@@ -654,15 +656,16 @@ ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,tr
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
+/* 押したときの動き（Units のたたみ・タッチでのユニットの札）は、動きを減らす設定の人にも必要なので、下の動きの仕掛けとは分けておく（2026-11-17 A-4） */
+(function(){var f=document.querySelector('.uf');if(f)f.addEventListener('click',function(){f.setAttribute('aria-expanded',document.body.classList.toggle('uo')?'true':'false')})})();
+(function(){if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
 document.documentElement.classList.add('js');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
-(function(){var f=document.querySelector('.uf');if(f)f.addEventListener('click',function(){f.setAttribute('aria-expanded',document.body.classList.toggle('uo')?'true':'false')})})();
 var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
-if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});
 function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
@@ -731,9 +734,13 @@ b.addEventListener('click',function(e){e.stopPropagation();var m=document.queryS
 addEventListener('click',shut);addEventListener('keydown',function(e){if(e.key==='Escape')shut()});addEventListener('resize',shut)})();
 """
 
+def ext_links(t):
+    """外のサイトへのリンクは新しいタブで開く（2026-11-17 Kさんの回答 Q5：すべて新しいタブ）。サイトの中のリンクはそのまま"""
+    return re.sub(r'<a (?![^>]*\btarget=)([^>]*?\bhref="https?://)', r'<a target="_blank" rel="noopener" \1', t)
+
 def main():
     html = page("Humming Hearts OFFICIAL SITE", DESC, "", body())
-    for path, text in (("index.html", html), ("css/style.css", CSS.lstrip("\n")), ("js/main.js", JS + "\n")):
+    for path, text in (("index.html", ext_links(html)), ("css/style.css", CSS.lstrip("\n")), ("js/main.js", JS + "\n")):
         with open(os.path.join(ROOT, path), "w", encoding="utf-8") as f: f.write(text)
         print("ok", path)
 

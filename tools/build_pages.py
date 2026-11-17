@@ -18,21 +18,8 @@ UD = {u["id"].lower(): u for u in D["units"]}
 CD = {c["id"].lower(): c for c in D["chars"]}
 PRE = "../"
 
-# キャラ性を表すタグ（管理サイトの「サイト用タグ」から、2026-11-15 に取り込み）。無い人は「未確定」で、タグの段を出さない
-TAGS = {"trt01": ["ストイックなカワセミ", "釣った命は美味しくいただく", "21:00就寝、05:00起床"],
-        "trt02": ["ムードメーカーなメジロ", "ファンレター募集中！！", "初恋がまだ来ません"],
-        "trt03": ["風まかせな旅ツバメ", "いいや違うべったら派", "温泉ソムリエです"],
-        "nct01": ["孤高のハヤブサ", "ブラコン（本人は否定）", "兄さんの恋人募集中"],
-        "nct02": ["みんなのお兄ちゃんフクロウ", "カカオ中毒", "私服はちょいダサ"],
-        "prs01": ["自然派のサンコウチョウ", "古民家暮らし", "トリートメントは使ってません"],
-        "prs02": ["陽キャなワカケホンセイインコ", "人類皆兄弟！", "巷で評判のチャラ兄"],
-        "blc01": ["カリスマカラス", "意外と常識人", "こだわりのバスローブ"],
-        "blc02": ["面倒見のいいカササギ", "隼瞳さんとツーリング希望", "セインはジム友"],
-        "blc03": ["天才肌なカケス", "省エネ主義", "積みゲー消化中"],
-        "orb01": ["エスコート上手なベニマシコ", "アイドルに憧れて", "僕はみんなのもの"],
-        "orb02": ["元気っ子なキクイタダキ", "基本的に見切り発車", "日曜の夕方は笑点一択"],
-        "orb03": ["しっかり者のルリビタキ", "モーニングルーティーンがある", "どう考えても僕が兄"],
-        "orb04": ["大ざっぱなジョウビタキ", "弟の小言はスルー", "そうだ、亀飼おう！"]}
+# キャラ性を表すタグ（スタッフツールの「サイト用タグ」を tools/sync_staff.py で pages_data.json に取り込む。2026-11-17）。無い人はタグの段を出さない
+TAGS = {k: c["tags"] for k, c in CD.items() if c.get("tags")}
 
 
 UNIT = {u: dict(no=no, name=n, kana=kana, tag=tg, c=c) for no, u, code, n, kana, tg, c, cnt in T.UNITS}
@@ -41,9 +28,9 @@ esc = html.escape
 
 # モチーフの野鳥の中身（2026-11-16。Kさんの監修で決定）。キャラの一言とオスメスはキャラの口調、中の人メモは K さんの文
 B = json.load(open(os.path.join(HERE, "birds.json"), encoding="utf-8"))
-BNAME = {}   # 和名はスタッフツールのモチーフ欄から取り込む（tools/sync_birds.py。2026-11-16 Kさんが「ハシボソガラス」に直した）
+BNAME = {}   # 和名はスタッフツールのモチーフ欄から取り込む（tools/sync_staff.py。2026-11-16 Kさんが「ハシボソガラス」に直した）
 REG = (("hk", "北海道"), ("hs", "本州・四国"), ("ky", "九州"))
-REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3", "05-1", "05-2", "05-3", "05-4"}   # 本物の絵がある鳥（make_bird_placeholders.py と同じ）
+REAL_BIRD = {"01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3", "05-1", "05-2", "05-3", "05-4"}   # 本物の絵がある鳥
 def bname(cid): return BNAME.get(cid, CD[cid]["motif"])
 LV = {3: "よく見る", 2: "ちょい探す", 1: "珍しい"}   # ★の段階の名前（Kさんが決定 2026-11-16）
 # 決まった地域でしか会えない鳥は、地域しだいで見つけやすさが変わるので★2にそろえ、名前も分ける（Kさんの指示 2026-11-16）
@@ -149,13 +136,13 @@ def unit_page(u):
     order = [o for o in UNIT if o in T.PAGES]
     i = order.index(u)
     pv, nx = order[i - 1], order[(i + 1) % len(order)]
-    def pill(cid):
+    def pill(cid, mid=False):
         c = CH[cid]; col = c[6]
         x = f";--x:{ART_X[cid]}%" if kv and cid in ART_X else ""
-        return f'<a class="uv-m" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}{x}">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
+        return f'<a class="uv-m{" mid" if mid else ""}" href="{T.mhref(c, PRE)}" style="--mc:{col};--mt:{"#141414" if T._lum(col) > .6 else "#fff"}{x}">{c[2]}{c[3]}<i aria-hidden="true"></i></a>'
     ids = [i2.lower() for i2 in d["members"]]
     if kv: ids.sort(key=lambda x: ART_X.get(x, 0))   # 絵の左から順に並べる（読み上げの順も、見た目の順と同じにする）
-    pills = "".join(pill(x) for x in ids)
+    pills = "".join(pill(x, kv and len(ids) == 3 and j == 1) for j, x in enumerate(ids))   # 3人のユニットは、左から2人目（真ん中）の札を1段上げる
     art = (f'<img src="{PRE}images/unit/{no}.webp" alt="{m["name"]}">' if kv else f'<img class="em" src="{PRE}images/emblem/{no}.webp" alt="">')
     songs = f'<a class="btn" href="{PRE}songs.html?u={T.SLUG[u]}">Songs</a>' if rels_of(u) else ""
     about = f'<dialog class="pop" id="pop-about" aria-label="{m["name"]} について"><div class="pop-h"><b>About</b><button class="pop-x" type="button" aria-label="閉じる"></button></div><div class="pop-b prose">{intro}</div></dialog>'
@@ -198,7 +185,7 @@ def songs_page():
 </section>
 </main>
 {T.footer()}<script>{SGJS}</script>'''
-    return T.page("楽曲 | Humming Hearts", "Humming Hearts の楽曲一覧。気分とユニットで選べます。", pre, inner, css=("page.css",))
+    return T.page("Songs | Humming Hearts", "Humming Hearts の楽曲一覧。気分とユニットで選べます。", pre, inner, css=("page.css",))
 
 SGJS = """(function(){var ps=[].slice.call(document.querySelectorAll('.sg .md')),cs=[].slice.call(document.querySelectorAll('.sgs .rel')),ss=[].slice.call(document.querySelectorAll('.sg .dd')),st={m:'',u:''};
 function ok(c,m,u){return(!m||c.dataset.m.split('|').indexOf(m)>=0)&&(!u||c.dataset.u===u)}
@@ -225,7 +212,6 @@ if(st.m&&st.u&&!cs.some(function(c){return ok(c,st.m,st.u)}))st.u='';
 draw()})();"""
 
 # 開いた直後にも帯が伸びる動きを見せるため、最初の1コマを描いてから「準備できた」の印を付ける
-# 【お試し】タグの形の案を見比べるための切り替え（アドレスの最後に ?tag=1 / 2 / 4）。形が決まったら消す
 RDY = "requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('rdy')})})"
 ORDER = [c[1] for c in T.CHARS if c[1] in T.MSLUG]   # 前へ・次への並び
 
@@ -261,7 +247,7 @@ def guideline_page():
 
 def birds_page():
     """Birds：鳥が目当てで来た人の入口。マナー → 見つけやすさで絞り込み → 14羽の一覧。行を押すと、そのメンバーのページが鳥の側で開く（Kさんの了承 2026-11-16）
-    紹介の1行・マナーの文・★の段階の名前は、たたき台（未確定。Kさんの確認待ち）"""
+    マナーの文・★の段階の名前はKさんが決定（2026-11-16）。紹介の1行と地域限定の段階名は、たたき台（未確定）"""
     lead = "メンバーのモチーフになった野鳥たち。会える季節と場所を、メンバーが案内します"
     manners = ["近づきすぎない。追いかけない", "巣やヒナには近づかない。撮影もひかえる", "えさをあげない", "田畑や私有地に入らない。めずらしい鳥の場所はSNSに書かない"]
     rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
@@ -355,7 +341,7 @@ def char_page(cid):
              f'<div class="bv">{fc}<div class="bv-b"><p class="bv-k">オスとメスの見分け方</p><p>{br(b["sex"])}</p></div></div>'
              f'<div class="bxs">{note("Tips", "見分けのヒント", br(b["tips"]))}{note("Trivia", "豆知識", br(b["trivia"]))}{memo}</div>'
              f'<div class="bd-go{" mf" if perch else ""}"><p class="row"><a class="btn" href="{PRE}birds.html">More Birds</a></p>{perch}</div></div>')
-    # 切り替え（名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
+    # 切り替え（名前「Character／Motif Bird」はKさんが決定 2026-11-16）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下（Kさんが選択 2026-11-16）
     tabs = ('<div class="ch-tab" role="tablist" aria-label="表示の切り替え"><i class="ch-ind" aria-hidden="true"></i><button type="button" role="tab" aria-selected="true" data-v="c">Character</button>'
             '<button type="button" role="tab" aria-selected="false" data-v="b">Motif Bird</button></div>'
             "<script>if(location.hash==='#bird')document.documentElement.classList.add('bird')</script>")
@@ -417,7 +403,7 @@ CSS = """
  .dd-b{display:flex;align-items:center;gap:6px;padding:0 26px 0 12px;font-size:13px;background-position:right 17px center,right 12px center}.dd-b i{flex:none;font:italic 500 15px/1 var(--en);letter-spacing:.02em;opacity:.6}.dd-b span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .sgs{padding-bottom:0;row-gap:0}.sgs .rel{padding-bottom:40px}   /* 2026-11-15 曲どうしの縦の間は、各曲の下の余白で取る（並びの間隔で取ると、曲の中の段ごとにも同じ間隔が入って、タグの上下が空きすぎていた） */.sgs .rel{margin-top:0!important}.sgs .rel[hidden]{display:none}
 /* 2026-11-15: 隣の曲と、曲名・札・ボタンの高さをそろえる（曲名が2行になってもボタンがずれない）。札とボタンの間は少し広げて、丸い札（選ぶもの）と四角いボタン（開くもの）を別のかたまりに見せる */
-.sgs .rel{display:grid;grid-template-rows:subgrid;grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
+.sgs .rel{display:grid;grid-template-rows:subgrid;grid-template-columns:minmax(0,1fr);grid-row:span 6;row-gap:0;align-content:start}.sgs .rel .lk{margin-top:18px}
 
 /* ユニットページ（1画面。2026-11-15）
    スマホ：上に絵（少し小さく）、下半分に紋章・名前・キャッチ・ボタン。左右のユニット切り替えは、親指の届く一番下の列に About・Songs と並べる */
@@ -430,8 +416,9 @@ CSS = """
 .uv-ms{position:absolute;left:var(--gx);right:var(--gx);bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
 .uv-m{min-height:32px;padding:0 11px 0 14px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--mc);color:var(--mt);font:500 13px/1 var(--jp);letter-spacing:.06em;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18);transition:opacity .25s}
 .uv-m:hover{opacity:.8}
-.uv-ms.at{left:0;right:0}.uv-ms.at .uv-m{position:absolute;bottom:0;left:var(--x);translate:-50% 0}
+.uv-ms.at{left:0;right:0}.uv-ms.at .uv-m{position:absolute;bottom:0;left:var(--x);translate:-50% 0}.uv-ms.at .uv-m.mid{translate:-50% calc(-100% - 6px)}   /* 2026-11-17 Kさん（A-5）：3人のユニットは、真ん中の人の札を1段上げて、札どうしが重ならないようにする */
 @media(max-width:359px){.uv-m{font-size:12px;padding:0 9px 0 11px;gap:5px}}
+@media(max-width:359px){h2{flex-wrap:wrap;row-gap:6px}}   /* 2026-11-17（A-7）幅320pxで「Motif Bird」の横の長い鳥の名前が切れていた。収まらないときは次の行へ */
 .uv-m i{width:6px;height:6px;margin-left:2px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;rotate:45deg}
 .uv-t{padding:20px var(--gx) 0}
 .uv-n{display:flex;align-items:center;gap:12px}
@@ -481,8 +468,10 @@ html.pop-on{overflow:hidden}
  .uv-bar .pop{width:100%}
 }
 @media(min-width:700px) and (max-width:899px) and (orientation:landscape){.uv{padding-top:150px}}
+/* 2026-11-17（A-5）スマホの横向きは絵が小さい（一辺230〜270px）ので、名前の札を小さくし、札が絵の端からはみ出さないよう、真ん中寄りに収める */
+@media(orientation:landscape) and (max-height:500px){.uv-m{min-height:26px;font-size:11px;padding:0 8px 0 10px;gap:4px}.uv-m i{width:5px;height:5px}.uv-ms.at .uv-m{left:clamp(46px,var(--x),calc(100% - 46px))}.uv-pic .uv-ms:not(.at){left:6px;right:6px;bottom:8px;gap:5px;justify-content:center}}
 /* モチーフ（キャラページ）：小さく重ねて開く。背景に鳥の絵、上に文（白いふちどりで読みやすく） */
-/* キャラ／鳥の切り替え（2026-11-16。名前は仮）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下。2つとも同じ幅 */
+/* キャラ／鳥の切り替え（2026-11-16。名前はKさんが決定）。PC は右側の幅いっぱいで名前の上、スマホは絵のすぐ下。2つとも同じ幅 */
 .ch-tab{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:0 0 26px;background:var(--faint);border-radius:99px}
 .ch-tab button{appearance:none;position:relative;z-index:1;border:0;margin:0;background:none;color:var(--sub);height:46px;border-radius:99px;font:500 18px/1 var(--en);letter-spacing:.02em;cursor:pointer;transition:color .3s}
 .ch-tab button:hover{color:var(--ink)}
@@ -741,7 +730,7 @@ def main():
     for path, text in out:
         full = os.path.join(T.ROOT, path)
         os.makedirs(os.path.dirname(full), exist_ok=True)
-        with open(full, "w", encoding="utf-8") as f: f.write(text)
+        with open(full, "w", encoding="utf-8") as f: f.write(T.ext_links(text) if path.endswith(".html") else text)
         print("ok", path)
 
 if __name__ == "__main__":
