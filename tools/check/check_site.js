@@ -120,6 +120,42 @@ const PILLS = () => {
     await ctx.close();
   }
 
+  // 1. リンクの意味：全ページの、名前のついたリンクが、その名前どおりの所を指しているか
+  //    （ロゴ→TOP、Songs→曲のページ、ユニットの札→そのユニット、メンバー名→そのメンバーのページ、など。2026-11-17 チェック役の指摘で追加）
+  {
+    const ctx = await b.newContext({viewport: {width: 1440, height: 900}});
+    await ctx.route(u => !u.href.startsWith(BASE), r => r.abort());
+    const pg = await ctx.newPage();
+    const who = {};   // メンバー名 → ページ
+    for (const p of list.filter(x => x.startsWith('members/'))) { const t = fs.readFileSync(path.join(ROOT, p), 'utf8').match(/<title>([^|<]+)/); if (t) who[t[1].replace(/\s/g, '')] = p; }
+    const unitName = {};   // ユニット名 → ページ
+    for (const p of list.filter(x => x.startsWith('units/'))) unitName[p.slice(6, -5)] = p;
+    const SEC = {units: 1, members: 1, news: 1, mood: 1, pickup: 1};
+    for (const p of list) {
+      await pg.goto(BASE + p, {waitUntil: 'domcontentloaded'});
+      const links = await pg.evaluate(() => [...document.querySelectorAll('a[href]')].filter(a => !a.target).map(a => {
+        const c = a.cloneNode(true); c.querySelectorAll('rt,rp,i,small').forEach(x => x.remove());
+        return {txt: c.textContent.replace(/\s/g, ''), cls: a.className, u: a.dataset.u || '', href: a.getAttribute('href'), url: a.href,
+                area: a.closest('.gnav') ? 'gnav' : a.closest('.m-nav') ? 'menu' : a.closest('.ft-l') ? 'foot' : a.closest('.up-m') ? 'upm' : ''};
+      }));
+      for (const l of links) {
+        const u = new URL(l.url), file = u.pathname.replace(/^\//, '') || 'index.html', hash = u.hash.slice(1), say = `「${l.txt || l.cls}」（${l.href}）`;
+        const want = (f, h) => { if (file !== f || (h !== undefined && hash !== h)) bad('リンク', p, `${say} が ${file}${u.hash} を指している（${f}${h ? '#' + h : ''} のはず）`); };
+        if (/\blogo\b/.test(l.cls)) { if (!(file === 'index.html' && (hash === '' || p === 'index.html'))) want('index.html', ''); continue; }
+        if (l.area === 'gnav' || l.area === 'menu' || l.area === 'foot') {
+          const k = l.txt.toLowerCase().replace(/[^a-z]/g, '').replace(/^(songs|units|members|birds|news|guideline).*/, '$1');
+          if (k === 'songs') want('songs.html'); else if (k === 'birds') want('birds.html'); else if (k === 'guideline') want('guideline.html');
+          else if (SEC[k]) want('index.html', k);
+          continue;
+        }
+        if (/\bup-a\b/.test(l.cls) && l.u) { if (unitName[l.u]) want(unitName[l.u]); else want('index.html', l.u); continue; }
+        const member = who[l.txt];
+        if (member && (l.area === 'upm' || /\b(uv-m|mem|bl-i|bd-i)\b/.test(l.cls))) { if (file !== member) want(member); continue; }
+      }
+    }
+    await ctx.close();
+  }
+
   // 1. 押して着く場所（上の帯・メニュー・ユニットの札）
   const WHERE = () => { const el = document.elementFromPoint(innerWidth / 2, innerHeight * 0.4); const s = el && el.closest('[id]'); return {file: location.pathname.split('/').pop() || 'index.html', hash: location.hash, at: s ? s.id : ''}; };
   for (const [w, h, touch] of [[390, 844, true], [1440, 900, false]]) {
