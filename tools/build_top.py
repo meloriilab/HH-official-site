@@ -98,6 +98,10 @@ def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG
 import json as _json, os as _os
 _PD = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pages_data.json"), encoding="utf-8"))
 BIRDNAME = {c["id"].lower(): c["motif"] for c in _PD["chars"]}
+# メンバーの色（名前の札・Episode・★など）は pages_data.json の "pill"。tools/sync_staff.py がスタッフツールの色から決める（決め方はそちらの pill_color）。
+# 2026-11-17 Kさんの回答（Q9）：今の札の色のままでよい。メインカラーが黒・灰色に近い人は、サブかアクセントのうち色みのある方を使う
+_PILL = {c["id"].lower(): c["pill"] for c in _PD["chars"] if c.get("pill")}
+CHARS[:] = [c[:6] + (_PILL.get(c[1], c[6]),) for c in CHARS]
 REAL_BIRD = ("01-1", "01-2", "01-3", "02-1", "02-2", "03-1", "03-2", "04-1", "04-2", "04-3", "05-1", "05-2", "05-3", "05-4")   # 本物の絵がある鳥（仮の絵は TOP に出さない）
 EP = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "episodes.json"), encoding="utf-8"))
 EP_ON = ["001", "002", "003"]
