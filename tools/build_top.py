@@ -170,8 +170,10 @@ def ep_dialogs(inner, pre=""):
 def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
 def header(pre="", top=True):
     """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
-    home = "#" if top else pre
-    sec = lambda k: f"#{k}" if top else f"{pre}#{k}"
+    # 2026-11-17 直し：Songs・Birds のようにトップと同じ階層のページでは pre が空なので、"#units" がそのページの中を指していた（TOP へ戻れない）。必ず "./" を付ける
+    root = pre or "./"
+    home = "#" if top else root
+    sec = lambda k: f"#{k}" if top else f"{root}#{k}"
     # 丸いボタン：押すとユニットのページへ。カーソルを載せると、そのユニットのメンバー名が下に出る
     def pill(u, n):
         ms = members_of(u)
