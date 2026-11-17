@@ -159,18 +159,18 @@ html.ep-on{overflow:hidden}
 .ep-sk{padding-inline:10px!important;font:italic 500 16px/1 var(--en)}
 .ep-x{position:relative;width:44px}.ep-x::before,.ep-x::after{content:"";position:absolute;left:11px;top:50%;width:22px;height:1px;background:currentColor;rotate:45deg}.ep-x::after{rotate:-45deg}
 .ep-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 16px 34px;display:flex;flex-direction:column;gap:14px;outline:0}
-.ep-r{display:flex;align-items:flex-start;gap:9px;max-width:88%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
+.ep-r{display:flex;align-items:flex-start;gap:9px;max-width:92%}.ep-r.me{align-self:flex-end;flex-direction:row-reverse}
 .ep-av{flex:none;width:36px;height:36px;border-radius:50%;object-fit:cover}
 .ep-r>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}.ep-r.me>div{align-items:flex-end}
 .ep-r small{margin:0 6px 3px;font:400 12px/1.4 var(--jp);color:var(--sub);letter-spacing:.06em}
-.ep-r p{margin:0;padding:9px 15px;border:1px solid var(--ink);border-radius:20px;font:400 15px/1.7 var(--jp);letter-spacing:.03em;white-space:pre-line}
+.ep-r p{margin:0;padding:9px 13px;border:1px solid var(--ink);border-radius:20px;font:400 15px/1.7 var(--jp);letter-spacing:.03em;white-space:pre-line}
 .ep-r.me p{background:var(--uc);border-color:var(--uc);color:var(--ut)}
 .ep-mv{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border:1px solid var(--ink);border-radius:20px;font:500 15px/1.4 var(--min)}
 .ep-mv img{width:64px;height:64px;border-radius:13px;object-fit:cover}.ep-mv i{display:block;font:italic 500 14px/1.3 var(--en);color:var(--sub)}
 .ep-ph{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;cursor:zoom-in;text-align:left}.ep-ph img{display:block;width:min(240px,62vw);border-radius:20px;transition:width .45s cubic-bezier(.16,1,.3,1)}
 .ep-ph.big{cursor:zoom-out}.ep-ph.big img{width:min(100%,560px)}.ep-ph small{margin:6px 6px 0!important;font-family:var(--min)!important}
 .ep-r:has(.ep-ph.big){max-width:100%}
-@media(max-width:699px){.ep-r{max-width:94%}.ep-r p{letter-spacing:.02em}}@media(max-width:374px){.ep-r p{font-size:14px}}   /* スマホでも、台詞の行が途中で折れにくいように（Kさんの改行どおりに見せる。2026-11-15） */
+@media(max-width:699px){.ep-log{padding-inline:12px}.ep-r{max-width:97%}.ep-r p{letter-spacing:.02em}}@media(max-width:374px){.ep-r p{font-size:14px}}   /* スマホでも、台詞の行が途中で折れにくいように（Kさんの改行どおりに見せる。2026-11-15。2026-11-17 Kさん「改行しすぎ」で、吹き出しを広げた：PCの会話の欄 460→560px、吹き出しの左右の内側 15→13px、スマホの左右の余白 16→12px） */
 /* ポラロイド写真（作中で「ポラロイド写真」と呼ばれる1枚。Kさん 2026-11-15）：白い縁、下だけ広い余白に手書きの添え書き、絵は正方形に切る */
 .ep-ph.pol{box-sizing:border-box;width:calc(min(200px,52vw) + 20px);padding:10px 10px 0;background:#fff;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.18);rotate:-2deg;transition:rotate .45s cubic-bezier(.16,1,.3,1),width .45s cubic-bezier(.16,1,.3,1)}
 .ep-ph.pol img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:0;transition:none}   /* 縁ごと拡大縮小する（絵だけ動いて縁が先に広がっていた。Kさん 2026-11-15） */
@@ -178,15 +178,16 @@ html.ep-on{overflow:hidden}
 .ep-ph.pol.big{rotate:0deg;width:min(100%,440px)}.ep-ph.pol.big img{width:100%}
 .ep .ep-log:focus-visible{outline:0}
 /* 話している人の挿絵：スマホはヘッダーの下に帯で、PCはチャットの左に縦いっぱいに（2026-11-15） */
-.ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px){.ep-ov{display:none}}   /* スマホの帯には出さない（Kさん 2026-11-15） */.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
+.ep-art{order:1;flex:none;position:relative;width:100%;height:24svh;overflow:hidden;pointer-events:none}.ep-art>img:first-child{display:block;width:100%;height:100%;object-fit:cover;object-position:50% var(--fy,30%)}.ep-ov{position:absolute;height:auto}@media(max-width:699px),(max-width:999px) and (orientation:portrait){.ep-ov{display:none}}   /* スマホの帯には出さない（Kさん 2026-11-15） */.ep-h{order:0}.ep-log{order:2}   /* スマホ：顔が見えるよう、ヘッダーの下に帯で（Kさん 2026-11-15「顔が見えないのが気になる」） */
 .ep-h{position:relative;z-index:1;background:var(--bg)}.ep-log{position:relative;z-index:1}
-@media(min-width:700px){dialog.ep{--eh:min(92vh,780px);width:min(calc(460px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%}.ep-art>img:first-child{object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}
+@media(min-width:700px) and (max-width:999px) and (orientation:portrait){.ep-art{height:min(40svh,52vw)}}   /* 2026-11-17 タブレットの縦向きの帯：スマホと同じ切り取り方（幅の52%の高さ）にして、顔が目だけにならないように */
+@media(min-width:700px) and (orientation:landscape),(min-width:1000px){dialog.ep{--eh:min(92vh,780px);width:min(calc(560px + var(--eh) * .4558),calc(100vw - 48px));padding-left:calc(var(--eh) * .4558)}.ep-art{position:absolute;left:0;top:0;width:calc(var(--eh) * .4558);height:100%}.ep-art>img:first-child{object-position:50% 50%}.ep-h{border-left:1px solid var(--ink)}.ep-log{border-left:1px solid var(--ink)}}   /* 2026-11-17 タブレットの縦向きは、会話の欄が狭くなり台詞が折れすぎたので、スマホと同じ形（上に帯の絵、会話は全幅）にする */
 .ep-ty p{display:flex;align-items:center;gap:6px;padding:17px 17px}.ep-ty i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;animation:epDot 1s ease-in-out infinite}.ep-ty i:nth-child(2){animation-delay:.16s}.ep-ty i:nth-child(3){animation-delay:.32s}
 @keyframes epDot{30%{opacity:1;translate:0 -3px}60%{opacity:.25;translate:0}}
 .ep-end{align-self:center;margin:10px 0 0;font:italic 500 15px/1 var(--en);color:var(--sub);letter-spacing:.08em}
 .js .ep-log>:not(.in){display:none}.js .ep-log>.in{animation:epRow .5s cubic-bezier(.16,1,.3,1)}
 @keyframes epRow{from{opacity:0;translate:0 12px}}
-@media(min-width:700px){.ep{inset:0;margin:auto;width:460px;height:min(92vh,780px)}.ep-log{padding:26px 22px 38px}}
+@media(min-width:700px) and (orientation:landscape),(min-width:1000px){.ep{inset:0;margin:auto;width:560px;height:min(92vh,780px)}.ep-log{padding:26px 22px 38px}}
 @media(prefers-reduced-motion:reduce){.ep[open]{animation:none}.js .ep-log>.in{animation:none}.ep-ph img{transition:none}}
 .lk{margin:12px 0 0;display:flex;max-width:252px;border:1px solid var(--ink);font:500 15px/1 var(--en);letter-spacing:.03em}
 .lk>*{flex:1 1 0;min-width:0;min-height:38px;display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s}
