@@ -170,8 +170,10 @@ def ep_dialogs(inner, pre=""):
 def chan(): return f'<p class="row"><a class="btn" href="{YT_CH}">YouTube</a>{spot("btn")}<a class="btn" href="{XURL}">X</a></p>'
 def header(pre="", top=True):
     """上の帯とメニュー。pre はトップページへ戻る道（個別ページでは "../"）"""
-    home = "#" if top else pre
-    sec = lambda k: f"#{k}" if top else f"{pre}#{k}"
+    # 2026-11-17 直し：Songs・Birds のようにトップと同じ階層のページでは pre が空なので、"#units" がそのページの中を指していた（TOP へ戻れない）。必ず "./" を付ける
+    root = pre or "./"
+    home = "#" if top else root
+    sec = lambda k: f"#{k}" if top else f"{root}#{k}"
     # 丸いボタン：押すとユニットのページへ。カーソルを載せると、そのユニットのメンバー名が下に出る
     def pill(u, n):
         ms = members_of(u)
@@ -490,7 +492,8 @@ h2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;backgr
 .hint::after{animation:fall 2.4s cubic-bezier(.65,0,.35,1) infinite}
 @media(prefers-reduced-motion:reduce){.hint::after{animation:none}}
 @keyframes fall{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-.f-go{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin-top:22px;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
+.f-go{display:flex;width:fit-content;align-items:center;justify-content:center;min-width:140px;min-height:44px;margin:22px auto 0;border:1px solid currentColor;font:500 13px/1 var(--min);letter-spacing:.08em;transition:background .25s,color .25s}
+/* 2026-11-17 Kさん：View More は文字の欄の中で真ん中に（PCは左の欄の真ん中、スマホは画面の真ん中） */
 a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん：紋章は白一色にして、ユニット名の左横に置く（試し） */
 .f-hd{display:flex;align-items:center;gap:14px}
@@ -587,7 +590,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  /* 2026-11-16 Kさん（案C）：絵の欄を6割に広げ、絵は切らずに丸ごと見せる（顔が欄の外へはみ出さない）。スクロールでずらす動きは、絵が欄から欠けるので止める */
  .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
- .f-txt{padding:120px 48px 60px min(var(--gx),8vw);align-self:center}.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
+ .f-txt{--pl:min(var(--gx),8vw);padding:120px 48px 60px var(--pl);align-self:center}.f-go{translate:calc((48px - var(--pl)) / 2) 0}   /* View More は、左の欄そのものの真ん中に（文字の欄の左右の空きが違う分をずらす） */.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
