@@ -54,15 +54,16 @@ ps.forEach(function(p){p.addEventListener('click',function(){draw(p.dataset.v,tr
 function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false');document.documentElement.style.overflow=o?'hidden':'';document.documentElement.classList.toggle('menu-open',o)}
 b.addEventListener('click',function(){set(m.hidden)});m.addEventListener('click',function(e){if(e.target.closest('a'))set(false)});
 addEventListener('keydown',function(e){if(e.key==='Escape')set(false)})})();
+/* 押したときの動き（Units のたたみ・タッチでのユニットの札）は、動きを減らす設定の人にも必要なので、下の動きの仕掛けとは分けておく（2026-11-17 A-4） */
+(function(){var f=document.querySelector('.uf');if(f)f.addEventListener('click',function(){f.setAttribute('aria-expanded',document.body.classList.toggle('uo')?'true':'false')})})();
+(function(){if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});})();
 (function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
 /* colour only in the middle band of the screen */
 document.documentElement.classList.add('js');
 var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ho.unobserve(e.target)}})},{threshold:.6});
 [].forEach.call(document.querySelectorAll('h2'),function(el){ho.observe(el)});
 var pg=document.querySelector('.prog');
-(function(){var f=document.querySelector('.uf');if(f)f.addEventListener('click',function(){f.setAttribute('aria-expanded',document.body.classList.toggle('uo')?'true':'false')})})();
 var pill={};[].forEach.call(document.querySelectorAll('.up-a'),function(a){pill[a.dataset.u]=a});
-if(!matchMedia('(hover:hover)').matches)document.addEventListener('click',function(e){var a=e.target.closest('.up-a'),u=a&&a.parentNode,o=document.querySelector('.up.open');if(o&&o!==u)o.classList.remove('open');if(!a||!u.querySelector('.up-m')||u.classList.contains('open'))return;e.preventDefault();u.classList.add('open')});
 function mark(){var fs=[].slice.call(document.querySelectorAll('.flag.lit')),cur=document.body.dataset.u||(fs.length?fs[fs.length-1].dataset.u:'');for(var k in pill)pill[k].classList.toggle('on',k===cur)}
 var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('lit',e.isIntersecting)});mark()},{rootMargin:'-30% 0px -30% 0px'});
 [].forEach.call(document.querySelectorAll('.rel,.flag,.mem,.fv,.pu-fr'),function(el){io.observe(el)});
