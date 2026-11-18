@@ -164,17 +164,17 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
-/* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
-.st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#EEEEEA}.st b,.st i{-webkit-text-stroke:.9px color-mix(in oklab,currentColor 72%,#000)}   /* 2026-11-18 Kさん：星のふちは全部に入れ、色は星の色より少し濃く */
+/* 見つけやすさ：四つ角の星。キャラのメインカラーで塗り、ふちは少し濃い色。足りない分は塗らず、灰色のふちだけ（淡いメインカラーでも見分けられるように） */
+.st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:transparent;-webkit-text-stroke:.9px #BDBDB7}.st b{-webkit-text-stroke:.9px color-mix(in oklab,currentColor 72%,#000)}   /* 2026-11-18 Kさん：星のふちは全部に入れ、色は星の色より少し濃く */
 /* Birds ページ：マナー → 見つけやすさで選ぶ → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
 .bp{padding-bottom:32px}
 .bp-l{margin:0 0 32px;max-width:40em;font-size:15px;line-height:2.1;word-break:keep-all}
 .bp-m{max-width:40em;padding:4px 20px 18px;border:1px solid var(--ink)}
 .bp .bp-k{margin:14px 0 6px;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}.bp .bp-kk{margin:32px 0 10px}
-.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
+.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9;word-break:keep-all}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
 .bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
 .bp-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px}@media(min-width:600px){.bp-f{grid-template-columns:repeat(5,minmax(0,1fr));max-width:650px}}   /* 2026-11-18 4段階になり札が5つ。スマホは3列（Moodの札と同じ） */.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
-.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
+.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;min-width:4.6em;margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
 .bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
 .bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
 .bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}

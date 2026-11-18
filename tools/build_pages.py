@@ -39,13 +39,9 @@ SMAX = max(LV)
 REGIONAL = {"blc02", "prs02"}   # カササギ・ワカケホンセイインコ
 def star(cid): return 2 if cid in REGIONAL else {3: 4, 2: 3, 1: 1}[B[cid]["star"]]
 def lv(cid): return LV[star(cid)]
-def lum(h):
-    f = lambda v: v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
-    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
-    return .2126 * f(r) + .7152 * f(g) + .0722 * f(b)
 def scol(cid):
-    """★の色：メンバーの色（"pill"。ほかの札と同じ。2026-11-18 から。それまではメインカラー）。ふちは全部の星に、星の色より少し濃い色で付ける（CSS。2026-11-18）"""
-    return CD[cid]["pill"]
+    """★の色：キャラのメインカラー（Kさんの指示 2026-11-16）。ふちは全部の星に、星の色より少し濃い色で付ける（CSS。2026-11-18）"""
+    return CD[cid]["colors"]["main"]
 def stars(n, cid):
     """見つけやすさ：四つ角の星（Kさんが選択 2026-11-16）が多いほど見つけやすい。足りない分は薄い灰色"""
     h = scol(cid)
@@ -249,9 +245,10 @@ def birds_page():
     """Birds：鳥が目当てで来た人の入口。マナー → 見つけやすさで絞り込み → 14羽の一覧。行を押すと、そのメンバーのページが鳥の側で開く（Kさんの了承 2026-11-16）
     マナーの文はKさんが決定（2026-11-16）。紹介の1行と★の段階の名前もKさんが決定（2026-11-18）"""
     lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>ご紹介！"   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
-    manners = ["近づきすぎない。追いかけない", "巣やヒナには近づかない。撮影もひかえる", "えさをあげない", "田畑や私有地に入らない。めずらしい鳥の場所はSNSに書かない"]
+    # 言葉の途中で折れないよう、切れ目に <wbr>（keep-all。2026-11-18）
+    manners = ["近づきすぎない。<wbr>追いかけない", "巣やヒナには<wbr>近づかない。<wbr>撮影も<wbr>ひかえる", "えさを<wbr>あげない", "田畑や<wbr>私有地に<wbr>入らない。<wbr>めずらしい<wbr>鳥の場所は<wbr>SNSに<wbr>書かない"]
     rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
-    # 絞り込み：すべて＋4段階。札は4つとも同じ幅（Moodの札と同じ形）。星は黒（どのメンバーの色でもないため）
+    # 絞り込み：すべて＋4段階。札は5つとも同じ幅（Moodの札と同じ形）。星は黒（どのメンバーの色でもないため）
     chips = '<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>' + "".join(
         f'<button class="md" type="button" data-v="{n}" aria-pressed="false" aria-label="{t}"><span class="st">{"✦" * n}</span></button>' for n, t in sorted(LV.items(), reverse=True))
     legend = "".join(f'<span><b class="st">{"✦" * n}</b>{t}</span>' for n, t in sorted(LV.items(), reverse=True))
@@ -259,7 +256,7 @@ def birds_page():
 <main>
 <section class="sec bp" id="birds"><h2><span>Birds</span><small>野鳥</small></h2>
   <p class="bp-l">{lead}</p>
-  <div class="bp-m"><p class="bp-k">観察のマナー</p><ul>{"".join(f"<li>{esc(x)}</li>" for x in manners)}</ul></div>
+  <div class="bp-m"><p class="bp-k">観察のマナー</p><ul>{"".join(f"<li>{x}</li>" for x in manners)}</ul></div>
   <p class="bp-k bp-kk">見つけやすさで選ぶ</p>
   <div class="bp-f" role="group" aria-label="見つけやすさで選ぶ">{chips}</div>
   <p class="bp-lg">{legend}</p>
@@ -551,17 +548,17 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 /* PC の鳥の側：右が長くなるので上でそろえ、絵は画面に残す。Scroll の合図は文字に重なるので出さない */
 @media(min-width:900px){section.ch{align-items:start}.ch>.ch-t{padding-top:16px}html.bird .ch-art{position:sticky;top:0}html.bird .ch-hint{display:none}}
 @media(min-width:700px){.cp-b .bf,.cp-b .bm{margin-left:60px}.mo-r{grid-template-columns:76px minmax(0,1fr) 64px}.mo-l{font-size:12px}.mo-c i{height:20px}.mo-a .mo-c b{font-size:16px}.mo-n{font-size:11px}.cp-b .bxs{margin-left:60px}.cp-b .bd-go{margin-left:60px}.cp-b .bv-b p{font-size:15px}}
-/* 見つけやすさ：四つ角の星。キャラの色（明るい色には細いふち）。足りない分は薄い灰色 */
-.st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:#EEEEEA}.st b,.st i{-webkit-text-stroke:.9px color-mix(in oklab,currentColor 72%,#000)}   /* 2026-11-18 Kさん：星のふちは全部に入れ、色は星の色より少し濃く */
+/* 見つけやすさ：四つ角の星。キャラのメインカラーで塗り、ふちは少し濃い色。足りない分は塗らず、灰色のふちだけ（淡いメインカラーでも見分けられるように） */
+.st{white-space:nowrap;letter-spacing:.12em}.st b{font-weight:400;color:var(--sc,var(--ink))}.st i{font-style:normal;color:transparent;-webkit-text-stroke:.9px #BDBDB7}.st b{-webkit-text-stroke:.9px color-mix(in oklab,currentColor 72%,#000)}   /* 2026-11-18 Kさん：星のふちは全部に入れ、色は星の色より少し濃く */
 /* Birds ページ：マナー → 見つけやすさで選ぶ → 14羽の一覧（1羽1行、Songs の一覧と同じく縦に短く） */
 .bp{padding-bottom:32px}
 .bp-l{margin:0 0 32px;max-width:40em;font-size:15px;line-height:2.1;word-break:keep-all}
 .bp-m{max-width:40em;padding:4px 20px 18px;border:1px solid var(--ink)}
 .bp .bp-k{margin:14px 0 6px;font:500 11px/1.6 var(--jp);letter-spacing:.08em;color:var(--sub)}.bp .bp-kk{margin:32px 0 10px}
-.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
+.bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9;word-break:keep-all}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
 .bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
 .bp-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px}@media(min-width:600px){.bp-f{grid-template-columns:repeat(5,minmax(0,1fr));max-width:650px}}   /* 2026-11-18 4段階になり札が5つ。スマホは3列（Moodの札と同じ） */.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
-.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
+.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;min-width:4.6em;margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
 .bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
 .bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
 .bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}
