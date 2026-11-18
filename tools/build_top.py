@@ -273,12 +273,12 @@ def body():
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
 <section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
 <p class="ab-c">もし、<wbr>野鳥がアイドルに<wbr>なったら…</p>
-<p class="ab-t">中の人の<wbr>森での<wbr>雑談から<wbr>生まれた<wbr>『擬人化された<wbr>野鳥＝ソナヴィアン』<wbr>たちが<wbr>活動を<wbr>始めました。<br>歌も、<wbr>彼ら自身も、<wbr>元になった<wbr>野鳥も<wbr>まるごと<wbr>楽しんでくれると<wbr>うれしいです！</p>
+<p class="ab-t">中の人の<wbr>森での<wbr>雑談から<wbr>生まれた<wbr>『擬人化された<wbr>野鳥＝ソナヴィアン』<wbr>たちが<wbr>活動を始めました。<br>歌も、<wbr>彼ら自身も、<wbr>元になった<wbr>野鳥も<wbr>まるごと<wbr>楽しんでくれると<wbr>うれしいです！</p>
 <div class="ab-s bd-s" id="birds"><h3><span>Birds</span><small>野鳥</small></h3><p class="bd-c">{BIRD_COPY}</p><div class="bd-g">{birds}</div><p class="row more"><a class="btn" href="birds.html">View More</a></p></div>
 <div class="ab-s" id="tips"><h3><span>Tips</span></h3>
-<details class="ab-d"><summary>ソナヴィアン</summary><p>野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて<span class="nw">届けます。</span></p></details>
-<details class="ab-d"><summary><ruby>奏樹市<rt>そうじゅし</rt></ruby></summary><p>ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まって<span class="nw">います。</span></p></details>
-<details class="ab-d"><summary>制作について</summary><p>「ハミングハーツ」は、melorii lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てて<span class="nw">います。</span></p></details>
+<details class="ab-d"><summary>ソナヴィアン</summary><p>{ep_wrap("野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて届けます。")}</p></details>
+<details class="ab-d"><summary><ruby>奏樹市<rt>そうじゅし</rt></ruby></summary><p>{ep_wrap("ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まっています。")}</p></details>
+<details class="ab-d"><summary>制作について</summary><p>{ep_wrap("「ハミングハーツ」は、melorii lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てています。")}</p></details>
 </div></section>
 <section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
