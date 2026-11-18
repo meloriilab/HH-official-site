@@ -563,7 +563,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9;word-break:keep-all}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
 .bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
 .bp-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px}@media(min-width:600px){.bp-f{grid-template-columns:repeat(5,minmax(0,1fr));max-width:650px}}   /* 2026-11-18 4段階になり札が5つ。スマホは3列（Moodの札と同じ） */.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
-.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;min-width:4.6em;margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
+.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;margin-right:6px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
 .bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
 .bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 /* 2026-11-18 Kさん：アイコンは鳥の顔を丸く切り抜いたもの。マウスを乗せるとメンバーの顔に替わる */
