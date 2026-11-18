@@ -216,7 +216,7 @@ def spot(cls, url=None):
     url = SPOT if url is None else url
     return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
-BIRD_COPY = "メンバーそれぞれに、モチーフの野鳥がいます"   # たたき台（未確定。Kさんの確認待ち）
+BIRD_COPY = "メンバーのモチーフになった野鳥たち"   # Kさんが決定（2026-11-18）
 def body():
     # Mood：ジャケットを5曲ならべ、気分の言葉で選び直せる（Kさんの指示 2026-11-14「リリースとmoodが合体した感じ」）。5曲の選び方と並び順は、開くたびに画面側で変える
     mcards="".join(f'''
