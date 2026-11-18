@@ -216,6 +216,8 @@ def spot(cls, url=None):
     url = SPOT if url is None else url
     return f'<a class="{cls}" href="{url}">Spotify</a>' if url else ""
 
+BN_CUT = {"ワカケホンセイインコ": "ワカケ<wbr>ホンセイ<wbr>インコ", "サンコウチョウ": "サンコウ<wbr>チョウ", "ハシボソガラス": "ハシボソ<wbr>ガラス", "ジョウビタキ": "ジョウ<wbr>ビタキ", "キクイタダキ": "キクイ<wbr>タダキ"}   # 鳥の名前が狭い所で折れるときの切れ目（2026-11-18）
+def bn_wrap(n): return BN_CUT.get(n, n)
 BIRD_COPY = "メンバーのモチーフになった野鳥たち"   # Kさんが決定（2026-11-18）
 def body():
     # Mood：ジャケットを5曲ならべ、気分の言葉で選び直せる（Kさんの指示 2026-11-14「リリースとmoodが合体した感じ」）。5曲の選び方と並び順は、開くたびに画面側で変える
@@ -238,7 +240,7 @@ def body():
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
     mem="".join(face(c) for c in CHARS)
     # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
-    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{BIRDNAME[c[1]]}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
+    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{bn_wrap(BIRDNAME[c[1]])}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
@@ -269,14 +271,15 @@ def body():
 <section class="sec" id="units"><h2><span>Units</span><small>ユニット</small></h2></section>
 <div class="flags">{units}</div>
 <section class="sec" id="members"><h2><span>Members</span><small>メンバー</small></h2><div class="mems">{mem}</div></section>
-<section class="sec bd-s" id="birds"><h2><span>Birds</span><small>野鳥</small></h2><p class="bd-c">{BIRD_COPY}</p><div class="bd-g">{birds}</div><p class="row more"><a class="btn" href="birds.html">View More</a></p></section>
 <section class="sec ab" id="about"><h2><span>About</span><small>ハミングハーツって？</small></h2>
-<p class="ab-c">もし、野鳥がアイドルになったら…<br>森での雑談から生まれたソナヴィアンたち<br>歌も、彼ら自身も、元になった野鳥も<br>まるごと楽しもう！</p>
-<dl class="ab-l">
-<div><dt>ソナヴィアン</dt><dd>野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて<span class="nw">届けます。</span></dd></div>
-<div><dt><ruby>奏樹市<rt>そうじゅし</rt></ruby></dt><dd>ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まって<span class="nw">います。</span></dd></div>
-<div><dt>制作について</dt><dd>「ハミングハーツ」は、melorii lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てて<span class="nw">います。</span></dd></div>
-</dl></section>
+<p class="ab-c">もし、<wbr>野鳥がアイドルに<wbr>なったら…</p>
+<p class="ab-t">中の人の<wbr>森での<wbr>雑談から<wbr>生まれた<wbr>『擬人化された<wbr>野鳥＝ソナヴィアン』<wbr>たちが<wbr>活動を<wbr>始めました。<br>歌も、<wbr>彼ら自身も、<wbr>元になった<wbr>野鳥も<wbr>まるごと<wbr>楽しんでくれると<wbr>うれしいです！</p>
+<div class="ab-s bd-s" id="birds"><h3><span>Birds</span><small>野鳥</small></h3><p class="bd-c">{BIRD_COPY}</p><div class="bd-g">{birds}</div><p class="row more"><a class="btn" href="birds.html">View More</a></p></div>
+<div class="ab-s" id="tips"><h3><span>Tips</span></h3>
+<details class="ab-d"><summary>ソナヴィアン</summary><p>野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて<span class="nw">届けます。</span></p></details>
+<details class="ab-d"><summary><ruby>奏樹市<rt>そうじゅし</rt></ruby></summary><p>ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まって<span class="nw">います。</span></p></details>
+<details class="ab-d"><summary>制作について</summary><p>「ハミングハーツ」は、melorii lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てて<span class="nw">います。</span></p></details>
+</div></section>
 <section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
 {footer()}'''
@@ -550,20 +553,28 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .bd-i:nth-child(n+5){display:none}
 .bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
 .bd-p{display:block;width:100%;aspect-ratio:1}.bd-p img{width:100%;height:100%;object-fit:contain}
-.bd-n{margin-top:6px;font:500 11px/1.4 var(--min);letter-spacing:.02em;word-break:break-all}
+.bd-n{margin-top:6px;font:500 11px/1.4 var(--min);letter-spacing:.02em;word-break:keep-all}   /* 2026-11-18 名前の途中で折らない。長い名前は bn_wrap の切れ目でだけ折る */
 .ft-l a+a{margin-left:28px}
 .bd-s .more{margin-top:28px}
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:64px;height:64px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
 .news li{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
-/* About。旧サイトのTOPの紹介文（Introduction）をそのまま使う。下の方に小さく置くので、見出しも本文も控えめにする */
-.ab-c{margin:0;font:500 15px/2.1 var(--min);letter-spacing:.04em}
+/* 2026-11-18 Kさん：About に Birds と Tips をまとめる。最初の1行は大きく。Tips（用語・制作について）は全部たたむ */
+.ab-c{margin:8px 0 0;font:500 clamp(24px,6.2vw,40px)/1.5 var(--min);letter-spacing:.04em;word-break:keep-all}
+.ab-t{margin:20px 0 0;max-width:40em;font-size:15px;line-height:2;word-break:keep-all}
+.ab-s{margin-top:64px}
+.ab-s h3{margin:0 0 20px;display:flex;align-items:baseline;gap:12px;font-weight:500;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ab-s h3 span{font:500 30px/1 var(--en);letter-spacing:-.01em}.ab-s h3 small{font:500 12px var(--min);letter-spacing:.06em;color:var(--sub)}
+.ab-d{border-bottom:1px solid var(--line)}
+.ab-d summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;cursor:pointer;list-style:none;font:500 15px/1.6 var(--min);letter-spacing:.04em}
+.ab-d summary::-webkit-details-marker{display:none}
+.ab-d summary::after{content:"";flex:none;width:8px;height:8px;margin-right:6px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;rotate:45deg;translate:0 -3px;transition:rotate .25s,translate .25s}
+.ab-d[open] summary::after{rotate:-135deg;translate:0 2px}
+.ab-d rt{font:500 9px var(--jp);letter-spacing:.1em;color:var(--sub)}
+.ab-d p{margin:0 0 20px;font-size:13px;line-height:1.9;color:var(--sub)}
+@media(prefers-reduced-motion:reduce){.ab-d summary::after{transition:none}}
 .nw{white-space:nowrap}
-.ab-l{margin:40px 0 0;border-top:1px solid var(--line)}
-.ab-l div{padding:18px 0;border-bottom:1px solid var(--line)}
-.ab-l dt{font:500 15px/1.6 var(--min);letter-spacing:.04em}.ab-l rt{font:500 9px var(--jp);letter-spacing:.1em;color:var(--sub)}
-.ab-l dd{margin:6px 0 0;font-size:13px;line-height:1.9;color:var(--sub)}
 .news time{font:500 19px var(--en)}.tag{justify-self:start;width:64px;text-align:center;border:1px solid var(--ink);font:500 10px/20px var(--jp);letter-spacing:.06em}
 .news .n-t{grid-column:1/-1}
 .one{width:140px}
@@ -582,7 +593,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .catch{right:var(--gx);top:150px;font-size:30px}
  .hx{left:var(--gx);top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
- .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-c{font-size:17px}.ab-l{margin-top:56px}.ab-l div{display:grid;grid-template-columns:220px 1fr;align-items:baseline;padding:24px 0}.ab-l dt{font-size:17px}.ab-l dd{margin:0;font-size:14px;max-width:40em}
+ .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-t{font-size:16px;max-width:none}.ab-s{margin-top:96px}.ab-s h3 span{font-size:40px}.ab-d summary{font-size:17px;min-height:64px}.ab-d p{font-size:14px;max-width:40em}
  .rels{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
 
  .f-mark{width:60px;height:60px}.f-hd{gap:20px}
