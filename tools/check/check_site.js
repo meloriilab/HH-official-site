@@ -174,7 +174,7 @@ const PILLS = () => {
         const r = await pg.evaluate(WHERE), name = links[i].t.replace(/[^A-Za-z]/g, '').toLowerCase();
         const wantFile = {songs: 'songs.html', birds: 'birds.html'}[name] || 'index.html';
         if (r.file !== wantFile) bad('リンク', `${w}px ${from}`, `メニューの「${links[i].t}」で ${r.file} に着いた（${wantFile} のはず）`);
-        else if (wantFile === 'index.html') { const ok = name === 'units' ? /^(units|triattique|nocturnalfizz|prismea|blackveil-harmonic|orybia)$/.test(r.at) : r.at === name; if (!ok) bad('リンク', `${w}px ${from}`, `メニューの「${links[i].t}」で ${r.at || '不明'} の場所に着いた（${name} のはず）`); }
+        else if (wantFile === 'index.html') { const ok = name === 'units' ? /^(units|triattique|nocturnalfizz|prismea|blackveil-harmonic)$/.test(r.at) : r.at === name; if (!ok) bad('リンク', `${w}px ${from}`, `メニューの「${links[i].t}」で ${r.at || '不明'} の場所に着いた（${name} のはず）`); }
       }
       // ユニットの札（スマホのユニット・メンバーのページは Units ボタンで開いてから）
       const n = await pg.$$eval('.up-a', a => a.length);
