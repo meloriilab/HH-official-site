@@ -249,7 +249,7 @@ def guideline_page():
 def birds_page():
     """Birds：鳥が目当てで来た人の入口。マナー → 見つけやすさで絞り込み → 14羽の一覧。行を押すと、そのメンバーのページが鳥の側で開く（Kさんの了承 2026-11-16）
     マナーの文はKさんが決定（2026-11-16）。紹介の1行と★の段階の名前もKさんが決定（2026-11-18）"""
-    lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>ご紹介！"   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
+    lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>紹介するよ。<wbr>観察マナーを<wbr>守って<wbr>探してみてね！"   # 2026-11-18 Kさんの指定の文   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
     # 言葉の途中で折れないよう、切れ目に <wbr>（keep-all。2026-11-18）
     manners = ["近づきすぎない。<wbr>追いかけない", "巣やヒナには<wbr>近づかない。<wbr>撮影も<wbr>ひかえる", "えさを<wbr>あげない", "田畑や<wbr>私有地に<wbr>入らない。<wbr>めずらしい<wbr>鳥の場所は<wbr>SNSに<wbr>書かない"]
     rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><span class="bl-ic"><img src="images/bird/face/{T.aid(CH[cid])}.webp" alt=""><img class="bl-cf" src="images/face/{T.fid(CH[cid])}.webp" alt=""></span><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
