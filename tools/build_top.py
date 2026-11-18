@@ -180,6 +180,8 @@ def ep_wrap(t):
             res.append(p[last:])
             return res
         out = [q for p in out for q in fine(p)]
+        if len(out) > 1 and len(out[-1].strip("。、！？!? 　")) <= 2:   # 最後が「配布」のような2字以下なら前とつなげ、それだけが次の行に落ちないようにする（2026-11-18）
+            out[-2:] = [out[-2] + out[-1]]
         return "<wbr>".join(f'<span class="nw">{p}</span>' for p in out)
     return "\n".join(ph(x) for x in t.split("\n"))
 def ep_dialogs(inner, pre=""):
