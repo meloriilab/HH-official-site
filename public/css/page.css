@@ -321,7 +321,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 @media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
 /* ガイドライン：読むためのページ。1行を40字ほどに収め、番号と見出しで目当ての項目を探せるようにする。PCは左に見出し・右に本文 */
 .gl{padding-bottom:16px}
-.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}
+.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}.gl-br{display:none}@media(min-width:1024px){.gl-br{display:inline}}   /* 2026-11-18 Kさん「2行にできない？」：PCは「大歓迎です！」の後で改行して2行に */
 .gl-s{border-top:1px solid var(--ink)}
 .gl-i{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:14px;align-items:baseline;padding:28px 0 30px;border-bottom:1px solid var(--line)}
 .gl-n{margin:0;font:italic 500 22px/1 var(--en);color:var(--sub)}
@@ -332,5 +332,5 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
 .gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
-@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px}
+@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px;max-width:none}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}

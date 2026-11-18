@@ -232,7 +232,7 @@ def guideline_page():
     def tail(h):   # 段落・箇条書きの終わりの5文字は途中で折り返さない（「す。」だけが次の行に落ちるのを防ぐ。Kさんの指摘 2026-11-15）
         return re.sub(r"([^<>]{5})(</p>|</li>)", r'<span class="nb">\1</span>\2', h)
     items = [(t, tail(b)) for t, b in items]
-    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
+    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！<br class='gl-br'>みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
     note = tail('<p class="gl-x">ガイドラインの内容は予告なく変わることがあります。</p>')   # いちばん下の注意書き（Kさんの指示 2026-11-15。「草案です」の一文は外す）
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
@@ -710,7 +710,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 @media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
 /* ガイドライン：読むためのページ。1行を40字ほどに収め、番号と見出しで目当ての項目を探せるようにする。PCは左に見出し・右に本文 */
 .gl{padding-bottom:16px}
-.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}
+.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}.gl-br{display:none}@media(min-width:1024px){.gl-br{display:inline}}   /* 2026-11-18 Kさん「2行にできない？」：PCは「大歓迎です！」の後で改行して2行に */
 .gl-s{border-top:1px solid var(--ink)}
 .gl-i{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:14px;align-items:baseline;padding:28px 0 30px;border-bottom:1px solid var(--line)}
 .gl-n{margin:0;font:italic 500 22px/1 var(--en);color:var(--sub)}
@@ -721,7 +721,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
 .gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
-@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px}
+@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px;max-width:none}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
 """
 
