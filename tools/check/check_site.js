@@ -201,7 +201,7 @@ const PILLS = () => {
     const ctx = await b.newContext({viewport: {width: 390, height: 844}, hasTouch: true, reducedMotion: 'reduce'});
     await ctx.route(u => !u.href.startsWith(BASE), r => r.abort());
     const pg = await ctx.newPage();
-    for (const p of ['members/jo-hitaki.html', 'units/triattique.html']) {
+    for (const p of ['members/ukyo-sanjo.html', 'units/triattique.html']) {
       await pg.goto(BASE + p); await pg.click('.uf'); await pg.waitForTimeout(250);
       if (await pg.evaluate(() => getComputedStyle(document.querySelector('.upills')).display) === 'none') bad('動き', p, '動きを減らす設定で Units ボタンが開かない');
     }
