@@ -165,6 +165,7 @@ def ep_wrap(t):
                 if ((a in "をにがはでへや" and kk(c0) and kk(b))
                         or (a in "をは" and kk(c0) and hira(b))
                         or (a == "が" and kata(c0) and hira(b))
+                        or (b in "おご" and j + 1 < len(p) and kk(p[j + 1]) and a in "をにがはでへやのと")   # 「にはお返事」「のご質問」
                         or (a in "をにはで" and kk(b) and 2 <= run(j) <= 3 and j - 1 - run(j) >= 0 and kk(p[j - 1 - run(j)]))
                         or (p[j - 2:j] in ("けど", "のは") and run(j) >= 3)
                         or p[max(0, j - 3):j] == "ほうが"
