@@ -131,21 +131,44 @@ def ep_wrap(t):
         for i, ch in enumerate(line):
             cur += ch
             nx = line[i + 1] if i + 1 < len(line) else ""
-            joshi = ch in "をにとがのはへでも" or (ch == "ら" and i and line[i - 1] == "か")   # 「から」の後でも折れる（2026-11-17）
-            if ch in "、。！？　 " or (joshi and nx and not ("\u3041" <= nx <= "\u309f") and nx not in "、。！？…ー～"):
+            joshi = ch in "をにとがのはへでも" or (ch == "ら" and i and line[i - 1] == "か")
+            if joshi and i and line[i - 1:i + 1] in ("ひと", "ふた"):
+                joshi = False
+            if joshi and i and "\u3041" <= line[i - 1] <= "\u309f" and not (i >= 2 and "\u3041" <= line[i - 2] <= "\u309f"):
+                joshi = False   # 「ひと回り」の「と」のように、ひらがな1字の後の助詞らしき字では切らない（2026-11-18）   # 「から」の後でも折れる（2026-11-17）
+            if ch in "、。！？　 ：" or (joshi and nx and not ("\u3041" <= nx <= "\u309f") and nx not in "、。！？…ー～"):
                 out.append(cur); cur = ""
         if cur: out.append(cur)
         # 長いまとまり（10字以上）は、ひらがなの後に漢字・カタカナが始まる所と「…」の後でも折れるようにする（狭い画面ではみ出さないため。2026-11-18）
         def fine(p):
+            # 2026-11-18 チェック役の指摘（「見た／目」「お／前」「…／！」）を受けて、切る所を言葉の外側に限った
             if len(p) < 10: return [p]
             hira = lambda c: "\u3041" <= c <= "\u309f"
-            kana_kanji = lambda c: ("\u30a1" <= c <= "\u30fa") or ("\u4e00" <= c <= "\u9fff")
-            res, cur = [], ""
-            for j, c in enumerate(p):
-                if cur and ((hira(p[j - 1]) and kana_kanji(c)) or (p[j - 1] == "…" and c != "…")):
-                    res.append(cur); cur = ""
-                cur += c
-            res.append(cur)
+            kata = lambda c: "\u30a1" <= c <= "\u30fa" or c == "ー"
+            kk = lambda c: kata(c) or ("\u4e00" <= c <= "\u9fff")
+            def run(j):   # j の直前まで続くひらがなの数
+                n = 0
+                while j - 1 - n >= 0 and hira(p[j - 1 - n]): n += 1
+                return n
+            cuts = []
+            for j in range(2, len(p)):
+                a, b, c0 = p[j - 1], p[j], p[j - 2]
+                if b in "…！？!?」』）、。ー～ッ": continue
+                if ((a in "をにがはでへや" and kk(c0) and kk(b))
+                        or (a in "をは" and kk(c0) and hira(b))
+                        or (a == "が" and kata(c0) and hira(b))
+                        or (a in "をにはで" and kk(b) and 2 <= run(j) <= 3 and j - 1 - run(j) >= 0 and kk(p[j - 1 - run(j)]))
+                        or (p[j - 2:j] in ("けど", "のは", "ので") and run(j) >= 3)
+                        or p[max(0, j - 3):j] == "ほうが"
+                        or (p[j - 2:j] in ("から", "たら", "なら") and run(j) >= 2 and not hira(b))
+                        or (run(j) >= 3 and a not in "おご" and p[j - 2:j] not in ("ひと", "ふた") and kk(b))
+                        or (run(j) >= 2 and kata(b) and b != "ッ")
+                        or a == "…"):
+                    cuts.append(j)
+            res, last = [], 0
+            for j in cuts:
+                if j - last >= 2 and len(p) - j >= 2: res.append(p[last:j]); last = j
+            res.append(p[last:])
             return res
         out = [q for p in out for q in fine(p)]
         return "<wbr>".join(f'<span class="nw">{p}</span>' for p in out)
@@ -565,7 +588,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .bd-i:nth-child(n+5){display:none}
 .bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
-.bd-p{display:block;width:76px;height:76px;border-radius:50%;overflow:hidden;background:#ECECE8}.bd-p img{display:block;width:100%;height:100%;object-fit:cover}   /* 2026-11-18 Kさん：鳥の顔を丸く切り抜く（tools/make_bird_faces.py）。メンバーの顔より少し大きく */
+.bd-p{display:block;width:min(76px,100%);aspect-ratio:1;height:auto;margin:0 auto;border-radius:50%;overflow:hidden;background:#ECECE8}.bd-p img{display:block;width:100%;height:100%;object-fit:cover}   /* 2026-11-18 Kさん：鳥の顔を丸く切り抜く（tools/make_bird_faces.py）。メンバーの顔より少し大きく */
 .bd-n{margin-top:6px;font:500 11px/1.4 var(--min);letter-spacing:.02em;word-break:keep-all}   /* 2026-11-18 名前の途中で折らない。長い名前は bn_wrap の切れ目でだけ折る */
 .ft-l a+a{margin-left:28px}
 .bd-s .more{margin:28px auto 0;width:fit-content}.bd-s .more .btn{min-width:180px}   /* 2026-11-18 Kさん「同じTOPなのに幅が違う」：All Songs と同じ幅・真ん中に */
@@ -617,7 +640,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
  .f-txt{--pl:min(var(--gx),8vw);padding:120px 48px 60px var(--pl);align-self:center}.f-go{translate:calc((48px - var(--pl)) / 2) 0}   /* View More は、左の欄そのものの真ん中に（文字の欄の左右の空きが違う分をずらす） */.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
- .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}.bd-p{width:112px;height:112px}
+ .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}.bd-p{width:min(112px,100%)}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
