@@ -34,7 +34,7 @@ JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   #
 RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule the Darkness","","Blackveil Harmonic"),("005","prs","Midnight Mirage","","Prisméa"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク")]   # 並び順＝YouTubeでMVを公開した日の新しい順（Kさんの回答 2026-11-14。日付は CRED）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
-NEWS = [("----.--.--","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開する日が決まったら入れる（未確定）
+NEWS = [("2026.11.28","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開日（2026-11-18 公開の予定表で決定）
 # ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
 # (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
@@ -91,6 +91,12 @@ PAGES = {"trt","nct","blc","prs","orb"}
 MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsubameya","nct01":"hayato-tsukimine","nct02":"aruto-tsukimine",
          "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei",
          "prs01":"ukyo-sanjo","prs02":"thane-wakamoto","orb01":"masiro-kurenai","orb02":"tadashi-kikui","orb03":"rui-hitaki","orb04":"jo-hitaki"}
+# 公開の範囲（2026-11-18 Kさんの回答 q7：公開は曲のある4ユニットだけ。ORYBIA は公開のときに外し、曲ができたら戻す）
+# ここに入れたユニットは、ユニット・メンバーのページを書き出さず、TOP・Birds などの一覧からも外す。元のデータと絵は消さない
+LAUNCH_HIDE = {"orb"}
+PAGES -= LAUNCH_HIDE
+for _k in [k for k in MSLUG if k[:3] in LAUNCH_HIDE]: del MSLUG[_k]
+def shown(c): return c[1][:3] not in LAUNCH_HIDE
 def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
 def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
 # ───────── エピソード（曲ごとのメンバーのチャット。文と写真は旧サイトのものをそのまま使う） ─────────
@@ -276,7 +282,7 @@ def body():
     def face(c):
         tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
-    mem="".join(face(c) for c in CHARS)
+    mem="".join(face(c) for c in CHARS if shown(c))
     # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
     birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/face/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{bn_wrap(BIRDNAME[c[1]])}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)

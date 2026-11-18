@@ -117,7 +117,7 @@ def rels_of(u): return [r for r in T.RELS if r[1] == u]
 # ユニットの絵の中で、各メンバーが立っている位置（左端からの％）。ピルをその人の足もとに置く（Kさんの指示 2026-11-15）
 ART_X = {"trt01": 17, "trt02": 46, "trt03": 81, "nct02": 31, "nct01": 69, "blc02": 20, "blc01": 50, "blc03": 83, "prs01": 29, "prs02": 71}
 
-UCOLS = "{" + ",".join(f'"{T.SLUG[x]}":"{UNIT[x]["c"]}"' for x in UNIT) + "}"   # ユニットの色（切り替えのとき、次のユニットの色の面を出す）
+UCOLS = "{" + ",".join(f'"{T.SLUG[x]}":"{UNIT[x]["c"]}"' for x in UNIT if x in T.PAGES) + "}"   # ユニットの色（切り替えのとき、次のユニットの色の面を出す）
 
 def unit_page(u):
     d, m = UD[u], UNIT[u]
@@ -732,6 +732,11 @@ def main():
     out.append(("guideline.html", guideline_page()))
     out.append(("birds.html", birds_page()))
     out.append(("css/page.css", CSS.lstrip("\n")))
+    # 検索サイト向けのページの一覧と案内（2026-11-18 公開の予定表 A-4）。公開しているページだけを載せる
+    pages = ["", "songs.html", "birds.html", "guideline.html"] + [p for p, _ in out if p.endswith(".html") and p.startswith(("units/", "members/"))]
+    out.append(("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                + "".join(f"  <url><loc>{T.SITE}/{p}</loc></url>\n" for p in pages) + "</urlset>\n"))
+    out.append(("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {T.SITE}/sitemap.xml\n"))
     for path, text in out:
         full = os.path.join(T.ROOT, path)
         os.makedirs(os.path.dirname(full), exist_ok=True)
