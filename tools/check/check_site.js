@@ -162,7 +162,7 @@ const PILLS = () => {
     const ctx = await b.newContext({viewport: {width: w, height: h}, hasTouch: touch});
     await ctx.route(u => !u.href.startsWith(BASE), r => r.abort());
     const pg = await ctx.newPage();
-    for (const from of ['index.html', 'songs.html', 'birds.html', 'guideline.html', 'units/orybia.html', 'members/jo-hitaki.html']) {
+    for (const from of ['index.html', 'songs.html', 'birds.html', 'guideline.html', 'units/prismea.html', 'members/ukyo-sanjo.html']) {
       const sel = touch ? '.menu a' : '.gnav a';
       await pg.goto(BASE + from);
       const links = await pg.$$eval(sel, a => a.map(x => ({t: x.textContent.trim().split(/\s/)[0], href: x.getAttribute('href'), ext: !!x.getAttribute('target')})));
@@ -205,8 +205,8 @@ const PILLS = () => {
       await pg.goto(BASE + p); await pg.click('.uf'); await pg.waitForTimeout(250);
       if (await pg.evaluate(() => getComputedStyle(document.querySelector('.upills')).display) === 'none') bad('動き', p, '動きを減らす設定で Units ボタンが開かない');
     }
-    await pg.goto(BASE + 'units/orybia.html'); await pg.click('[data-pop=about]'); await pg.waitForTimeout(250);
-    if (!await pg.$eval('#pop-about', d => d.open)) bad('動き', 'units/orybia.html', 'About が開かない');
+    await pg.goto(BASE + 'units/prismea.html'); await pg.click('[data-pop=about]'); await pg.waitForTimeout(250);
+    if (!await pg.$eval('#pop-about', d => d.open)) bad('動き', 'units/prismea.html', 'About が開かない');
     await pg.goto(BASE + 'songs.html?u=prismea'); await pg.waitForTimeout(300);
     if (await pg.$$eval('.sgs .rel', a => a.filter(x => !x.hidden).length) === 0) bad('動き', 'songs.html?u=prismea', 'ユニットで絞ると曲が1つも出ない');
     await ctx.close();
