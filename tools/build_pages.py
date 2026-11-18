@@ -51,7 +51,7 @@ def stars(n, cid):
     """見つけやすさ：四つ角の星（Kさんが選択 2026-11-16）が多いほど見つけやすい。足りない分は薄い灰色"""
     h = scol(cid)
     return f'<span class="st" style="--sc:{h}" role="img" aria-label="見つけやすさ {SMAX}段階中{n}"><b>{"✦" * n}</b><i>{"✦" * (SMAX - n)}</i></span>'
-def br(t): return "<br>".join(esc(x) for x in t.split("\n"))
+def br(t): return "<br>".join(T.ep_wrap(esc(x)) for x in t.split("\n"))   # 鳥の側の文：改行はそのまま、折り返しは文節の切れ目だけ（Episode と同じ。2026-11-18 Kさん了承）
 def months(b):
     """会える時期：地方ごとに12か月の帯。中身が同じ地方は1行にまとめる（Kさんの回答 v2q2）。地方の補足は帯の右端に置く"""
     rows = []
@@ -252,7 +252,7 @@ def birds_page():
     lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>ご紹介！"   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
     # 言葉の途中で折れないよう、切れ目に <wbr>（keep-all。2026-11-18）
     manners = ["近づきすぎない。<wbr>追いかけない", "巣やヒナには<wbr>近づかない。<wbr>撮影も<wbr>ひかえる", "えさを<wbr>あげない", "田畑や<wbr>私有地に<wbr>入らない。<wbr>めずらしい<wbr>鳥の場所は<wbr>SNSに<wbr>書かない"]
-    rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><img src="images/face/{T.fid(CH[cid])}.webp" alt=""><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
+    rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><span class="bl-ic"><img src="images/bird/face/{T.aid(CH[cid])}.webp" alt=""><img class="bl-cf" src="images/face/{T.fid(CH[cid])}.webp" alt=""></span><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
     # 絞り込み：すべて＋4段階。札は5つとも同じ幅（Moodの札と同じ形）。星は黒（どのメンバーの色でもないため）
     chips = '<button class="md on" type="button" data-v="" aria-pressed="true">すべて</button>' + "".join(
         f'<button class="md" type="button" data-v="{n}" aria-pressed="false" aria-label="{t}"><span class="st">{"✦" * n}</span></button>' for n, t in sorted(LV.items(), reverse=True))
@@ -565,11 +565,14 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .bp-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px}@media(min-width:600px){.bp-f{grid-template-columns:repeat(5,minmax(0,1fr));max-width:650px}}   /* 2026-11-18 4段階になり札が5つ。スマホは3列（Moodの札と同じ） */.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
 .bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;min-width:4.6em;margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
 .bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
-.bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);transition:opacity .25s}.bl-i:hover{opacity:.7}
-.bl-i img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+/* 2026-11-18 Kさん：アイコンは鳥の顔を丸く切り抜いたもの。マウスを乗せるとメンバーの顔に替わる */
+.bl-ic{position:relative;display:block;width:48px;height:48px;border-radius:50%;overflow:hidden;background:#ECECE8}.bl-ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bl-cf{opacity:0;transition:opacity .25s}@media(hover:hover){.bl-i:hover .bl-cf{opacity:1}}.bl-i:focus-visible .bl-cf{opacity:1}
+@media(prefers-reduced-motion:reduce){.bl-cf{transition:none}}
 .bl-t b{display:block;font:500 17px/1.4 var(--min);letter-spacing:.06em}.bl-t small{display:block;margin-top:2px;font:400 12px/1.5 var(--jp);color:var(--sub)}.bl-t rt{font-size:7px}
 .bl-s{display:flex;flex-direction:column;align-items:flex-end;gap:2px}.bl-s .st{font-size:17px}.bl-s small{font-size:10px;color:var(--sub)}
-@media(min-width:900px){.bp-l{font-size:16px}.bl{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.bl-i{grid-template-columns:56px minmax(0,1fr) auto}.bl-i img{width:56px;height:56px}}
+@media(min-width:900px){.bp-l{font-size:16px}.bl{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.bl-i{grid-template-columns:56px minmax(0,1fr) auto}.bl-ic{width:56px;height:56px}}
 .ch-x{margin-top:24px}.ch-x .row{width:fit-content}.ch-x .btn{min-width:168px;padding-inline:24px}
 .ch-mm{margin-top:28px}.ch-mm .lbl{margin:0 0 12px}
 .mm{display:flex;flex-wrap:wrap;gap:14px 22px}

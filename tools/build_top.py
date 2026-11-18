@@ -135,6 +135,19 @@ def ep_wrap(t):
             if ch in "、。！？　 " or (joshi and nx and not ("\u3041" <= nx <= "\u309f") and nx not in "、。！？…ー～"):
                 out.append(cur); cur = ""
         if cur: out.append(cur)
+        # 長いまとまり（10字以上）は、ひらがなの後に漢字・カタカナが始まる所と「…」の後でも折れるようにする（狭い画面ではみ出さないため。2026-11-18）
+        def fine(p):
+            if len(p) < 10: return [p]
+            hira = lambda c: "\u3041" <= c <= "\u309f"
+            kana_kanji = lambda c: ("\u30a1" <= c <= "\u30fa") or ("\u4e00" <= c <= "\u9fff")
+            res, cur = [], ""
+            for j, c in enumerate(p):
+                if cur and ((hira(p[j - 1]) and kana_kanji(c)) or (p[j - 1] == "…" and c != "…")):
+                    res.append(cur); cur = ""
+                cur += c
+            res.append(cur)
+            return res
+        out = [q for p in out for q in fine(p)]
         return "<wbr>".join(f'<span class="nw">{p}</span>' for p in out)
     return "\n".join(ph(x) for x in t.split("\n"))
 def ep_dialogs(inner, pre=""):
@@ -240,7 +253,7 @@ def body():
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
     mem="".join(face(c) for c in CHARS)
     # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
-    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{bn_wrap(BIRDNAME[c[1]])}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
+    birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/face/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{bn_wrap(BIRDNAME[c[1]])}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
     order={"01":CHARS[0:3],"02":CHARS[3:5],"03":CHARS[5:7],"04":CHARS[7:10],"05":CHARS[10:14]}
     def alt(k):
@@ -552,10 +565,10 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .bd-i:nth-child(n+5){display:none}
 .bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
-.bd-p{display:block;width:100%;aspect-ratio:1}.bd-p img{width:100%;height:100%;object-fit:contain}
+.bd-p{display:block;width:76px;height:76px;border-radius:50%;overflow:hidden;background:#ECECE8}.bd-p img{display:block;width:100%;height:100%;object-fit:cover}   /* 2026-11-18 Kさん：鳥の顔を丸く切り抜く（tools/make_bird_faces.py）。メンバーの顔より少し大きく */
 .bd-n{margin-top:6px;font:500 11px/1.4 var(--min);letter-spacing:.02em;word-break:keep-all}   /* 2026-11-18 名前の途中で折らない。長い名前は bn_wrap の切れ目でだけ折る */
 .ft-l a+a{margin-left:28px}
-.bd-s .more{margin-top:28px}
+.bd-s .more{margin:28px auto 0;width:fit-content}.bd-s .more .btn{min-width:180px}   /* 2026-11-18 Kさん「同じTOPなのに幅が違う」：All Songs と同じ幅・真ん中に */
 .mem{display:flex;flex-direction:column;align-items:center;text-align:center;font:500 12px/1.5 var(--min);letter-spacing:.04em}
 .mem .ph{display:block;width:64px;height:64px;border-radius:50%;overflow:hidden;margin-bottom:10px}
 .news{list-style:none;margin:0 0 28px;padding:0}
@@ -604,7 +617,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-pic{display:flex;align-items:center;justify-content:center}.f-art{position:static;top:auto;width:auto;height:auto;max-width:100%;max-height:calc(100svh - 64px);object-fit:contain;transform:none!important}   /* 画面の高さから上の帯（48px）と少しの余白を引いた高さまで。大きな画面で足元が切れないように */
  .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
  .f-txt{--pl:min(var(--gx),8vw);padding:120px 48px 60px var(--pl);align-self:center}.f-go{translate:calc((48px - var(--pl)) / 2) 0}   /* View More は、左の欄そのものの真ん中に（文字の欄の左右の空きが違う分をずらす） */.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
- .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}
+ .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}.bd-p{width:112px;height:112px}
  .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
