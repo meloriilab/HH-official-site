@@ -590,7 +590,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
 @media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
 @media(max-width:359px){.f-name{font-size:38px}}   /* 2026-11-17 幅320pxでは「NocturnalFizz」が1語で画面からはみ出していた */
-.mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}   /* 2026-11-18 公開は4ユニット・10人。札は2×2（スマホ）・4列（PC）、PCのメンバーは5人×2行 */
+.mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}   /* 2026-11-18 公開は4ユニット・10人。札は2×2（TOPのUnitsの帯だけPCは4列）、PCのメンバーは5人×2行 */
 /* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
 .bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -631,7 +631,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd,.sec,.nr,.ft{padding-inline:var(--gx)}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
- .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(4,auto);margin-inline:0}
+ .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(2,1fr);margin-inline:0}
  .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(4,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
@@ -650,7 +650,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
  .f-txt{--pl:min(var(--gx),8vw);padding:120px 48px 60px var(--pl);align-self:center}.f-go{translate:calc((48px - var(--pl)) / 2) 0}   /* View More は、左の欄そのものの真ん中に（文字の欄の左右の空きが違う分をずらす） */.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}.bd-p{width:min(112px,100%)}
- .mems{grid-template-columns:repeat(5,1fr);gap:32px 20px;max-width:760px;margin-inline:auto}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
+ .mems{grid-template-columns:repeat(5,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
 }
