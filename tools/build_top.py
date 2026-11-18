@@ -34,7 +34,7 @@ JK = {"005":"03-02","004":"03-01","003":"04-01","002":"02-01","001":"01-01"}   #
 RELS = [("004","prs","月日の奏","つきひのかなで","Prisméa"),("003","blc","Rule the Darkness","","Blackveil Harmonic"),("005","prs","Midnight Mirage","","Prisméa"),("002","nct","宵の翼","よいのつばさ","NocturnalFizz"),("001","trt","薄紅梅","うすこうばい","トリアティーク")]   # 並び順＝YouTubeでMVを公開した日の新しい順（Kさんの回答 2026-11-14。日付は CRED）
 
 # お知らせ（新しいものを上に）: (日付, 札, 本文)。札は MV / MUSIC / INFO のどれか
-NEWS = [("----.--.--","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開する日が決まったら入れる（未確定）
+NEWS = [("2026.11.28","INFO","公式サイトOpen")]   # Kさんの回答（2026-11-14）：今のところこの1件だけ。日付は公開日（2026-11-18 公開の予定表で決定）
 # ピックアップ曲（RELS の先頭の番号で選ぶ）と、その公開日。扉の紋章・ユニット名は、選んだ曲のユニットに自動で変わる
 # (ユニット, 曲名, ふりがな, 公開日, MVのアドレス)。わからない欄は空（空なら画面に出さない）
 PICK = ("prs", "月日の奏", "つきひのかなで", "", YT_MV)
@@ -91,6 +91,12 @@ PAGES = {"trt","nct","blc","prs","orb"}
 MSLUG = {"trt01":"mikoto-kawase","trt02":"sennosuke-mejiro","trt03":"wataru-tsubameya","nct01":"hayato-tsukimine","nct02":"aruto-tsukimine",
          "blc01":"renji-karasuma","blc02":"ryosuke-kasagi","blc03":"suguru-kakei",
          "prs01":"ukyo-sanjo","prs02":"thane-wakamoto","orb01":"masiro-kurenai","orb02":"tadashi-kikui","orb03":"rui-hitaki","orb04":"jo-hitaki"}
+# 公開の範囲（2026-11-18 Kさんの回答 q7：公開は曲のある4ユニットだけ。ORYBIA は公開のときに外し、曲ができたら戻す）
+# ここに入れたユニットは、ユニット・メンバーのページを書き出さず、TOP・Birds などの一覧からも外す。元のデータと絵は消さない
+LAUNCH_HIDE = {"orb"}
+PAGES -= LAUNCH_HIDE
+for _k in [k for k in MSLUG if k[:3] in LAUNCH_HIDE]: del MSLUG[_k]
+def shown(c): return c[1][:3] not in LAUNCH_HIDE
 def uhref(u, pre=""): return f"{pre}units/{SLUG[u]}.html" if u in PAGES else f"{pre or './'}#{SLUG[u]}"
 def mhref(c, pre=""): return f"{pre}members/{MSLUG[c[1]]}.html" if c[1] in MSLUG else ""
 # ───────── エピソード（曲ごとのメンバーのチャット。文と写真は旧サイトのものをそのまま使う） ─────────
@@ -276,7 +282,7 @@ def body():
     def face(c):
         tag,end=(f'a href="{mhref(c)}"',"a") if mhref(c) else ("div","div")
         return f'<{tag} class="mem"><span class="ph"><img src="images/face/{fid(c)}.webp" alt=""></span><span>{name(c)}</span></{end}>'
-    mem="".join(face(c) for c in CHARS)
+    mem="".join(face(c) for c in CHARS if shown(c))
     # Birds の帯：絵がある鳥から、開くたびに4羽を選ぶ（画面側で並べ替える。Mood のジャケットと同じ考え方。2026-11-16）
     birds="".join(f'<a class="bd-i" href="{mhref(c)}#bird"><span class="bd-p"><img src="images/bird/face/{aid(c)}.webp" alt="" loading="lazy"></span><span class="bd-n">{bn_wrap(BIRDNAME[c[1]])}</span></a>' for c in CHARS if aid(c) in REAL_BIRD and mhref(c))
     news="".join(f'<li><time>{d}</time><span class="tag">{t}</span><span class="n-t">{x}</span></li>' for d,t,x in NEWS)
@@ -342,7 +348,7 @@ ruby rt{font:400 .4em/1 var(--jp);letter-spacing:.1em}
 .hd .gnav{display:none}
 .hd{flex-wrap:wrap;gap:14px}
 /* unit pills: jump straight to a unit from anywhere at the top; the one on screen is filled */
-.upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-inline:-8px}
+.upills{order:3;flex:1 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-inline:-8px}
 .up{position:relative;display:block;min-width:0}
 /* スマホのメンバーのページ：ユニットのピルはたたんでおき、上の帯の「Units」で開く（Kさんの指示 2026-11-15：1画面に立ち絵と名前まで入れるため） */
 .uf{display:none;appearance:none;margin:0 0 0 auto;min-height:28px;padding:0 24px 0 12px;border:1px solid var(--ink);border-radius:999px;color:var(--ink);font:500 12px/1 var(--en);letter-spacing:.04em;cursor:pointer;background-color:transparent;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-repeat:no-repeat;background-size:5px 5px,5px 5px;background-position:right 14px center,right 9px center}
@@ -584,7 +590,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 2026-11-15 Kさん決定（案C）: スマホでは旗を画面の約6割の高さにして、ユニットの区切りを短くする。旗は上のユニットのボタン（高さ72px）の下で止まり、紋章が隠れない */
 @media(max-width:899px){.flag{top:72px;min-height:60svh}.f-txt{padding:40px 24px 20px}.f-mark{width:40px;height:40px}}
 @media(max-width:359px){.f-name{font-size:38px}}   /* 2026-11-17 幅320pxでは「NocturnalFizz」が1語で画面からはみ出していた */
-.mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}
+.mems{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}   /* 2026-11-18 公開は4ユニット・10人。札は2×2（TOPのUnitsの帯だけPCは4列）、PCのメンバーは5人×2行 */
 /* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
 .bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -625,8 +631,8 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd,.sec,.nr,.ft{padding-inline:var(--gx)}
  .hd .gnav{display:flex;gap:30px;font:500 19px var(--en);margin-left:auto}.yt{margin-left:0;font-size:19px}.burger{display:none}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
- .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(3,1fr);margin-inline:0}
- .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(6,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
+ .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(2,1fr);margin-inline:0}
+ .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(4,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
  .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
  .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
  .catch{right:var(--gx);top:150px;font-size:30px}
@@ -644,7 +650,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .f-name,.f-tag{word-break:keep-all}   /* 2026-11-17（A-2）PCでは、名前と一文を言葉の途中で折らない（「トリアティ／ーク」「和ロ／ック」になっていた） */
  .f-txt{--pl:min(var(--gx),8vw);padding:120px 48px 60px var(--pl);align-self:center}.f-go{translate:calc((48px - var(--pl)) / 2) 0}   /* View More は、左の欄そのものの真ん中に（文字の欄の左右の空きが違う分をずらす） */.f-name{font-size:clamp(40px,3.6vw,60px)}   /* 2026-11-17（A-2）大きな画面で文字の欄の左が空きすぎて、名前が収まらなかった。左の空きを画面幅の8%まで、名前の大きさを画面幅に合わせる */.f-tag{font-size:24px}.f-mem{font-size:18px;max-width:440px}
  .bd-c{font-size:15px;margin-bottom:28px}.bd-g{gap:32px;max-width:960px}.bd-n{margin-top:10px;font-size:14px;letter-spacing:.06em}.bd-p{width:min(112px,100%)}
- .mems{grid-template-columns:repeat(7,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
+ .mems{grid-template-columns:repeat(5,1fr);gap:32px 20px}.mem .ph{width:96px;height:96px}.mem{font-size:13px}
  .news li{grid-template-columns:150px 84px 1fr}.news .n-t{grid-column:auto}
  .ft{grid-template-columns:1fr 420px;align-items:end}.ft .note{grid-column:1/-1}
 }

@@ -8,7 +8,7 @@
 - `public/images/` … 画像。`chara`（立ち絵）・`face`（丸い顔）・`emblem`（ユニットの紋章）・`kv`（ユニットの絵）・`jacket`（ジャケット）。ファイル名はユニット番号で付け、制作用の記号（TRT など）は使わない
 - `tools/sync_staff.py` … スタッフツールから、野鳥のテキスト・鳥の和名・年齢・身長・誕生日・趣味・好きなもの・苦手なもの・#タグを取り込む（`tools/birds.json`・`tools/pages_data.json` を書きかえる）。Kさんがスタッフツールで直したら、これを実行してから上の2つを実行する。食い違ったときはスタッフツールが正しい（2026-11-17 Kさん）。色は取り込まない
 - 外のサイトへのリンクは、組み立ての道具が自動で新しいタブで開く形にする（2026-11-17 Kさん）
-- `public/rule-the-darkness.html` … ミニゲーム
+- `archive/minigame/rule-the-darkness.html` … ミニゲーム（公開しない。2026-11-18 から保管。`archive/README.md`）
 - `tools/check/` … チェック役。`node tools/check/check_site.js` で、リンクの着く先・はみ出し・札の重なり・エラー・決まりごとを調べる。Kさんに見せる前に必ず通す（`CLAUDE.md`）
 - `wrangler.jsonc` … Cloudflare に置くための設定（`main` に入れると自動で公開）
 
