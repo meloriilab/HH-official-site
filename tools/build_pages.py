@@ -39,6 +39,11 @@ SMAX = max(LV)
 REGIONAL = {"blc02", "prs02"}   # カササギ・ワカケホンセイインコ
 def star(cid): return 2 if cid in REGIONAL else {3: 4, 2: 3, 1: 1}[B[cid]["star"]]
 def lv(cid): return LV[star(cid)]
+def lum(h):
+    f = lambda v: v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    return .2126 * f(r) + .7152 * f(g) + .0722 * f(b)
+def light(h): return 1.05 / (lum(h) + .05) < 2.5   # 白地で見えにくい明るい色（会える時期の帯に細いふちを付ける）
 def scol(cid):
     """★の色：キャラのメインカラー（Kさんの指示 2026-11-16）。ふちは全部の星に、星の色より少し濃い色で付ける（CSS。2026-11-18）"""
     return CD[cid]["colors"]["main"]
@@ -330,7 +335,7 @@ def char_page(cid):
     # 中の人メモだけ押すと開く（Kさんの指示 2026-11-16：見たい人だけ見ればいい。ほかは出したまま）
     note = lambda en, jp, t: f'<div class="bx"><p class="bx-k">{en}<small>{jp}</small></p><div class="bx-in"><p>{t}</p></div></div>' if t else ""
     memo = f'<details class="bx memo"><summary><span class="bx-k">Note<small>中の人メモ</small></span></summary><div class="bx-in"><p>{br(b["memo"])}</p></div></details>' if b["memo"] else ""
-    birdx = (f'<div class="cp-b{scol(cid)[1]}" style="--cm:{col["main"]}">'
+    birdx = (f'<div class="cp-b{" lt" if light(col["main"]) else ""}" style="--cm:{col["main"]}">'
              f'<div class="bv">{fc}<div class="bv-b"><p>{br(b["line"])}</p></div></div>'
              f'<div class="bf"><dl class="bf-g"><div><dt>区分</dt><dd>{esc(b["kind"])}</dd></div><div><dt>地域</dt><dd>{esc(b["region"])}</dd></div><div class="w"><dt>いそうな場所</dt><dd>{esc(b["place"])}</dd></div></dl>'
              f'<div class="bf-s"><p class="bf-k">見つけやすさ</p>{stars(star(cid), cid)}<p class="bf-l">{lv(cid)}</p></div></div>'
