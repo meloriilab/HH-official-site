@@ -165,6 +165,7 @@ def ep_wrap(t):
                 if ((a in "をにがはでへや" and kk(c0) and kk(b))
                         or (a in "をは" and kk(c0) and hira(b))
                         or (a == "が" and kata(c0) and hira(b))
+                        or (b in "おご" and j + 1 < len(p) and kk(p[j + 1]) and a in "をにがはでへやのと")   # 「にはお返事」「のご質問」
                         or (a in "をにはで" and kk(b) and 2 <= run(j) <= 3 and j - 1 - run(j) >= 0 and kk(p[j - 1 - run(j)]))
                         or (p[j - 2:j] in ("けど", "のは") and run(j) >= 3)
                         or p[max(0, j - 3):j] == "ほうが"
@@ -179,6 +180,8 @@ def ep_wrap(t):
             res.append(p[last:])
             return res
         out = [q for p in out for q in fine(p)]
+        if len(out) > 1 and len(out[-1].strip("。、！？!? 　")) <= 2:   # 最後が「配布」のような2字以下なら前とつなげ、それだけが次の行に落ちないようにする（2026-11-18）
+            out[-2:] = [out[-2] + out[-1]]
         return "<wbr>".join(f'<span class="nw">{p}</span>' for p in out)
     return "\n".join(ph(x) for x in t.split("\n"))
 def ep_dialogs(inner, pre=""):
@@ -232,7 +235,7 @@ def header(pre="", top=True):
 <header class="hd"><a class="logo" href="{home}"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939"></a><nav class="upills" id="upills" aria-label="ユニット">{upills}</nav><button class="uf" type="button" aria-expanded="false" aria-controls="upills">Units</button><nav class="gnav"><a href="{pre}songs.html">Songs</a><a href="{sec("units")}">Units</a><a href="{sec("members")}">Members</a><a href="{pre}birds.html">Birds</a><a href="{sec("news")}">News</a></nav><a class="yt" href="{YT_CH}" aria-label="YouTube"><img class="yt-i" src="{pre}images/youtube-icon.png" alt="" width="34" height="24"></a><button class="sh" type="button" aria-haspopup="true" aria-label="Share" title="Share"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8.3 10.7 15.7 6.3M8.3 13.3l7.4 4.4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg></button><button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></header>
 <div class="menu" id="menu" hidden><nav class="m-nav"><a href="{pre}songs.html">Songs<small>楽曲一覧</small></a><a href="{sec("units")}">Units<small>ユニット</small></a><a href="{sec("members")}">Members<small>メンバー</small></a><a href="{pre}birds.html">Birds<small>野鳥</small></a><a href="{sec("news")}">News<small>お知らせ</small></a></nav>{chan()}</div>'''
 def footer(pre=""):
-    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="ft-l"><a href="{pre}birds.html">Birds</a><a href="{pre}guideline.html">Guideline</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© melorii lab</p></footer>'''
+    return f'''<footer class="ft"><p class="logo"><img src="{pre}images/logo/logo-charcoal.webp" alt="Humming Hearts" width="1502" height="939" loading="lazy"></p>{chan()}<p class="ft-l"><a href="{pre}birds.html">Birds</a><a href="{pre}guideline.html">Guideline</a></p><p class="note">キャラクター・楽曲・映像の制作に生成AIを活用しています。</p><p class="note">© Melorii Lab</p></footer>'''
 # 見た目と動きのファイルには、作り直すたびに変わる番号を付ける（ブラウザが古いファイルを使い続けて「反映されない」のを防ぐ）
 import hashlib as _hl, glob as _gl
 VER = _hl.md5(b"".join(open(f, "rb").read() for f in sorted(_gl.glob(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "*.*"))) if f.endswith((".py", ".json")))).hexdigest()[:8]

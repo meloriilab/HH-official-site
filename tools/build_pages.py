@@ -225,14 +225,15 @@ def guideline_page():
     items = [
         ("二次創作", "<p>イラスト、漫画、小説、音楽、コスプレなど、ファンによる非営利の二次創作を歓迎します。</p><p>公式とは関係のない創作だと分かる形で楽しんでください。原作の雰囲気やキャラクターのイメージを大切にしてもらえると嬉しいです。</p>"),
         ("収益化", "<p>同人誌やグッズなど、個人や少人数のサークルの範囲での頒布は問題ありません。</p><p>大量生産しての販売、公式と間違われる商品化、ブランドや第三者のライセンスを侵害する利用はご遠慮ください。</p>"),
-        ("AIの利用", "<p>Humming Hearts は生成AIを活用して制作しています。そのため、二次創作にAIを使うこと自体は禁止しておりません。</p><p>公式の画像や音源をそのまま学習データとして使用すること、再配布すること、公式になりすます利用はお控えください。</p>"),
+        ("AIの利用", "<p>Humming Hearts は生成AIを活用して制作しています。そのため、二次創作にAIを使うこと自体は禁止しておりません。ご使用になられた場合はAIを使用したことを明記いただけると幸いです。</p><p>公式の画像や音源をそのまま学習データとして使用すること、再配布すること、公式になりすます利用はお控えください。</p>"),
         ("禁止事項", "<ul><li>公式・公認であるかのような誤認を招く表現</li><li>過度に暴力的・差別的な内容、特定の個人や団体を誹謗中傷する内容</li><li>政治・宗教・反社会的活動への利用</li><li>ロゴ・エンブレムなどの公式素材の無断使用、改変しての配布</li></ul>"),
         ("お問い合わせ", f'<p>Humming Hearts は現在、お問い合わせの窓口を設けておりません。個別のご質問やご連絡にはお返事できませんので、あらかじめご了承ください。</p><p>最新のお知らせは、公式の <a href="{T.XURL}">X</a> と <a href="{T.YT_CH}">YouTube</a> でご確認ください。</p>'),
     ]
     def tail(h):   # 段落・箇条書きの終わりの5文字は途中で折り返さない（「す。」だけが次の行に落ちるのを防ぐ。Kさんの指摘 2026-11-15）
-        return re.sub(r"([^<>]{5})(</p>|</li>)", r'<span class="nb">\1</span>\2', h)
+        # 2026-11-18 チェック役の指摘（「明／記」「大歓迎で／す！」）：文は文節の切れ目でだけ折る（ep_wrap）。終わりの短い語が1つだけ落ちることもこれで防ぐ
+        return re.sub(r">([^<>]+)<", lambda m: ">" + T.ep_wrap(m.group(1)) + "<", h)
     items = [(t, tail(b)) for t, b in items]
-    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
+    lead = tail("<p class=\"gl-l\">Humming Hearts（ハミングハーツ）のキャラクターや世界を使った創作や、歌ってみた動画などは大歓迎です！<br class='gl-br'>みんなが気持ちよく楽しめるように、以下をご一読いただければと思います。</p>")
     note = tail('<p class="gl-x">ガイドラインの内容は予告なく変わることがあります。</p>')   # いちばん下の注意書き（Kさんの指示 2026-11-15。「草案です」の一文は外す）
     rows = "".join(f'<div class="gl-i"><p class="gl-n" aria-hidden="true">{i:02d}</p><h3>{t}</h3><div class="gl-b">{b}</div></div>' for i, (t, b) in enumerate(items, 1))
     inner = f'''{T.header("", top=False)}
@@ -249,7 +250,7 @@ def guideline_page():
 def birds_page():
     """Birds：鳥が目当てで来た人の入口。マナー → 見つけやすさで絞り込み → 14羽の一覧。行を押すと、そのメンバーのページが鳥の側で開く（Kさんの了承 2026-11-16）
     マナーの文はKさんが決定（2026-11-16）。紹介の1行と★の段階の名前もKさんが決定（2026-11-18）"""
-    lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>ご紹介！"   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
+    lead = "メンバーの<wbr>モチーフになった<wbr>野鳥たちを<wbr>簡単に<wbr>紹介するよ。<wbr>観察マナーを<wbr>守って<wbr>探してみてね！"   # 2026-11-18 Kさんの指定の文   # 言葉の途中で折れないよう、切れ目にだけ <wbr>
     # 言葉の途中で折れないよう、切れ目に <wbr>（keep-all。2026-11-18）
     manners = ["近づきすぎない。<wbr>追いかけない", "巣やヒナには<wbr>近づかない。<wbr>撮影も<wbr>ひかえる", "えさを<wbr>あげない", "田畑や<wbr>私有地に<wbr>入らない。<wbr>めずらしい<wbr>鳥の場所は<wbr>SNSに<wbr>書かない"]
     rows = "".join(f'<li data-s="{star(cid)}"><a class="bl-i" href="{T.mhref(CH[cid])}#bird"><span class="bl-ic"><img src="images/bird/face/{T.aid(CH[cid])}.webp" alt=""><img class="bl-cf" src="images/face/{T.fid(CH[cid])}.webp" alt=""></span><span class="bl-t"><b>{esc(bname(cid))}</b><small>{T.name(CH[cid])}</small></span><span class="bl-s">{stars(star(cid), cid)}<small>{lv(cid)}</small></span></a></li>' for cid in ORDER)
@@ -563,7 +564,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .bp-m ul{margin:0;padding:0;list-style:none;font-size:14px;line-height:1.9;word-break:keep-all}.bp-m li{position:relative;padding-left:18px}.bp-m li+li{margin-top:4px}
 .bp-m li::before{content:"";position:absolute;left:0;top:.95em;width:9px;height:1px;background:var(--ink)}
 .bp-f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px}@media(min-width:600px){.bp-f{grid-template-columns:repeat(5,minmax(0,1fr));max-width:650px}}   /* 2026-11-18 4段階になり札が5つ。スマホは3列（Moodの札と同じ） */.bp-f .md{min-height:44px;padding:0 6px;justify-content:center;font-size:13px}.bp-f .st{font-size:15px;letter-spacing:.18em}
-.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;min-width:4.6em;margin-right:8px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
+.bp-lg{margin:12px 0 20px;display:grid;grid-template-columns:repeat(2,max-content);gap:4px 24px;font-size:12px;color:var(--sub)}.bp-lg b{display:inline-block;margin-right:6px;font-weight:400;color:var(--ink)}@media(min-width:600px){.bp-lg{grid-template-columns:repeat(4,max-content)}}
 .bl{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}.bl li[hidden]{display:none}
 .bl-i{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 /* 2026-11-18 Kさん：アイコンは鳥の顔を丸く切り抜いたもの。マウスを乗せるとメンバーの顔に替わる */
@@ -710,7 +711,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 @media(prefers-reduced-motion:reduce){.ch-art{filter:none}}
 /* ガイドライン：読むためのページ。1行を40字ほどに収め、番号と見出しで目当ての項目を探せるようにする。PCは左に見出し・右に本文 */
 .gl{padding-bottom:16px}
-.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}
+.gl-l{margin:0 0 48px;max-width:40em;font-size:15px;line-height:2.1}.gl-br{display:none}@media(min-width:1024px){.gl-br{display:inline}}   /* 2026-11-18 Kさん「2行にできない？」：PCは「大歓迎です！」の後で改行して2行に */
 .gl-s{border-top:1px solid var(--ink)}
 .gl-i{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:14px;align-items:baseline;padding:28px 0 30px;border-bottom:1px solid var(--line)}
 .gl-n{margin:0;font:italic 500 22px/1 var(--en);color:var(--sub)}
@@ -721,7 +722,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .gl-b li::before{content:"";position:absolute;left:0;top:1.05em;width:10px;height:1px;background:var(--ink)}
 .gl-x{margin:32px 0 0;max-width:40em;font-size:13px;line-height:2;color:var(--sub)}
 .gl-b a{border-bottom:1px solid var(--ink)}.gl .nb{white-space:nowrap}
-@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px}
+@media(min-width:900px){.gl{padding-bottom:32px}.gl-l{margin-bottom:48px;font-size:16px;max-width:none}
  .gl-i{grid-template-columns:64px 236px minmax(0,1fr);column-gap:0;padding:40px 0 44px}.gl-n{font-size:26px}.gl-i h3{font-size:22px}.gl-b{grid-column:auto;font-size:16px}.gl-x{margin-left:300px}}
 """
 
