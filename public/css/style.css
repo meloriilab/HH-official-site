@@ -264,6 +264,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
 .bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media(max-width:359px){.bd-g{grid-template-columns:repeat(3,minmax(0,1fr))}.bd-i:nth-child(n+4){display:none}}   /* 2026-11-18 4羽だと丸がメンバーの顔(64px)より小さくなるので、狭い画面は3羽 */
 .bd-i:nth-child(n+5){display:none}
 .bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
 .bd-p{display:block;width:min(76px,100%);aspect-ratio:1;height:auto;margin:0 auto;border-radius:50%;overflow:hidden;background:#ECECE8}.bd-p img{display:block;width:100%;height:100%;object-fit:cover}   /* 2026-11-18 Kさん：鳥の顔を丸く切り抜く（tools/make_bird_faces.py）。メンバーの顔より少し大きく */

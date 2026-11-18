@@ -132,6 +132,8 @@ def ep_wrap(t):
             cur += ch
             nx = line[i + 1] if i + 1 < len(line) else ""
             joshi = ch in "をにとがのはへでも" or (ch == "ら" and i and line[i - 1] == "か")
+            if joshi and line[max(0, i - 1):i + 2] in ("道の駅", "中の人"):
+                joshi = False   # ひとつの言葉の中の「の」（2026-11-18）
             if joshi and i and line[i - 1:i + 1] in ("ひと", "ふた"):
                 joshi = False
             if joshi and i and "\u3041" <= line[i - 1] <= "\u309f" and not (i >= 2 and "\u3041" <= line[i - 2] <= "\u309f"):
@@ -158,9 +160,9 @@ def ep_wrap(t):
                         or (a in "をは" and kk(c0) and hira(b))
                         or (a == "が" and kata(c0) and hira(b))
                         or (a in "をにはで" and kk(b) and 2 <= run(j) <= 3 and j - 1 - run(j) >= 0 and kk(p[j - 1 - run(j)]))
-                        or (p[j - 2:j] in ("けど", "のは", "ので") and run(j) >= 3)
+                        or (p[j - 2:j] in ("けど", "のは") and run(j) >= 3)
                         or p[max(0, j - 3):j] == "ほうが"
-                        or (p[j - 2:j] in ("から", "たら", "なら") and run(j) >= 2 and not hira(b))
+                        or (p[j - 2:j] in ("から", "たら", "なら", "ので") and run(j) >= 2 and not hira(b))
                         or (run(j) >= 3 and a not in "おご" and p[j - 2:j] not in ("ひと", "ふた") and kk(b))
                         or (run(j) >= 2 and kata(b) and b != "ッ")
                         or a == "…"):
@@ -586,6 +588,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* TOP の Birds：鳥の絵を4羽。押すとそのメンバーの Motif の小窓へ */
 .bd-c{margin:0 0 20px;font-size:14px;line-height:1.9}
 .bd-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media(max-width:359px){.bd-g{grid-template-columns:repeat(3,minmax(0,1fr))}.bd-i:nth-child(n+4){display:none}}   /* 2026-11-18 4羽だと丸がメンバーの顔(64px)より小さくなるので、狭い画面は3羽 */
 .bd-i:nth-child(n+5){display:none}
 .bd-i{display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .25s}.bd-i:hover{opacity:.7}
 .bd-p{display:block;width:min(76px,100%);aspect-ratio:1;height:auto;margin:0 auto;border-radius:50%;overflow:hidden;background:#ECECE8}.bd-p img{display:block;width:100%;height:100%;object-fit:cover}   /* 2026-11-18 Kさん：鳥の顔を丸く切り抜く（tools/make_bird_faces.py）。メンバーの顔より少し大きく */
