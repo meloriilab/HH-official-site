@@ -325,7 +325,7 @@ def body():
 <div class="ab-s" id="tips"><h3><span>Tips</span></h3>
 <details class="ab-d"><summary>ソナヴィアン</summary><p>{ep_wrap("野鳥の魂を宿した存在です。人には言えない想いを、歌にのせて届けます。")}</p></details>
 <details class="ab-d"><summary><ruby>奏樹市<rt>そうじゅし</rt></ruby></summary><p>{ep_wrap("ソナヴィアンの歌や文化を研究するために発展した学園都市です。中高大一貫の奏樹学園を中心に、研究施設やライブハウス、録音スタジオが集まっています。")}</p></details>
-<details class="ab-d"><summary>制作について</summary><p>{ep_wrap("「ハミングハーツ」は、Melorii Lab が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てています。")}</p></details>
+<details class="ab-d"><summary>制作について</summary><p>{ep_wrap("「ハミングハーツ」は、Melorii\u00a0Lab\u00a0が制作する同人創作企画です。キャラクター・楽曲・映像・物語など、多くの工程で生成AIを活用しながら、少人数で育てています。")}</p></details>
 </div></section>
 <section class="sec" id="news"><h2><span>News</span><small>お知らせ</small></h2><ul class="news">{news}</ul></section>
 </main>
