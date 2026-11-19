@@ -84,18 +84,19 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .m-nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:italic 500 38px/1.1 var(--en)}
 .m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.06em}
 .menu .row{margin:32px 0 0}
-.fv{position:relative;height:730px;overflow:hidden}
-.word{position:absolute;margin:0;font:500 112px/1 var(--en);color:var(--faint);white-space:nowrap;letter-spacing:-.02em}
-.w1{left:-10px;top:150px}.w2{right:-14px;top:330px}
-.trio{position:absolute;inset:auto 3% 0;height:560px}
+.fv{position:relative;height:700px;overflow:hidden}
+.trio{position:absolute;inset:auto 0 0;height:600px}
 .trio img{position:absolute;bottom:0;max-width:none}
-.trio{--H:340px}.trio img{transform:translateX(-50%);width:auto;height:calc(var(--H)*var(--s));bottom:calc(var(--H)*var(--y))!important}
-.catch{position:absolute;z-index:3;right:22px;top:150px;margin:0;writing-mode:vertical-rl;font:500 21px/1.6 var(--min);letter-spacing:.3em}
+.trio{--H:335px}.trio img{transform:translateX(-50%);width:auto;height:calc(var(--H)*var(--s));bottom:calc(var(--H)*var(--y))!important}
+.catch{position:absolute;z-index:3;right:22px;top:118px;margin:0;writing-mode:vertical-rl;font:500 22px/1.6 var(--min);letter-spacing:.3em}
 .catch span{display:block;white-space:nowrap}.catch span+span{padding-top:4em}
 /* 名前と説明（案A）。いちばん先に読む場所＝左上の空いたところに横組みで置き、右の縦組みのキャッチと左右で釣り合わせる */
 .hx{position:absolute;z-index:3;left:var(--gx);top:96px;margin:0}
-.hx small{display:block;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.hx b{display:block;margin-top:4px;font:500 26px/1.4 var(--min);letter-spacing:.12em;white-space:nowrap}
+.hx small{display:block;font:500 12px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.hx b{display:block;margin-top:4px;font:500 30px/1.4 var(--min);letter-spacing:.12em;white-space:nowrap}
+/* 2026-11-19 案Aの調整：幅320前後では、名前とキャッチが触れないよう少し小さく・キャッチを下げる。タブレットは絵を真ん中に大きく */
+@media(max-width:359px){.hx b{font-size:25px}.catch{top:170px;font-size:20px}.trio{--H:300px}}
+@media(min-width:700px) and (max-width:899px){.fv{height:880px}.trio{left:50%;right:auto;width:720px;margin-left:-360px;height:760px;--H:480px}.hx b{font-size:36px}.catch{font-size:26px}}
 .pu{padding-top:72px}
 h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.06em}
 .pu-g{display:grid;gap:28px}
@@ -303,10 +304,10 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
  .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(2,1fr);margin-inline:0}
  .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(4,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
- .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
- .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
- .catch{right:var(--gx);top:150px;font-size:30px}
- .hx{left:var(--gx);top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
+ .fv{height:900px}
+ .trio{height:780px;width:860px;left:50%;right:auto;margin-left:-430px;--H:470px}
+ .catch{right:var(--gx);top:116px;font-size:30px}
+ .hx{left:var(--gx);top:116px}.hx small{font-size:13px}.hx b{font-size:42px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-t{font-size:16px;max-width:none}.ab-s{margin-top:96px}.ab-s h3 span{font-size:40px}.ab-d summary{font-size:17px;min-height:64px}.ab-d p{font-size:14px;max-width:40em}
  .rels{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
@@ -329,7 +330,6 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 @media(min-width:900px) and (max-width:1279px){.f-name{font-size:clamp(34px,3.6vw,46px)}.f-mark{width:48px;height:48px}.f-hd{gap:14px}}
 @media(min-width:900px) and (max-width:1139px){
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
- .trio{left:0;margin-left:0;width:88%}
  .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
  h2 span{font-size:56px}
 }

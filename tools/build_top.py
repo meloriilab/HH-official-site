@@ -293,17 +293,15 @@ def body():
     def alt(k):
         return next((c[2]+c[3] for c in CHARS if c[1][:3] in NO and aid(c)==k), "")
     # (file, x%, size, bottom as a share of H, layer, scroll speed)
-    FIG=[("05-1",39,.70,.44,1,".26"),("05-2",46,.74,.50,1,".26"),("05-3",56,.72,.46,1,".26"),("05-4",65,.70,.51,1,".26"),
-         ("03-1",13,.82,.34,1,".22"),("03-2",24,.78,.40,1,".22"),("07-1",76,.76,.50,1,".22"),("07-2",91,.80,.46,1,".22"),
-         ("04-2",74,.98,.08,2,".14"),("04-1",85,1.04,.04,2,".14"),("04-3",96,.96,.10,2,".14"),
-         ("02-1",8,1.12,-.24,2,".12"),("02-2",22,1.06,-.2,2,".12"),
-         ("01-2",37,1.26,-.42,3,".04"),("01-3",63,1.24,-.4,3,".04"),("01-1",50,1.34,-.44,4,".04")]
+    # 2026-11-19 Kさん：最初の画面は案A（公開する4ユニット・10人の集合絵）。後ろの列＝Prisméa・Blackveil、中＝NocturnalFizz、前＝トリアティーク
+    FIG=[("03-1",23,.80,.44,1,".2"),("03-2",36,.76,.48,1,".2"),("04-2",62,.78,.48,1,".2"),("04-1",74,.82,.44,1,".2"),("04-3",86,.80,.42,1,".2"),
+         ("02-1",19,1.0,-.02,2,".12"),("02-2",79,.98,0,2,".12"),
+         ("01-2",32,1.18,-.38,3,".04"),("01-3",68,1.16,-.36,3,".04"),("01-1",50,1.28,-.42,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
     pu_u,PT,PK,PD,PMV=PICK; PN=NO[pu_u]; PUN=next(n for no,u,code,n,*_ in UNITS if u==pu_u)   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
     return f'''{header()}
 <main>
 <section class="fv">
-  <p class="word w1" aria-hidden="true" data-speed=".55">Humming</p><p class="word w2" aria-hidden="true" data-speed=".3" data-speedx="-.15">Hearts</p>
   <div class="trio">{lineup}</div>
   <h1 class="hx"><small>野鳥擬人化×AI楽曲</small><b>ハミングハーツ</b></h1>
   <p class="catch"><span>本能のまま、</span><span>歌う。</span></p>
@@ -417,18 +415,19 @@ button.btn{font:500 18px/1 var(--en);letter-spacing:.04em}
 .m-nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:italic 500 38px/1.1 var(--en)}
 .m-nav small{font:500 12px/1 var(--jp);color:var(--sub);letter-spacing:.06em}
 .menu .row{margin:32px 0 0}
-.fv{position:relative;height:730px;overflow:hidden}
-.word{position:absolute;margin:0;font:500 112px/1 var(--en);color:var(--faint);white-space:nowrap;letter-spacing:-.02em}
-.w1{left:-10px;top:150px}.w2{right:-14px;top:330px}
-.trio{position:absolute;inset:auto 3% 0;height:560px}
+.fv{position:relative;height:700px;overflow:hidden}
+.trio{position:absolute;inset:auto 0 0;height:600px}
 .trio img{position:absolute;bottom:0;max-width:none}
-.trio{--H:340px}.trio img{transform:translateX(-50%);width:auto;height:calc(var(--H)*var(--s));bottom:calc(var(--H)*var(--y))!important}
-.catch{position:absolute;z-index:3;right:22px;top:150px;margin:0;writing-mode:vertical-rl;font:500 21px/1.6 var(--min);letter-spacing:.3em}
+.trio{--H:335px}.trio img{transform:translateX(-50%);width:auto;height:calc(var(--H)*var(--s));bottom:calc(var(--H)*var(--y))!important}
+.catch{position:absolute;z-index:3;right:22px;top:118px;margin:0;writing-mode:vertical-rl;font:500 22px/1.6 var(--min);letter-spacing:.3em}
 .catch span{display:block;white-space:nowrap}.catch span+span{padding-top:4em}
 /* 名前と説明（案A）。いちばん先に読む場所＝左上の空いたところに横組みで置き、右の縦組みのキャッチと左右で釣り合わせる */
 .hx{position:absolute;z-index:3;left:var(--gx);top:96px;margin:0}
-.hx small{display:block;font:500 11px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
-.hx b{display:block;margin-top:4px;font:500 26px/1.4 var(--min);letter-spacing:.12em;white-space:nowrap}
+.hx small{display:block;font:500 12px/1.6 var(--jp);letter-spacing:.06em;color:var(--sub)}
+.hx b{display:block;margin-top:4px;font:500 30px/1.4 var(--min);letter-spacing:.12em;white-space:nowrap}
+/* 2026-11-19 案Aの調整：幅320前後では、名前とキャッチが触れないよう少し小さく・キャッチを下げる。タブレットは絵を真ん中に大きく */
+@media(max-width:359px){.hx b{font-size:25px}.catch{top:170px;font-size:20px}.trio{--H:300px}}
+@media(min-width:700px) and (max-width:899px){.fv{height:880px}.trio{left:50%;right:auto;width:720px;margin-left:-360px;height:760px;--H:480px}.hx b{font-size:36px}.catch{font-size:26px}}
 .pu{padding-top:72px}
 h2 span,h2 small{white-space:nowrap}.pu h2{gap:10px}.pu h2 small{letter-spacing:.06em}
 .pu-g{display:grid;gap:28px}
@@ -636,10 +635,10 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .hd{flex-wrap:nowrap;gap:28px;justify-content:flex-start}
  .upills{order:0;flex:0 0 auto;display:inline-grid;grid-template-columns:repeat(2,1fr);margin-inline:0}
  .js body:not([data-u]) .upills{display:grid;grid-template-columns:repeat(4,minmax(0,180px));justify-content:center;gap:8px;padding:12px 32px}.up-a{min-height:24px;font-size:13px;padding-inline:14px}
- .fv{height:900px}.word{font-size:300px}.w1{left:calc(50% - 600px);top:70px}.w2{right:calc(50% - 600px);top:420px}
- .trio{height:780px;width:960px;left:50%;right:auto;margin-left:-560px;--H:500px}
- .catch{right:var(--gx);top:150px;font-size:30px}
- .hx{left:var(--gx);top:120px}.hx small{font-size:13px}.hx b{font-size:40px}
+ .fv{height:900px}
+ .trio{height:780px;width:860px;left:50%;right:auto;margin-left:-430px;--H:470px}
+ .catch{right:var(--gx);top:116px;font-size:30px}
+ .hx{left:var(--gx);top:116px}.hx small{font-size:13px}.hx b{font-size:42px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-t{font-size:16px;max-width:none}.ab-s{margin-top:96px}.ab-s h3 span{font-size:40px}.ab-d summary{font-size:17px;min-height:64px}.ab-d p{font-size:14px;max-width:40em}
  .rels{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;padding-bottom:120px}.rels.lead{padding-bottom:96px}.rel:nth-child(even){margin-top:120px}.rel h3{font-size:21px}.rels.lead{align-items:start}.rels.lead .rel:first-child{grid-column:span 2;grid-row:span 2;margin-bottom:0}.rels.lead .rel:nth-child(even){margin-top:0}.rels.lead .rel:nth-child(2n+3){margin-top:96px}.rels.lead .rel:first-child h3{font-size:34px}
@@ -662,7 +661,6 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 @media(min-width:900px) and (max-width:1279px){.f-name{font-size:clamp(34px,3.6vw,46px)}.f-mark{width:48px;height:48px}.f-hd{gap:14px}}
 @media(min-width:900px) and (max-width:1139px){
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
- .trio{left:0;margin-left:0;width:88%}
  .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
  h2 span{font-size:56px}
 }
@@ -807,7 +805,8 @@ def ext_links(t):
     return re.sub(r'<a (?![^>]*\btarget=)([^>]*?\bhref="https?://)', r'<a target="_blank" rel="noopener" \1', t)
 
 def main():
-    html = page("Humming Hearts OFFICIAL SITE", DESC, "", body())
+    # 共有の一文（2026-11-19 Kさん。2行目の「Youtube」は表記を YouTube にそろえた）
+    html = page("Humming Hearts OFFICIAL SITE", DESC, "", body(), share="野鳥擬人化×AI楽曲プロジェクト「ハミングハーツ」公式サイト&#10;YouTubeほか各配信プラットフォームにて好評配信中！")
     for path, text in (("index.html", ext_links(html)), ("css/style.css", CSS.lstrip("\n")), ("js/main.js", JS + "\n")):
         with open(os.path.join(ROOT, path), "w", encoding="utf-8") as f: f.write(text)
         print("ok", path)
