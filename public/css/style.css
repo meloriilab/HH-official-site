@@ -307,6 +307,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .fv{height:900px}
  .trio{height:780px;width:860px;left:50%;right:auto;margin-left:-430px;--H:470px}
  .catch{right:var(--gx);top:116px;font-size:30px}
+ .catch span{display:inline}.catch span+span{padding-top:0}   /* 2026-11-23 Kさん：広いPCではキャッチを1行に（右の縦の空きを1本の線で使う）。1139px以下は2列のまま */
  .hx{left:var(--gx);top:116px}.hx small{font-size:13px}.hx b{font-size:42px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-t{font-size:16px;max-width:none}.ab-s{margin-top:96px}.ab-s h3 span{font-size:40px}.ab-d summary{font-size:17px;min-height:64px}.ab-d p{font-size:14px;max-width:40em}
@@ -329,6 +330,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 文字の欄が4割になるので、幅の狭いPC・横向きタブレットではユニット名を少し小さく */
 @media(min-width:900px) and (max-width:1279px){.f-name{font-size:clamp(34px,3.6vw,46px)}.f-mark{width:48px;height:48px}.f-hd{gap:14px}}
 @media(min-width:900px) and (max-width:1139px){
+ .catch span{display:block}.catch span+span{padding-top:4em}
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
  .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
  h2 span{font-size:56px}

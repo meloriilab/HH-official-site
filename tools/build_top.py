@@ -294,9 +294,11 @@ def body():
         return next((c[2]+c[3] for c in CHARS if c[1][:3] in NO and aid(c)==k), "")
     # (file, x%, size, bottom as a share of H, layer, scroll speed)
     # 2026-11-19 Kさん：最初の画面は案A（公開する4ユニット・10人の集合絵）。後ろの列＝Prisméa・Blackveil、左の中ほど＝NocturnalFizz（2026-11-19 Kさん：ユニットは分けない）、前＝トリアティーク
-    FIG=[("03-1",36,.78,.46,1,".2"),("03-2",48,.74,.50,1,".2"),("04-2",63,.78,.48,1,".2"),("04-1",74,.82,.44,1,".2"),("04-3",86,.80,.42,1,".2"),
-         ("02-1",18,.98,.02,2,".12"),("02-2",31,.96,.04,2,".12"),
-         ("01-2",43,1.34,-.54,3,".04"),("01-3",75,1.34,-.54,3,".04"),("01-1",59,1.44,-.6,4,".04")]
+    # 大きさ＝列の奥行き×身長（管理ツールの身長。2026-11-23 Kさん：身長表の順に）。同じ列は足もとの高さをそろえる
+    # 身長：01-1 172／01-2 162／01-3 175／02-1 178／02-2 182／03-1 171／03-2 173／04-1 177／04-2 180／04-3 168（奥行き：後ろ.80、中.98、前1.38。--s＝奥行き×身長÷175。NocturnalFizz の2枚は膝下までの絵＝全身の約8割なので、さらに×0.8。切れ目は画面の下端より下に置く）
+    FIG=[("03-1",36,0.782,0.46,1,".2"),("03-2",48,0.791,0.46,1,".2"),("04-2",63,0.823,0.46,1,".2"),("04-1",74,0.809,0.46,1,".2"),("04-3",86,0.768,0.46,1,".2"),
+         ("02-1",18,0.797,-0.04,2,".12"),("02-2",31,0.815,-0.04,2,".12"),
+         ("01-2",43,1.277,-0.56,3,".04"),("01-3",75,1.38,-0.56,3,".04"),("01-1",59,1.356,-0.56,4,".04")]
     lineup="".join(f'<img style="left:{x}%;--s:{sz};--y:{y};z-index:{z}" src="images/chara/{k}.webp" alt="{alt(k)}" data-speed="{sp}">' for k,x,sz,y,z,sp in FIG)
     pu_u,PT,PK,PD,PMV=PICK; PN=NO[pu_u]; PUN=next(n for no,u,code,n,*_ in UNITS if u==pu_u)   # ピックアップ曲。扉の紋章はこの曲のユニットのもの
     return f'''{header()}
@@ -638,6 +640,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
  .fv{height:900px}
  .trio{height:780px;width:860px;left:50%;right:auto;margin-left:-430px;--H:470px}
  .catch{right:var(--gx);top:116px;font-size:30px}
+ .catch span{display:inline}.catch span+span{padding-top:0}   /* 2026-11-23 Kさん：広いPCではキャッチを1行に（右の縦の空きを1本の線で使う）。1139px以下は2列のまま */
  .hx{left:var(--gx);top:116px}.hx small{font-size:13px}.hx b{font-size:42px}
  .pu{padding-top:120px}.pu-g{grid-template-columns:1fr 720px;align-items:end;column-gap:80px}.pu-fr{order:2;margin:0}.dr{--e:230px;--in:18px}.dr b{font-size:24px}.pu-t{position:absolute;z-index:2;left:0;bottom:0;margin:0;max-width:71.6%;background:var(--bg);font-size:44px;padding:16px 26px 0 0}
  .sec{padding-top:120px}h2 span{font-size:64px}h2{margin-bottom:32px}.ab-t{font-size:16px;max-width:none}.ab-s{margin-top:96px}.ab-s h3 span{font-size:40px}.ab-d summary{font-size:17px;min-height:64px}.ab-d p{font-size:14px;max-width:40em}
@@ -660,6 +663,7 @@ a.flag:hover .f-go{background:var(--tx);color:var(--c)}
 /* 文字の欄が4割になるので、幅の狭いPC・横向きタブレットではユニット名を少し小さく */
 @media(min-width:900px) and (max-width:1279px){.f-name{font-size:clamp(34px,3.6vw,46px)}.f-mark{width:48px;height:48px}.f-hd{gap:14px}}
 @media(min-width:900px) and (max-width:1139px){
+ .catch span{display:block}.catch span+span{padding-top:4em}
  .hd .gnav{display:none}.burger{display:block}.yt{margin-left:auto}
  .pu-g{grid-template-columns:1fr 62%;column-gap:40px}
  h2 span{font-size:56px}
