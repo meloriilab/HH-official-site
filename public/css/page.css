@@ -293,7 +293,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
 .pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
 .pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
-.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px;text-wrap:balance}
 .mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
