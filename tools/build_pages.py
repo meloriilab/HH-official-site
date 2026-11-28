@@ -304,6 +304,7 @@ def char_page(cid):
     rows = [("誕生日", d["birthday"]), ("身長", f'{d["height"]}cm'), ("年齢", f'{d["age"]}歳'),
             ("趣味", "、".join(d["hobby"])), ("好きなもの", d["like"]), ("苦手なもの", d["dislike"])]
     # 値は「、」の後でだけ折り返す（趣味などが2行になっても、ことばの途中で切れない。2026-11-15）
+    # 2026-11-28：プロフィールの値は行の長さをそろえて折る（text-wrap:balance。狭い幅で「写真」だけが次の行に落ちていた）
     dl = "".join(f"<div><dt>{k}</dt><dd>{''.join(f'<span class=nw>{esc(x)}</span>' for x in phrases(str(v)) if x)}</dd></div>" for k, v in rows)
     tags = ('<ul class="tags">' + "".join(f"<li>#{esc(t)}</li>" for t in TAGS[cid]) + "</ul>") if cid in TAGS else ""
     # タブレット幅では、タグを立ち絵の上にメインカラーの帯で縦に並べる。帯が明るい色の人は、白ではなく黒の文字にして読めるようにする
@@ -683,7 +684,7 @@ html.bird .ch-bd{display:block;animation:pFade .35s ease both}
 .ch-r{margin:2px 0 0;font:italic 500 18px/1 var(--en);letter-spacing:.04em;color:var(--sub)}
 .pf{margin:36px 0 0;max-width:640px;border-top:1px solid var(--ink)}
 .pf div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
-.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px}
+.pf dt{font:500 12px/2.1 var(--jp);letter-spacing:.06em;color:var(--sub)}.pf dd{margin:0;font-size:15px;text-wrap:balance}
 .mt{margin:0 0 16px;font:500 26px/1.4 var(--min);letter-spacing:.08em;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mt small{font:italic 500 17px var(--en);letter-spacing:.02em;color:var(--sub)}
 .un{margin:0 0 36px}.un a{display:inline-flex;align-items:baseline;gap:14px;min-height:44px;font:italic 500 34px/1.1 var(--en);border-bottom:1px solid var(--ink);padding-bottom:6px}
